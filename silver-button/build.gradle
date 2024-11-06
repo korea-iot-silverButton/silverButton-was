@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.korit'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 프로젝트 개발에 필요한 기능인 의존성을 입력
+    // : 스프링부트 웹 관련 기능 제공 | 테스트 기능을 제공
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    // 스프링 데이터 JPA
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    // 스프링 시큐리티 사용 스타터
+    implementation('org.springframework.boot:spring-boot-starter-security')
+
+    // 프로젝트 유효성 검사를 위한 의존성 입력
+    implementation('jakarta.validation:jakarta.validation-api:3.0.2')
+    //implementation('org.hibernate.validator:hibernate.validator:8.0.0.Final')
+
+    // JWT 의존성 추가
+    implementation('io.jsonwebtoken:jjwt-api:0.11.2')
+    implementation('io.jsonwebtoken:jjwt-impl:0.11.2')
+    implementation('io.jsonwebtoken:jjwt-jackson:0.11.2')
+
+    // 데이터베이스 h2 사용
+    runtimeOnly('com.h2database:h2')
+    implementation('mysql:mysql-connector-java:8.0.33')
+
+    // 반복 메서드 작성 작업을 줄여주는 라이브러리
+    compileOnly('org.projectlombok:lombok')
+    annotationProcessor('org.projectlombok:lombok')
+
+    testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
+    testImplementation('org.assertj:assertj-core:3.22.0')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    // 스프링 시큐리티 테스트를 위한 테스트 기능 제공
+    testImplementation('org.springframework.security:spring-security-test')
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
