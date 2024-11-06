@@ -1,0 +1,49 @@
+plugins {
+	id 'java'
+	// 프로젝트에 사용할 스프링부트 플러그인 | 스프링의 의존성을 자동 관리하는 플러그인
+	id 'org.springframework.boot' version '3.2.0'
+	id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+
+repositories {
+
+	mavenCentral()
+}
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-web')
+
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+
+	implementation('org.springframework.boot:spring-boot-starter-security')
+
+
+	implementation('jakarta.validation:jakarta.validation-api:3.0.2')
+
+
+	implementation('io.jsonwebtoken:jjwt-api:0.11.2')
+	implementation('io.jsonwebtoken:jjwt-impl:0.11.2')
+	implementation('io.jsonwebtoken:jjwt-jackson:0.11.2')
+
+
+	runtimeOnly('com.h2database:h2')
+	implementation('mysql:mysql-connector-java:8.0.33')
+
+
+	compileOnly('org.projectlombok:lombok')
+	annotationProcessor('org.projectlombok:lombok')
+
+	testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
+	testImplementation('org.assertj:assertj-core:3.22.0')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	// 스프링 시큐리티 테스트를 위한 테스트 기능 제공
+	testImplementation('org.springframework.security:spring-security-test')
+}
+
+test {
+	useJUnitPlatform()
+}
