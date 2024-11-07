@@ -1,0 +1,42 @@
+### application file(확장자 .properties(우선), .yml 동일)###
+# : 애플리케이션의 설정 정보를 관리하는 파일
+
+#역할 및 용도
+# 1.(애플리케이션) 서버 환경 설정- 서버 포트 번호등을 관리
+# 2. 데이터베이스 설정- URL, 사용자명, 비밀번호등을 정의
+# 3. JPA 및 Hibernate 설정 - DB와의 상호작용 시 엔터티 매핑 방식과 SQL출력 여부등의 설정을 관리
+
+## 동작 방식
+# .properties VS .yml
+# 1. .properties
+#   : 주로 단순하거나 개발 초기 단계에서 사용
+
+# 2.  .yml
+#   : 설정이 복잡하고 중첩된 구조가 필요할 때 선호
+
+# 3. 형식 및 구조 차이
+# 1) .properties
+#: 키-값 쌍의 형태로 설정
+# 2) .yml
+#: 계층적 구조를 사용
+#: 가독성이 좋고 복잡한 설정을 쉽게 관리
+
+server:
+  port: 8080
+
+# Spring boot와 JPA를 이용해 ORM을 구현
+# 애플리케이션 설정에서 연결할 DB를 명시
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/springboot__db
+    username: root
+    password: root
+  #  profiles:
+  #    active:
+  #      - dev
+  #      - prod
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
