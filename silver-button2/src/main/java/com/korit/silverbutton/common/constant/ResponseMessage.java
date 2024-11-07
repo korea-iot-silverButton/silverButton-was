@@ -1,7 +1,6 @@
 package com.korit.silverbutton.common.constant;
 
 public class ResponseMessage {
-
     // 성공 및 일반 메시지
     public static final String SUCCESS = "Success"; // 성공 시 반환 메시지
     public static final String VALIDATION_FAIL = "Validation failed."; // 유효성 검사 실패 시 반환 메시지
@@ -36,7 +35,4 @@ public class ResponseMessage {
     // 토큰 및 메시지 관련 에러
     public static final String TOKEN_CREATE_FAIL = "Token creation failed."; // 토큰 생성 실패 시 반환 메시지
     public static final String MESSAGE_SEND_FAIL = "Failed to send authentication number."; // 인증 번호 전송 실패 시 반환 메시지
-
-
-    public static final String TODO = "/api/v1/todos";
 }
