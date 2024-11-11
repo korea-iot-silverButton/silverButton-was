@@ -24,7 +24,7 @@ dependencies {
 
     // 프로젝트 유효성 검사를 위한 의존성 입력
     implementation('jakarta.validation:jakarta.validation-api:3.0.2')
-    //implementation('org.hibernate.validator:hibernate.validator:8.0.0.Final')
+    implementation('commons-validator:commons-validator:1.7')
 
     // JWT 의존성 추가
     implementation('io.jsonwebtoken:jjwt-api:0.11.2')
@@ -44,6 +44,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     // 스프링 시큐리티 테스트를 위한 테스트 기능 제공
     testImplementation('org.springframework.security:spring-security-test')
+
 }
 
 test {
