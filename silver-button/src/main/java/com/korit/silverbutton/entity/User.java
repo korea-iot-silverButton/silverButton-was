@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -25,22 +27,31 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private String phone;
 
-    @Column(columnDefinition = "ENUM('M', 'F')")
-    private String gender;
+    @Column(nullable = false, unique = true)
+    private String email;
 
     private String nickname;
 
-    private String rrn;
+    private Date birthDate;
+
+    @Column(columnDefinition = "ENUM('M', 'F')")
+    private String gender;
 
     @Column(nullable = false)
-    private String profile;
+    private String profileImage;
+
+    @Column(columnDefinition = "ENUM('노인', '보호자', '요양사')")
+    private String role;
+
+    private String licenseNumber;
+
+    private String specialization;
+
+    private String protectorId;
 }
