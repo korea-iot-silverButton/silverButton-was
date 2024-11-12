@@ -15,7 +15,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.apache.commons.validator.routines.EmailValidator;
+
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -39,76 +40,21 @@ public class AuthServiceImpl implements AuthService {
         String phone = dto.getPhone(); // 전화번호
         String gender = dto.getGender(); //성별
 
-        String nickname = dto.getNickName(); //닉네임
+        String nickname = dto.getNickname(); // 닉네임
 
-        String rrn = dto.getRrn(); // 주민등록번호
+        Date birthDate= dto.getBirthDate();
+
+        String profileImage= dto.getProfileImage();
+
+        String role= dto.getRole();
+
+        String licenseNumber= dto.getLicenseNumber();
+
+        String specialization= dto.getSpecialization();
+
+        String protectorId= dto.getProtectorId();
 
         SignUpResponseDto data = null;
-
-        // 1. 유효성 검사 //
-        if (userId == null || userId.isEmpty()) {
-            // INVALID_USER_ID
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        if (password == null || password.isEmpty() || confirmPassword == null || confirmPassword.isEmpty()) {
-            // INVALID_PASSWORD
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        if (!password.equals(confirmPassword)) {
-            return ResponseDto.setFailed(ResponseMessage.NOT_MATCH_PASSWORD);
-        }
-
-        if (!password.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,16}$")) {
-            // WEAK_PASSWORD
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        if (name == null || name.isEmpty()) {
-            // INVALID_NAME
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        if (email == null || email.isEmpty() || !EmailValidator.getInstance().isValid(email)) {
-            // INVALID_EMAIL
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        if (phone == null || phone.isEmpty() || !phone.matches("[0-9]{11}$")) { //하이픈없이
-            // [0-9]{10,15}$ : 10자에서 15자 사이의 숫자로만 이루어짐
-
-            // INVALID_PHONE
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        if (gender != null && !gender.matches("M|F")) {
-            // INVALID_GENDER
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        if (nickname == null || nickname.isEmpty() || !nickname.matches("^[가-힣]+$") ) {
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        if (rrn == null || rrn.isEmpty()) {
-            return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
-        }
-
-        // 2. 중복 체크 //
-        if (userRepository.existsByUserId(userId)) {
-            return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
-        }
-
-        if (userRepository.existsByEmail(email)) {
-            // EXIST_EMAIL
-            return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
-        }
-
-        if (userRepository.existsByNickname(nickname)) {
-            return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
-        }
-
 
         try {
             String encodedPassword = bCryptpasswordEncoder.encode(password);
@@ -116,12 +62,17 @@ public class AuthServiceImpl implements AuthService {
             User user = User.builder()
                     .userId(userId)
                     .password(encodedPassword)
-                    .email(email)
                     .name(name)
                     .phone(phone)
-                    .gender(gender)
+                    .email(email)
                     .nickname(nickname)
-                    .rrn(rrn)
+                    .birthDate(birthDate)
+                    .gender(gender)
+                    .profileImage(profileImage)
+                    .role(role)
+                    .licenseNumber(licenseNumber)
+                    .specialization(specialization)
+                    .protectorId(protectorId)
                     .build();
 
             userRepository.save(user);
