@@ -28,7 +28,7 @@ server:
 # 애플리케이션 설정에서 연결할 DB를 명시
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/springboot__db
+    url: jdbc:mysql://localhost:3306/board_db
     username: root
     password: root
   #  profiles:

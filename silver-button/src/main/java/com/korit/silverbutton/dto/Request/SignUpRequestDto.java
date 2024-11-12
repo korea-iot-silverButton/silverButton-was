@@ -1,5 +1,6 @@
 package com.korit.silverbutton.dto.Request;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,34 +10,39 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class SignUpRequestDto {
-    @NotBlank
+    @Column(nullable = false, unique = true)
     private String userId;
-    @NotBlank
+
+    @Column(nullable = false)
     private String password;
-    @NotBlank
+
     private String confirmPassword;
-    @NotBlank
-    private String email;
-    @NotBlank
+
+    @Column(nullable = false)
     private String name;
-    @NotBlank
+
+    @Column(nullable = false)
     private String phone;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    private String nickname;
+
+    private Date birthDate;
+
+    @Column(columnDefinition = "ENUM('M', 'F')")
     private String gender;
 
-    @NotBlank
-    private String nickName;
+    @Column(nullable = false)
+    private String profileImage;
 
-    @NotBlank
-    private String rrn;
+    @Column(columnDefinition = "ENUM('노인', '보호자', '요양사')")
+    private String role;
 
-    @NotBlank
-    private Date dateBirth;
-
-    @NotBlank
-    private String profile;
-
-    private String license;
+    private String licenseNumber;
 
     private String specialization;
+
+    private String protectorId;
 }
