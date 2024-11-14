@@ -2,10 +2,10 @@ package com.korit.silverbutton.service.implement;
 
 
 import com.korit.silverbutton.common.constant.ResponseMessage;
-import com.korit.silverbutton.dto.Request.LoginRequestDto;
-import com.korit.silverbutton.dto.Request.SignUpRequestDto;
-import com.korit.silverbutton.dto.Response.LoginResponseDto;
-import com.korit.silverbutton.dto.Response.SignUpResponseDto;
+import com.korit.silverbutton.dto.SignIn.Request.SignInRequestDto;
+import com.korit.silverbutton.dto.SignUp.Request.SignUpRequestDto;
+import com.korit.silverbutton.dto.SignIn.Response.SignInResponseDto;
+import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.provider.JwtProvider;
@@ -52,9 +52,11 @@ public class AuthServiceImpl implements AuthService {
 
         String specialization= dto.getSpecialization();
 
-        String protectorId= dto.getProtectorId();
+        Long protectorId= dto.getProtectorId();
 
         SignUpResponseDto data = null;
+
+
 
         try {
             String encodedPassword = bCryptpasswordEncoder.encode(password);
@@ -88,11 +90,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseDto<LoginResponseDto> login(LoginRequestDto dto) {
+    public ResponseDto<SignInResponseDto> login(SignInRequestDto dto) {
         String userId = dto.getUserId();
         String password = dto.getPassword();
 
-        LoginResponseDto data = null;
+        SignInResponseDto data = null;
 
         // 1. 유효성 검사 //
         if (userId == null || userId.isEmpty()) {
@@ -118,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
             String token = jwtProvider.generateJwtToken(userId);
             int exprTime = jwtProvider.getExpiration();
 
-            data = new LoginResponseDto(user, token, exprTime);
+            data = new SignInResponseDto(user, token, exprTime);
 
         } catch (Exception e) {
             e.printStackTrace();

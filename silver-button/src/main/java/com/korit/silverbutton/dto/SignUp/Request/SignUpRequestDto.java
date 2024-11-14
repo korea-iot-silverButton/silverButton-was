@@ -1,9 +1,10 @@
-package com.korit.silverbutton.dto.Request;
+package com.korit.silverbutton.dto.SignUp.Request;
 
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -29,6 +30,9 @@ public class SignUpRequestDto {
 
     private String nickname;
 
+    @Past
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @Column(nullable = false)
     private Date birthDate;
 
     @Column(columnDefinition = "ENUM('M', 'F')")
@@ -44,5 +48,5 @@ public class SignUpRequestDto {
 
     private String specialization;
 
-    private String protectorId;
+    private Long protectorId;
 }

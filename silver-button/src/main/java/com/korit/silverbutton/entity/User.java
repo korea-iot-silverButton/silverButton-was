@@ -1,10 +1,12 @@
 package com.korit.silverbutton.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -38,6 +40,9 @@ public class User {
 
     private String nickname;
 
+    @Past
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @Column(nullable = false)
     private Date birthDate;
 
     @Column(columnDefinition = "ENUM('M', 'F')")
@@ -53,5 +58,5 @@ public class User {
 
     private String specialization;
 
-    private String protectorId;
+    private Long protectorId;
 }
