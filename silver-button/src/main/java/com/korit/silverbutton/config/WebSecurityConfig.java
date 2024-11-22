@@ -57,7 +57,7 @@ public class WebSecurityConfig {
                         new AntPathRequestMatcher("/api/test/books/**"),
                         new AntPathRequestMatcher("/api/students/**"),
                         new AntPathRequestMatcher("/api/books/**"),
-                        new AntPathRequestMatcher("/api/v1/**")
+                        new AntPathRequestMatcher("/api/v1/auth")
                 );
     }
 
