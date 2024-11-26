@@ -125,6 +125,9 @@ public class WebSecurityConfig {
                         //  : 누구나 접근이 가능하게 설정
                         //  : 해당 경로와 일치하는 요청이 오면 인증, 인가 없이도 접근 가능
                         .permitAll()
+//
+//                        .requestMatchers(new AntPathRequestMatcher("/test/**"))
+//                        .hasRole("ADMIN")
                         // .anyRequest()
                         //  : 위에서 설정한 url 이외의 요청에 대해 설정
                         // .authenticated()
