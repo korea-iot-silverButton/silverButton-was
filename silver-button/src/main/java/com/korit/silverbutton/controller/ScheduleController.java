@@ -38,4 +38,11 @@ public class ScheduleController {
         ResponseDto<ScheduleCreateResponseDto> result= scheduleservice.createScheduleSelf(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
+
+    // 선택된 본인의 스케줄 삭제
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseDto<Void>> deleteSchedule(@PathVariable Long id){
+        ResponseDto<Void> result = scheduleservice.deleteSchedule(id);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }

@@ -26,5 +26,4 @@ public class Schedules {
 
     @Column(nullable = false)
     private String task;
-
 }
