@@ -11,6 +11,7 @@ import com.korit.silverbutton.entity.Schedules;
 import com.korit.silverbutton.repository.ScheduleCreateRepository;
 import com.korit.silverbutton.repository.ScheduleRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -55,12 +56,13 @@ public class ScheduleService {
     }
 
     // 선택된 본인의 스케줄 삭제
-    public ResponseDto<Void> deleteSchedule(Long id) {
+    @Transactional
+    public ResponseDto<Void> deleteSchedule(Long id, Long userId) { // users의 pk인 id== 여기서의 userId 헷갈림 조심
         try{
             if(!scheduleCreateRepository.existsById(id)){
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
-            scheduleCreateRepository.deleteById(id);
+            scheduleCreateRepository.deleteByIdAndDependentId(id, userId);
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
         }
         catch(Exception e){
