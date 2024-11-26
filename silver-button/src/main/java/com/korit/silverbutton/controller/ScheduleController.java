@@ -6,6 +6,7 @@ import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.Schedule.Request.ScheduleCreateRequestDto;
 import com.korit.silverbutton.dto.Schedule.Response.ScheduleCreateResponseDto;
 import com.korit.silverbutton.dto.Schedule.Response.ScheduleResponseDto;
+import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class ScheduleController {
 
     @GetMapping("/search")
     private ResponseEntity<ResponseDto<List<ScheduleResponseDto>>> findSchedulesByDependentIdAndDate
-            (@RequestParam int year, @RequestParam int month, @AuthenticationPrincipal String userId){
+            (@RequestParam int year, @RequestParam int month, @AuthenticationPrincipal PrincipalUser principalUser){
         ResponseDto<List<ScheduleResponseDto>> result=
-                scheduleservice.getScheduleByDependentIdAndDate(userId, year, month);
+                scheduleservice.getScheduleByDependentIdAndDate(principalUser.getUserId(), year, month);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -41,7 +42,7 @@ public class ScheduleController {
 
     // 선택된 본인의 스케줄 삭제
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseDto<Void>> deleteSchedule(@PathVariable Long id){
+    public ResponseEntity<ResponseDto<Void>> deleteSchedule(@PathVariable Long id, @AuthenticationPrincipal PrincipalUser principalUser){
         ResponseDto<Void> result = scheduleservice.deleteSchedule(id);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }

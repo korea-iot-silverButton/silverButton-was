@@ -10,4 +10,7 @@ public interface ScheduleCreateRepository extends JpaRepository<Schedules, Long>
     // service, controller로 작성하였음
 
     // 자신이 부양자, 요양사일 경우 matchings 테이블 조회 후 추가
+
+    // 삭제 시 본인인지 userId확인하고 삭제
+
 }
