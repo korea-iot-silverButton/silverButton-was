@@ -6,6 +6,7 @@ import com.korit.silverbutton.dto.Schedule.Request.ScheduleCreateRequestDto;
 import com.korit.silverbutton.dto.Schedule.Response.ScheduleCreateResponseDto;
 import com.korit.silverbutton.dto.Schedule.Response.ScheduleResponseDto;
 
+import com.korit.silverbutton.entity.MatchingsId;
 import com.korit.silverbutton.entity.Schedules;
 import com.korit.silverbutton.repository.ScheduleCreateRepository;
 import com.korit.silverbutton.repository.ScheduleRepository;
@@ -53,9 +54,19 @@ public class ScheduleService {
         }
     }
 
-//    // 스케줄 생성 (1,3)일 때 테이블에서 (1,3)이 있으면 schedule에 insert into 생성
-//    public ResponseDto<ScheduleResponseDto> createSchedule(String dependentId, Date scheduleDate, String task){
-//        ScheduleResponseDto data= null;
-//        return null;
-//    }
+    // 선택된 본인의 스케줄 삭제
+    public ResponseDto<Void> deleteSchedule(Long id) {
+        try{
+            if(!scheduleCreateRepository.existsById(id)){
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
+            }
+            scheduleCreateRepository.deleteById(id);
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+    }
+
 }
