@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Matchings, MatchingsId> {
@@ -49,6 +50,9 @@ public interface ScheduleRepository extends JpaRepository<Matchings, MatchingsId
     List<Object[]> findSchedulesByDependentIdAndDate(@Param("userId") String userId,
                                                      @Param("year") int year,
                                                      @Param("month") int month);
+
+    @Query("SELECT m.id.dependentId FROM Matchings m WHERE m.id.caregiverId = :caregiverId ")
+    Long findDependentIdsByCaregiverId(@Param("caregiverId") Long caregiverId);
 }
 
 
