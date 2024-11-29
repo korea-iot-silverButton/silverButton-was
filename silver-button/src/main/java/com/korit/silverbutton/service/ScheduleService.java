@@ -92,7 +92,7 @@ public class ScheduleService {
     // 본인의 스케줄 업데이트
     public ResponseDto<ScheduleCreateResponseDto> updateSchedule(Long id, ScheduleCreateRequestDto dto, Long userId) {
         try{
-            boolean check= scheduleCreateRepository.existsByIdAndUserId(id, userId);
+            boolean check= scheduleCreateRepository.existsByIdAndDependentId(id, userId);
             if(check){
                 // 작성 중
                 //Schedules schedule
