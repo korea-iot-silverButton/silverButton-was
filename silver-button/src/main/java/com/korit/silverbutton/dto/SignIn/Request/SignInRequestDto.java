@@ -1,4 +1,4 @@
-package com.korit.silverbutton.dto.Request;
+package com.korit.silverbutton.dto.SignIn.Request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class LoginRequestDto {
+public class SignInRequestDto {
 
     private String userId;
 

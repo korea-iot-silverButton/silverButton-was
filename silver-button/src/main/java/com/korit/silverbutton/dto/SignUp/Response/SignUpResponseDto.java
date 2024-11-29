@@ -1,9 +1,7 @@
-package com.korit.silverbutton.dto.Response;
+package com.korit.silverbutton.dto.SignUp.Response;
 
 import com.korit.silverbutton.entity.User;
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 public class SignUpResponseDto {
