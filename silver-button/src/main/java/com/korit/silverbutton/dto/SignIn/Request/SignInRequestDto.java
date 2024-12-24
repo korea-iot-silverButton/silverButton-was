@@ -14,4 +14,10 @@ public class SignInRequestDto {
     private String password;
 
     private String phone;
+
+    private String name;
+
+    private String role;
+
+
 }
