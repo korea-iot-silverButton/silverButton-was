@@ -6,6 +6,7 @@ import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.board.Request.BoardRequestDto;
 import com.korit.silverbutton.dto.board.Response.BoardResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.paged.Response.PagedResponseDto;
 import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.BoardService;
 import jakarta.annotation.security.PermitAll;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(ApiMappingPattern.BOARD)
 @RequiredArgsConstructor
@@ -28,8 +30,8 @@ public class BoardController {
     private static final String BOARD = "/";
     private static final String BOARD_ALL = "/all";
     private static final String BOARD_ID = "/{id}";
-    private static final String BOARD_SEARCH = "/search";
-    private static final String BOARD_USERID = "/search/user";
+    private static final String BOARD_SEARCH_TITLE = "/search/title";
+    private static final String BOARD_SEARCH_NAME = "/search/name";
     private static final String BOARD_PUT = "/{id}";
     private static final String BOARD_DELETE = "/{id}";
 
@@ -38,32 +40,31 @@ public class BoardController {
             @AuthenticationPrincipal PrincipalUser principalUser,
             @Valid @RequestBody BoardRequestDto dto
     ) {
-
-
-        Long authorId = principalUser.getId();
-        System.out.println("Author ID: " + authorId);
-        ResponseDto<BoardResponseDto> response = boardService.createBoard(authorId, dto);
+        ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
     @GetMapping(BOARD_ALL)
     @PermitAll
-    public ResponseEntity<ResponseDto<List<BoardResponseDto>>> getAllBoards(
+    public ResponseEntity<ResponseDto<PagedResponseDto<List<BoardResponseDto>>>> getAllBoards(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        ResponseDto<List<BoardResponseDto>> response = boardService.getAllBoards(page, size);
+        ResponseDto<PagedResponseDto<List<BoardResponseDto>>> response = boardService.getAllBoards(page, size);
+        System.out.println("ResponseDto 내용: " + response);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
 
-    @GetMapping(BOARD_SEARCH)
+    // 제목 검색
+    @GetMapping(BOARD_SEARCH_TITLE)
     @PermitAll
     public ResponseEntity<ResponseDto<List<BoardResponseDto>>> getBoardByTitle(
-            @RequestParam String keyword
+            @RequestParam(defaultValue = "") String keyword
 
     ){
+        System.out.println("Received keyword: " + keyword); // keyword 로그 확인
         if(keyword == null || keyword.trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD));
@@ -75,21 +76,23 @@ public class BoardController {
         return ResponseEntity.status(status).body(response);
     }
 
-    @GetMapping(BOARD_USERID)
+    @GetMapping(BOARD_SEARCH_NAME)
     @PermitAll
-    public ResponseEntity<ResponseDto<List<BoardResponseDto>>> getBoardByUser(
-            @RequestParam(name ="user") Long user
+    public ResponseEntity<ResponseDto<List<BoardResponseDto>>> getBoardByUserName(
+            @RequestParam(defaultValue = "") String name
 
     ){
-        if(user == null) {
+        System.out.println("Received name: " + name);
+        if(name == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD));
         }
-        ResponseDto<List<BoardResponseDto>> response = boardService.getBoardByUser(user);
-        System.out.println("User ID: " + user);
+        ResponseDto<List<BoardResponseDto>> response = boardService.getBoardByUserName(name);
+        System.out.println("User name: " + name);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
+
 
     @GetMapping(BOARD_ID)
     @PermitAll
@@ -108,12 +111,7 @@ public class BoardController {
             @PathVariable Long id,
             @Valid @RequestBody BoardRequestDto dto
     ){
-        if(principalUser == null) {
-            throw new IllegalStateException("User is not authenticated");
-        }
-        System.out.println("Authenticated User: " + principalUser);
-        Long authorId = principalUser.getId();
-        ResponseDto<BoardResponseDto> response = boardService.updateBoard(authorId, id, dto);
+        ResponseDto<BoardResponseDto> response = boardService.updateBoard(principalUser.getId(), id, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -123,10 +121,9 @@ public class BoardController {
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
     ) {
-        Long authorId = principalUser.getId();
-        ResponseDto<Void> response = boardService.deleteBoard(authorId, id);
-        HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
-        return ResponseEntity.status(status).body(response);
+       ResponseDto<Void> response = boardService.deleteBoard(principalUser.getId(), id);
+       HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
+       return ResponseEntity.status(status).body(response);
 
 
     }

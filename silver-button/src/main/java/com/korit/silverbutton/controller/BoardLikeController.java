@@ -28,8 +28,7 @@ public class BoardLikeController {
             @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestBody @Valid BoardLikeRequestDto dto
     ) {
-        Long likerId = principalUser.getId();
-        ResponseDto<BoardLikeResponseDto> response = boardLikeService.insertLike(likerId, dto);
+        ResponseDto<BoardLikeResponseDto> response = boardLikeService.insertLike(principalUser.getId(), dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -39,8 +38,7 @@ public class BoardLikeController {
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
     ){
-        Long likerId = principalUser.getId();
-        ResponseDto<Void> response = boardLikeService.deleteLike(likerId, id);
+        ResponseDto<Void> response = boardLikeService.deleteLike(principalUser.getId(), id);
         HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

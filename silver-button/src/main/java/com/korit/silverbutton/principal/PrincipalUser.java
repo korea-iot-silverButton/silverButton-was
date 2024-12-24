@@ -16,8 +16,6 @@ public class PrincipalUser implements UserDetails {
     private Long id;
     private String userId;
     private String role;
-    private String name;
-    private String phone;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -53,6 +51,4 @@ public class PrincipalUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-
 }
