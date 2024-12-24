@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface BoardLikeRepository extends JpaRepository<BoardLike, Long> {
 
-    Optional<BoardLike> findByLikerIdAndId(User likerId, Long id);
-
     Optional<BoardLike> findByBoardIdAndLikerId(Long boardId, Long likerId);
+    Optional<BoardLike> findByLikerIdAndId(Long likerId, Long id);
+
 }
