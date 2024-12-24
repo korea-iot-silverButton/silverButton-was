@@ -28,5 +28,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "AND u.phone = :password")
     User findByRoleAndNameAndPhone(@Param("role") String role, @Param("name") String name, @Param("phone") String phone);
 
-
 }
