@@ -1,11 +1,13 @@
 package com.korit.silverbutton.service;
 
-import com.korit.silverbutton.dto.Request.LoginRequestDto;
-import com.korit.silverbutton.dto.Request.SignUpRequestDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.SignIn.Request.SignInRequestDto;
+import com.korit.silverbutton.dto.SignIn.Response.SignInResponseDto;
+import com.korit.silverbutton.dto.SignUp.Request.SignUpRequestDto;
+import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 
 public interface AuthService {
 
     ResponseDto<SignUpResponseDto> signUp(SignUpRequestDto dto);
-    ResponseDto<LoginResponseDto> login(LoginRequestDto dto);
+    ResponseDto<SignInResponseDto> login(SignInRequestDto dto);
 }
