@@ -28,7 +28,7 @@ public class Board  {
     private String content;
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition =  "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     @Builder.Default
@@ -43,8 +43,8 @@ public class Board  {
 
     @PrePersist
     public void prePersist() {
-        if (created_at == null) {
-            created_at = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
         }
     }
 

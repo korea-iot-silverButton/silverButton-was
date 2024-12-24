@@ -26,7 +26,7 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseDto<CommentResponseDto> createComment(String authorId, CommentRequestDto dto) {
+    public ResponseDto<CommentResponseDto> createComment(String userId, CommentRequestDto dto) {
         CommentResponseDto data = null;
         String content = dto.getContent();
         Long boardId = dto.getBoardId();
@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
             Comment comment = Comment.builder()
                     .content(content)
                     .board(board.get())
-                    .writer(authorId)
+                    .writer(userId)
                     .build();
             commentRepository.save(comment);
             data = new CommentResponseDto(comment);
@@ -71,10 +71,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public ResponseDto<Void> deleteComment(String authorId, Long id) {
+    public ResponseDto<Void> deleteComment(String userId, Long id) {
 
         try {
-            Optional<Comment> optionalComment = commentRepository.findByWriterAndId(authorId, id);
+            Optional<Comment> optionalComment = commentRepository.findByWriterAndId(userId, id);
 
             if(optionalComment.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);

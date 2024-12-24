@@ -28,20 +28,20 @@ public class BoardLikeServiceImpl implements BoardLikeService {
     private final BoardRepository boardRepository;
 
     @Override
-    public ResponseDto<BoardLikeResponseDto> insertLike(Long likerId, BoardLikeRequestDto dto)  {
+    public ResponseDto<BoardLikeResponseDto> insertLike(Long userId, BoardLikeRequestDto dto)  {
         BoardLikeResponseDto data = null;
-        Long id = dto.getBoardId();
-        try {
-            User liker = findUserById(likerId);
-            Board board = boardRepository.findByUserIdAndId(liker.getId(), dto.getBoardId())
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_POST));
 
-            Optional<BoardLike> existingLike = boardLikeRepository.findByBoardIdAndLikerId(dto.getBoardId(), likerId);
-            if (existingLike.isPresent()) {
-                return ResponseDto.setFailed(ResponseMessage.POST_ALREADY_LIKED);
-            }
+
+        try {
+        User liker = findUserById(userId);
+        Board board = findBoardById(dto.getBoardId());
+
+        Optional<BoardLike> existingLike = boardLikeRepository.findByBoardIdAndLikerId(board.getId(), liker.getId());
+        if (existingLike.isPresent()) {
+            return ResponseDto.setFailed(ResponseMessage.POST_ALREADY_LIKED);
+        }
             BoardLike boardLike = BoardLike.builder()
-                    .id(id)
+                    .id(dto.getId())
                     .board(board)
                     .liker(liker)
                     .build();
@@ -61,11 +61,11 @@ public class BoardLikeServiceImpl implements BoardLikeService {
     }
 
     @Override
-    public ResponseDto<Void> deleteLike(Long likerId, Long id) {
+    public ResponseDto<Void> deleteLike(Long userId, Long id) {
 
         try {
-            User liker = findUserById(likerId);
-            Optional<BoardLike> optionalBoardLike = boardLikeRepository.findByLikerIdAndId(liker, id);
+            User liker = findUserById(userId);
+            Optional<BoardLike> optionalBoardLike = boardLikeRepository.findByLikerIdAndId(liker.getId(), id);
             if(optionalBoardLike.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
