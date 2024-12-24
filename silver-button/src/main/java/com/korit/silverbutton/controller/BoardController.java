@@ -27,7 +27,7 @@ public class BoardController {
 
     private  final BoardService boardService;
 
-    private static final String BOARD = "/";
+    private static final String BOARD_CREATE = "/create";
     private static final String BOARD_ALL = "/all";
     private static final String BOARD_ID = "/{id}";
     private static final String BOARD_SEARCH_TITLE = "/search/title";
@@ -35,7 +35,7 @@ public class BoardController {
     private static final String BOARD_PUT = "/{id}";
     private static final String BOARD_DELETE = "/{id}";
 
-    @PostMapping(BOARD)
+    @PostMapping(BOARD_CREATE)
     public ResponseEntity<ResponseDto<BoardResponseDto>> createBoard(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @Valid @RequestBody BoardRequestDto dto

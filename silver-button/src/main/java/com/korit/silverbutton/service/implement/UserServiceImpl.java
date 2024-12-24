@@ -2,8 +2,8 @@ package com.korit.silverbutton.service.implement;
 
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.ResponseDto;
-import com.korit.silverbutton.dto.User.userResponseDto.UserResponseDto;
-import com.korit.silverbutton.dto.User.userResquestDto.UserRequestDto;
+import com.korit.silverbutton.dto.User.Response.UserResponseDto;
+import com.korit.silverbutton.dto.User.Request.UserRequestDto;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.ProfileImgService;
