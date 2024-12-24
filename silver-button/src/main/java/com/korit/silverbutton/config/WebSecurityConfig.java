@@ -52,11 +52,7 @@ public class WebSecurityConfig {
 //                .requestMatchers(toH2Console())
                 // "/static/**" 경로의 정적 리소스를 보안 검사에서 제외
                 .requestMatchers(new AntPathRequestMatcher("/api/v1/static/**"),
-                        new AntPathRequestMatcher("/api/v1/menus/**"),
-                        new AntPathRequestMatcher("/api/v1/books/**"),
-                        new AntPathRequestMatcher("/api/test/books/**"),
-                        new AntPathRequestMatcher("/api/students/**"),
-                        new AntPathRequestMatcher("/api/books/**")
+                        new AntPathRequestMatcher("/api/v1/auth")
                 );
     }
 
@@ -124,11 +120,23 @@ public class WebSecurityConfig {
                         //  : 누구나 접근이 가능하게 설정
                         //  : 해당 경로와 일치하는 요청이 오면 인증, 인가 없이도 접근 가능
                         .permitAll()
+                        .requestMatchers(
+                                new AntPathRequestMatcher("api/v1/board/**"),
+                                new AntPathRequestMatcher("api/v1/board/comment/**"),
+                                new AntPathRequestMatcher("api/v1/board/boardlike/**")
+                        ).authenticated()
                         // .anyRequest()
                         //  : 위에서 설정한 url 이외의 요청에 대해 설정
                         // .authenticated()
                         //  : 별도의 인가는 필요하지 않지만 인증이 성공된 상태여야 접근 가능
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()) // 위에서 설정한 경로를 제외한 나머지 경로 인증 필요
+//                        .requestMatchers(new AntPathRequestMatcher("/test/**"))
+//                        .hasRole("ADMIN")
+                        // .anyRequest()
+                        //  : 위에서 설정한 url 이외의 요청에 대해 설정
+                        // .authenticated()
+                        //  : 별도의 인가는 필요하지 않지만 인증이 성공된 상태여야 접근 가능
+
 
                 // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

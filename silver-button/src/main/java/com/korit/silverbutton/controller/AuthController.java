@@ -3,8 +3,6 @@ package com.korit.silverbutton.controller;
 import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.Request.LoginRequestDto;
 import com.korit.silverbutton.dto.Request.SignUpRequestDto;
-import com.korit.silverbutton.dto.Response.LoginResponseDto;
-import com.korit.silverbutton.dto.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.service.AuthService;
 import jakarta.validation.Valid;
