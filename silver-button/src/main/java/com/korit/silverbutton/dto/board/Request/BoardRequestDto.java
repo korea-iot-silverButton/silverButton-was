@@ -1,6 +1,7 @@
 package com.korit.silverbutton.dto.board.Request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,8 @@ public class BoardRequestDto {
 
     @NotBlank(message = "Content cannot be empty")
     private String content;
+
+    @Size(max = 255, message = "Image URL length must be less than 255 characters")
+    private String imageUrl; // Optional field for image path or URL
 
 }

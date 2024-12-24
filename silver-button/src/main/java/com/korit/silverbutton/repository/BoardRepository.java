@@ -16,15 +16,18 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @EntityGraph(attributePaths = "comments")
     Page<Board> findAll(Pageable pageable);
 
+    @EntityGraph(attributePaths = "comments")
+    Page<Board> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    List<Board>findByUser_Id(Long userId);
+    List<Board>findByUserName(String name);
+    List<Board> findByTitleContainingIgnoreCase(String title);
+
+    Optional<Board> findByUserIdAndId(Long userId, Long Id);
 
     @EntityGraph(attributePaths = "comments") // 댓글까지 함께 로드
     Optional<Board> findWithCommentsById(Long id);
 
-    List<Board> findByTitleContaining(String title);
 
-    Optional<Board> findByUserIdAndId(Long userId, Long Id);
 
 
 }
