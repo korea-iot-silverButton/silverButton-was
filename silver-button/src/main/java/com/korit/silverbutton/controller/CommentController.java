@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -34,10 +35,7 @@ public class CommentController {
             @Valid @RequestBody CommentRequestDto dto,
             @AuthenticationPrincipal PrincipalUser principalUser
     ){
-//        userId = "1";
-
-        String authorId = principalUser.getUserId();
-        ResponseDto<CommentResponseDto> reponse = commentService.createComment(authorId, dto);
+        ResponseDto<CommentResponseDto> reponse = commentService.createComment(principalUser.getUserId(), dto);
         HttpStatus status = reponse.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(reponse);
     }
@@ -56,9 +54,7 @@ public class CommentController {
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
     ) {
-//        userId = "1";
-        String authorId = principalUser.getUserId();
-        ResponseDto<Void> reponse = commentService.deleteComment(authorId, id);
+        ResponseDto<Void> reponse = commentService.deleteComment(principalUser.getUserId(), id);
         HttpStatus status = reponse.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(reponse);
     }
