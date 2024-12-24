@@ -11,7 +11,6 @@ import com.korit.silverbutton.repository.ScheduleCreateRepository;
 import com.korit.silverbutton.repository.ScheduleRepository;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
