@@ -80,6 +80,9 @@ public class DependentServiceImpl implements DependentService {
     }
 
     @Override
+    // 특정 노인 사용자 조회인데 로그인에서는 필요없을거 같아 ㅠ
+    // 매칭 , 약품 데이터 , 게시판이나 이런 기능에서는 필요하겠지만 나는 필요없을듯
+    // 조장님 확인해주세용 필요하면 만들게요 ㅇㅅㅇ
     public ResponseDto<DependentResponseDto> getAllDepen(Long id, String userId) {
         try{
 
@@ -104,20 +107,31 @@ public class DependentServiceImpl implements DependentService {
             User user = userRepository.findByRoleAndNameAndPhone(principalUser.getRole(), name, phone);
 
             if (user == null) {
-                // 2. 사용자가 존재하지 않으면 실패 응답 반환
+                //  사용자가 존재하지 않으면 실패 응답 반환
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
             // 권한 검증: principalUser와 user가 동일한지 확인
             if (!user.getName().equals(principalUser.getName()) || !user.getPhone().equals(principalUser.getPhone())) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
+            // 사용자 정보 업데이트
+            user = user.toBuilder()
+                    .email(email != null ? email : user.getEmail()) // email이 null이 아니면 업데이트
+                    .name(name != null ? name : user.getName()) // 이름
+                    .phone(phone != null ? phone : user.getPhone()) // 폰
+                    .build();
+
+            userRepository.save(user);
+
+            data = new DependentResponseDto(user);
 
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
+        // 성공
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
 
     }
 
