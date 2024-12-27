@@ -1,6 +1,9 @@
 package com.korit.silverbutton.filter;
 
+import com.korit.silverbutton.entity.User;
+import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.provider.JwtProvider;
+import com.korit.silverbutton.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // JWT 토큰을 처리하는 JwtProvider 의존성
     // : JWT 검증에 사용
     private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     /*
         doFilterInternal
@@ -66,13 +70,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // JWT 토큰이 유효할 경우 해당 토큰에서 사용자 ID 추출
             String userId = jwtProvider.getUserIdFromJwt(token);
+            User user = userRepository.findByUserId(userId).get();
 
             // 추출한 사용자 ID를 바탕으로 SecurityContext에 인증 정보 설정
             // : setAuthenticationContext()는 요청에서 userId값을 SecurityContext에 인증 정보로 설정
             // : UsernamePasswordAuthenticationToken을 생성하고, 해당 토큰에 userId값을 넣어 인증 정보로 등록
             // >> Spring Security는 SecurityContextHolder에 있는 인증 정보를 자동으로
             //      , 컨트롤러의 메서드에서 주입시킬 수 있음 (@AuthenticationPrincipal)
-            setAuthenticationContext(request, userId);
+            setAuthenticationContext(request, user);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,11 +90,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * setAuthenticationContext
      * : SecurityContext에 인증 정보를 설정하는 메서드
      */
-    private void setAuthenticationContext(HttpServletRequest request, String userId) {
+    private void setAuthenticationContext(HttpServletRequest request, User user) {
         // 사용자 ID를 바탕으로 UsernamePasswordAuthenticationToken(인증토큰) 생성
         //  : 기본 설정 - 권한 없음
         AbstractAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(userId, null, AuthorityUtils.NO_AUTHORITIES);
+                = new UsernamePasswordAuthenticationToken(PrincipalUser.builder().id(user.getId()).userId(user.getUserId()).role(user.getRole()).name(user.getName()).phone(user.getPhone()).build(), null, AuthorityUtils.NO_AUTHORITIES);
 
         // 요청에 대한 세부 정보를 설정
         // : 생성된 인증 토큰에 요청의 세부 사항을 설정
