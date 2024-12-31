@@ -21,24 +21,28 @@ public class BoardLikeController {
     private final BoardLikeService boardLikeService;
 
     private static final String INSERT = "/boardlike/insert";
-    private static final String DELETE = "/boardlike/{id}";
+    private static final String DELETE = "/boardlike/delete/{id}";
 
     @PostMapping(INSERT)
     public ResponseEntity<ResponseDto<BoardLikeResponseDto>> insertLike(
-            @AuthenticationPrincipal PrincipalUser principalUser,
+//            @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestBody @Valid BoardLikeRequestDto dto
     ) {
-        ResponseDto<BoardLikeResponseDto> response = boardLikeService.insertLike(principalUser.getId(), dto);
+//        ResponseDto<BoardLikeResponseDto> response = boardLikeService.insertLike(principalUser.getId(), dto);
+        Long tempAuthorId = 1L;
+        ResponseDto<BoardLikeResponseDto> response = boardLikeService.insertLike(tempAuthorId, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
     @DeleteMapping(DELETE)
-    public ResponseEntity<ResponseDto<Void>> deleteLike(
-            @AuthenticationPrincipal PrincipalUser principalUser,
+    public ResponseEntity<ResponseDto<BoardLikeResponseDto>> deleteLike(
+//            @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
-    ){
-        ResponseDto<Void> response = boardLikeService.deleteLike(principalUser.getId(), id);
+    ) {
+//        ResponseDto<BoardLikeResponseDto> response = boardLikeService.deleteLike(principalUser.getId(), id);
+        Long testUserId = 1L;
+        ResponseDto<BoardLikeResponseDto> response = boardLikeService.deleteLike(testUserId, id);
         HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
