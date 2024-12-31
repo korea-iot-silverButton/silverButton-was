@@ -20,6 +20,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByNickname(String nickname);
 
-    @Query("SELECT u FROM User u WHERE u.role = :role AND u.name = :name AND u.phone = :phone")
+    @Query("" +
+            "SELECT u " +
+            "FROM User u " +
+            "WHERE u.role = :노인 " +
+            "AND u.name = :userId " +
+            "AND u.phone = :password")
     User findByRoleAndNameAndPhone(@Param("role") String role, @Param("name") String name, @Param("phone") String phone);
+
 }

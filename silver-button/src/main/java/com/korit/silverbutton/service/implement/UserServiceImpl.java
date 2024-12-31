@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserService {
             }
             User user = userOptional.get(); // 사용자 정보 가져오기
 
+
             // 비밀번호 일치 체크
             if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_MATCH_PASSWORD);
@@ -86,6 +87,14 @@ public class UserServiceImpl implements UserService {
 
             // 이메일 중복 체크
             if (!user.getEmail().equals(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
+                return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
+            }
+            // userId 중복 체크
+            if (!user.getUserId().equals(dto.getUserId()) && userRepository.existsByUserId(dto.getUserId())) {
+                return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
+            }
+            // 닉네임 중복 체크
+            if (!user.getNickname().equals(dto.getNickname()) && userRepository.existsByNickname(dto.getNickname())) {
                 return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
             }
 

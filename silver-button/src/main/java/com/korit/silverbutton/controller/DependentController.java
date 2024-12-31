@@ -66,9 +66,9 @@ public class DependentController {
     @DeleteMapping("/api/v1/signin/dependents/{id}") // URL 경로에서 {userId}를 PathVariable로 매핑
     public ResponseEntity<ResponseDto<Void>> deleteDepen(
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @PathVariable String userId
+            @PathVariable String role, String name, String phone
     ) {
-        ResponseDto<Void> response = dependentService.deleteDepen(userId);
+        ResponseDto<Void> response = dependentService.deleteDepen(role, name, phone);
         HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
