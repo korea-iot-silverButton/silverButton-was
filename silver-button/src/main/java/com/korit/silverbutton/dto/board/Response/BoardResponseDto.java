@@ -25,6 +25,7 @@ public class BoardResponseDto {
     private int views;
     private List<CommentResponseDto> comments;
 
+
     public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.user = board.getUser().getId();

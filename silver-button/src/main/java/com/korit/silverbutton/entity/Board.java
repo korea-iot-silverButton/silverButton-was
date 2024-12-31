@@ -41,6 +41,8 @@ public class Board  {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
+
+
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {

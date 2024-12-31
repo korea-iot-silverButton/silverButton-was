@@ -19,9 +19,9 @@ public interface BoardService {
 
 
 
-    ResponseDto<List<BoardResponseDto>> getBoardByTitle(String keyword);
+    ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByTitle(String keyword, int page, int size);
 
-    ResponseDto<List<BoardResponseDto>> getBoardByUserName(String name);
+    ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByUserName(String name, int page, int size);
 
     ResponseDto<BoardResponseDto> updateBoard(Long userId, Long id,  @Valid BoardRequestDto dto);
 
@@ -30,7 +30,5 @@ public interface BoardService {
     ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id);
 
 
-//    ResponseDto<List<BoardResponseDto>> searchByTitle(String keyword);
-//
-//    ResponseDto<List<BoardResponseDto>> searchByUser(String user);
+
 }
