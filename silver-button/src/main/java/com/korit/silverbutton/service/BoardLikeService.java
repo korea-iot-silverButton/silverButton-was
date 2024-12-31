@@ -12,7 +12,7 @@ public interface BoardLikeService  {
 
     ResponseDto<BoardLikeResponseDto> insertLike(Long userId, @Valid BoardLikeRequestDto dto);
 
-    ResponseDto<Void> deleteLike(Long userId, Long id);
+    ResponseDto<BoardLikeResponseDto> deleteLike(Long userId, Long id);
 
 
     User findUserById(Long likerId);
