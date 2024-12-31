@@ -30,7 +30,7 @@ public class ScheduleService {
             List<Object[]> results=
                     scheduleRepository.findSchedulesByDependentIdAndDate(userId, year, month);
             data= results.stream()
-                    .map(result-> new ScheduleResponseDto((String)result[0], (String)result[1])).collect(Collectors.toList());
+                    .map(result-> new ScheduleResponseDto((Long)result[0], (String)result[2], (String)result[1])).collect(Collectors.toList());
         }
         catch (Exception e){
             e.printStackTrace();
@@ -92,12 +92,19 @@ public class ScheduleService {
     public ResponseDto<ScheduleCreateResponseDto> updateSchedule(Long id, ScheduleCreateRequestDto dto, Long userId) {
         try{
             boolean check= scheduleCreateRepository.existsByIdAndDependentId(id, userId);
-            if(check){
-                // 작성 중
-                //Schedules schedule
-                return null;
-            }
-            else{
+            if (check) {
+                Schedules schedule = scheduleCreateRepository.findByIdAndDependentId(id, userId);
+
+                // 스케줄이 존재하면 수정
+                schedule.setTask(dto.getTask());
+
+                // 스케줄 저장 (업데이트)
+                scheduleCreateRepository.save(schedule);
+
+                // 응답 데이터 반환
+                ScheduleCreateResponseDto responseDto = new ScheduleCreateResponseDto(schedule);
+                return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
+            } else {
                 return ResponseDto.setFailed("해당 스케줄이 존재하지 않습니다. 다시 시도해주세요");
             }
         }
