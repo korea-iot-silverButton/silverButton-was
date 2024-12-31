@@ -116,7 +116,8 @@ public class WebSecurityConfig {
                                 //  : 특정 요청과 일치하는 url에 대한 엑세스
                                 new AntPathRequestMatcher("/api/v1/auth/**"),
                                 new AntPathRequestMatcher("/api/v1/board/**"),
-                                new AntPathRequestMatcher("/api/v1/boardlike/**")
+                                new AntPathRequestMatcher("/api/v1/boardlike/**"),
+                                new AntPathRequestMatcher("/api/v1/medicine/**")
                         )
                         // .permitAll()
                         //  : 누구나 접근이 가능하게 설정
