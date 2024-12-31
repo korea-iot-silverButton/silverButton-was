@@ -19,8 +19,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @EntityGraph(attributePaths = "comments")
     Page<Board> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    List<Board>findByUserName(String name);
-    List<Board> findByTitleContainingIgnoreCase(String title);
+    Page<Board>findByUserName(String name, Pageable pageable);
+    Page<Board> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
     Optional<Board> findByUserIdAndId(Long userId, Long Id);
 
