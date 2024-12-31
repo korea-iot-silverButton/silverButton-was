@@ -136,9 +136,22 @@ public class DependentServiceImpl implements DependentService {
     }
 
     @Override
-    public ResponseDto<Void> deleteDepen(String userId) {
+    public ResponseDto<Void> deleteDepen(String role, String name, String phone) {
 
+        ResponseDto<Void> data = null;
+        try {
+            // 노인 조회
+            User user = userRepository.findByRoleAndNameAndPhone(role, name, phone);
 
-        return null;
+            if (user == null) ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+
+            userRepository.delete(user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+
+        }
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
     }
 }
