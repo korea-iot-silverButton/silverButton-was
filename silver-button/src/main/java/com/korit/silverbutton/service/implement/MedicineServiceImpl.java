@@ -1,122 +1,83 @@
 package com.korit.silverbutton.service.implement;
 
-import com.korit.silverbutton.dto.ResponseDrugApi;
-import com.korit.silverbutton.dto.medicine.response.OpenApiOneDto;
-import com.korit.silverbutton.repository.MedicineRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
+import com.korit.silverbutton.common.constant.ResponseMessage;
+import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.medicine.response.MedicineApi1ResponseDto;
+import com.korit.silverbutton.dto.medicine.response.MedicineApi2ResponseDto;
+import com.korit.silverbutton.dto.medicine.requset.MedicineSearchByNameRequestDto;
+import com.korit.silverbutton.dto.medicine.response.MedicineResponseDto;
+import com.korit.silverbutton.service.MedicineService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class MedicineServiceImpl {
+public class MedicineServiceImpl implements MedicineService {
+    @Value("${drug.api.service-key}")
+    String serviceKey;
 
-    @Value("${api.medicine.serviceKey}")
-    private String serviceKey;
+    private final WebClient webClient;
 
-    @Value("${api.medicine.url}")
-    private String apiUrl;
+    public MedicineServiceImpl(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
+    }
 
-    private final RestTemplate restTemplate;
-    private final MedicineRepository medicineRepository;
+    @Override
+    public ResponseDto<List<MedicineResponseDto>> searchMedicinesByName(MedicineSearchByNameRequestDto dto,
+                                                                        int pageNo,
+                                                                        int numOfRows) {
+        List<MedicineResponseDto> data = new ArrayList<>();
+        String medicineName = dto.getMedicineName();
 
-//    public ResponseDto<List<MedicineResponseDto>> getDrugInfoByName(String name) {
-//        try {
-//            List<MedicineResponseDto> data = null;
-//            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-//        } catch (Exception e) {
-//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-//        }
-//    }
+        String encodedServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8);
 
-//
-//    public ResponseDto<List<MedicineResponseDto>> getDrugInfoBySearchOption(String shape, String color, String line) {
-//        try {
-//            List<MedicineResponseDto> data = medicineRepository.findAll().stream()
-//                    .filter(medicine -> medicine.getColorClass1().equals(color))
-//                    .filter(medicine -> medicine.getDrugShape().equals(shape))
-//                    .filter(medicine -> medicine.getLineFront().equals(line))
-//                    .map(MedicineResponseDto::new)
-//                    .toList();
-//            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-//        } catch (Exception e) {
-//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-//        }
-//    }
+        try {
+            var firstApiResponse = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("https")
+                            .host("apis.data.go.kr")
+                            .path("/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01")
+                            .queryParam("serviceKey", "jptKXkEhoWS2pwVQ34adwBGaLMbSQxl8jipaqrcP3oFbUD%2BVSG73q0mvxhSxJ46NK3v%2BsGLTPy0bH0oTQmuSdQ%3D%3D")
+                            .queryParam("type", "json")
+                            .queryParam("pageNo", pageNo)
+                            .queryParam("numOfRows", numOfRows)
+                            .queryParam("ITEM_NAME", medicineName)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
+            var secondApiResponse = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("https")
+                            .host("apis.data.go.kr")
+                            .path("/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList")
+                            .queryParam("ServiceKey", "jptKXkEhoWS2pwVQ34adwBGaLMbSQxl8jipaqrcP3oFbUD%2BVSG73q0mvxhSxJ46NK3v%2BsGLTPy0bH0oTQmuSdQ%3D%3D")
+                            .queryParam("type", "json")
+                            .queryParam("pageNo", pageNo)
+                            .queryParam("numOfRows", numOfRows)
+                            .queryParam("itemName", medicineName)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-    public ResponseDrugApi<List<OpenApiOneDto>> fetchMedicineData(int pageNo, int numOfRows) {
-        ResponseDrugApi<List<OpenApiOneDto>> data = null;
+            System.out.println("Service Key: " + serviceKey);
 
-        String uri = UriComponentsBuilder.fromHttpUrl(apiUrl)
-                .queryParam("serviceKey", serviceKey)
-                .queryParam("pageNo", pageNo)
-                .queryParam("numOfRows", numOfRows)
-                .queryParam("type", "json")
-                .toUriString();
+            data.add(new MedicineApi1ResponseDto("API1", firstApiResponse));
+            data.add(new MedicineApi2ResponseDto("API2", secondApiResponse));
 
-        webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        } catch (Exception e) {
+            e.printStackTrace();
+            ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
 
-        System.out.println(serviceKey);
-        System.out.println(apiUrl);
-        System.out.println(pageNo);
-        System.out.println(numOfRows);
-
-        return data;
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 }
-
-
-// 약품 전체 조회
-//    public ResponseDto<List<MedicineResponseDto>> getMedicineList() {
-//        try {
-//            List<MedicineResponseDto> data = medicineRepository.findAll().stream()
-//                    .map(MedicineResponseDto::new)
-//                    .toList();
-//
-//            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-//        } catch (Exception e) {
-//            logError(e, "Failed to fetch medicine list");
-//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-//        }
-//    }
-
-//    public ResponseDto<List<MedicineResponseDto>> getSearchMedicine(searchDrugRequestDto dto) {
-//        List<MedicineResponseDto> data = null;
-//
-//        try {
-//            // findBy 메소드 사용
-//            List<Medicine> medicineList = medicineRepository.findByDrugShapeAndColorClass1AndLineFrontAndItemName(
-//                    dto.getShape(), dto.getColor(), dto.getLine(), dto.getName());
-//
-//            // 검색된 데이터를 DTO로 변환
-//            data = medicineList.stream()
-//                    .map(MedicineResponseDto::new)
-//                    .collect(Collectors.toList());
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-//        }
-//
-//        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-//    }
-//}
-
-// 약품 이름으로 검색
-//    public ResponseDto<MedicineResponseDto> searchMedicineByName(String medicineName) {
-//
-//    }
-
-
-
-
-
