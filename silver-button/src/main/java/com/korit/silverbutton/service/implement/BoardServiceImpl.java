@@ -46,6 +46,10 @@ public class BoardServiceImpl implements BoardService {
         try {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException(ResponseMessage.NOT_EXIST_USER));
+            if (user == null) {
+                user = new User(); // 임시 User 객체 생성 (또는 임시 작성자 이름 설정)
+                user.setName("임시작성자"); // 임시 이름 설정
+            }
 
             Board board = Board.builder()
                     .user(user)
@@ -136,7 +140,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public ResponseDto<List<BoardResponseDto>> getBoardByTitle(String keyword) {
+    public ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByTitle(String keyword, int page, int size) {
 
         if(keyword == null || keyword.trim().isEmpty()) {
             return ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD);
@@ -144,21 +148,31 @@ public class BoardServiceImpl implements BoardService {
 
         try {
             keyword = keyword.trim();
-            List<Board> boards = boardRepository.findByTitleContainingIgnoreCase(keyword);
+            Pageable pageable = PageRequest.of(page, size); // 페이징 처리
+            Page<Board> boardPage = boardRepository.findByTitleContainingIgnoreCase(keyword, pageable);
 
-            System.out.println("검색 키워드: " + keyword);
-            System.out.println("검색 결과 개수: " + boards.size());
-            boards.forEach(board -> System.out.println("게시글 제목: " + board.getTitle()));
-
-            if(boards.isEmpty()) {
+            if(boardPage.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
 
-            List<BoardResponseDto> data = boards.stream()
+
+
+            System.out.println("검색 키워드: " + keyword);
+            System.out.println("검색 결과 개수: " + boardPage.getNumber());
+            boardPage.forEach(board -> System.out.println("게시글 제목: " + board.getTitle()));
+
+            if(boardPage.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
+            }
+
+            List<BoardResponseDto> data = boardPage.getContent().stream()
                     .map(BoardResponseDto::new)
                     .collect(Collectors.toList());
 
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+            PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
+                    boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements());
+
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, pagedResponse);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,23 +181,28 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public ResponseDto<List<BoardResponseDto>> getBoardByUserName(String name) {
+    public ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByUserName(String name, int page, int size) {
            if(name == null){
                return ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD);
            }
 
             try {
-            List<Board> boards = boardRepository.findByUserName(name);
-            if(boards.isEmpty()) {
-               return ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD);
-            }
+                Pageable pageable = PageRequest.of(page, size); // 페이징 처리
+                Page<Board> boardPage = boardRepository.findByUserName(name, pageable);
 
-            List<BoardResponseDto> data = boards.stream()
-                    .map(BoardResponseDto::new)
-                    .collect(Collectors.toList());
+                if(boardPage.isEmpty()) {
+                    return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
+                }
 
-                System.out.println("Boards: " + boards);
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+
+                List<BoardResponseDto> data = boardPage.getContent().stream()
+                        .map(BoardResponseDto::new)
+                        .collect(Collectors.toList());
+
+                PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
+                        boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements());
+
+                return ResponseDto.setSuccess(ResponseMessage.SUCCESS, pagedResponse);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -226,12 +245,14 @@ public class BoardServiceImpl implements BoardService {
 
 
         try {
-            Optional<Board> optionalBoard =
-                    boardRepository.findByUserIdAndId(userId,id);
-            if(optionalBoard.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
-            }
+            Optional<Board> optionalBoard ;
 
+            // userId가 null일 경우 userId 체크를 건너뜁니다.
+            if (userId != null) {
+                optionalBoard = boardRepository.findByUserIdAndId(userId, id);
+            } else {
+                optionalBoard = boardRepository.findById(id);  // userId 없이 id로만 조회
+            }
             Board board = optionalBoard.get();
             boardRepository.delete(board);
 
