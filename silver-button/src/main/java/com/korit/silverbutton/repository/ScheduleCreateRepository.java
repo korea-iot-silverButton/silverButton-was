@@ -17,4 +17,6 @@ public interface ScheduleCreateRepository extends JpaRepository<Schedules, Long>
     void deleteByIdAndDependentId(Long id, Long dependentId);
 
     boolean existsByIdAndDependentId(Long id, Long dependentId);
+
+    Schedules findByIdAndDependentId(Long id, Long dependentId);
 }
