@@ -23,6 +23,6 @@ public interface DependentService {
 
     ResponseDto<DependentResponseDto> updateDepen(UpdateRequestDto dto, PrincipalUser principalUser);
 
-    ResponseDto<Void> deleteDepen(String userId);
+    ResponseDto<Void> deleteDepen(String role, String name, String phone);
 
 }
