@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RestController
 @RequestMapping(ApiMappingPattern.BOARD)
 @RequiredArgsConstructor
@@ -27,20 +28,23 @@ public class BoardController {
 
     private  final BoardService boardService;
 
-    private static final String BOARD = "/";
+    private static final String BOARD = "/create";
     private static final String BOARD_ALL = "/all";
     private static final String BOARD_ID = "/{id}";
     private static final String BOARD_SEARCH_TITLE = "/search/title";
     private static final String BOARD_SEARCH_NAME = "/search/name";
     private static final String BOARD_PUT = "/{id}";
-    private static final String BOARD_DELETE = "/{id}";
+    private static final String BOARD_DELETE = "/delete/{id}";
 
     @PostMapping(BOARD)
+    @PermitAll
     public ResponseEntity<ResponseDto<BoardResponseDto>> createBoard(
-            @AuthenticationPrincipal PrincipalUser principalUser,
+//            @AuthenticationPrincipal PrincipalUser principalUser,
             @Valid @RequestBody BoardRequestDto dto
     ) {
-        ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto);
+        Long tempAuthorId = 1L; // 테스트용 사용자 ID (임Long tempAuthorId = 1L;의의 값 설정)
+//        ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto);
+        ResponseDto<BoardResponseDto> response = boardService.createBoard(tempAuthorId, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -60,8 +64,10 @@ public class BoardController {
     // 제목 검색
     @GetMapping(BOARD_SEARCH_TITLE)
     @PermitAll
-    public ResponseEntity<ResponseDto<List<BoardResponseDto>>> getBoardByTitle(
-            @RequestParam(defaultValue = "") String keyword
+    public ResponseEntity<ResponseDto<PagedResponseDto<List<BoardResponseDto>>>> getBoardByTitle(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
 
     ){
         System.out.println("Received keyword: " + keyword); // keyword 로그 확인
@@ -71,15 +77,17 @@ public class BoardController {
 
         }
 
-        ResponseDto<List<BoardResponseDto>> response = boardService.getBoardByTitle(keyword);
+        ResponseDto<PagedResponseDto<List<BoardResponseDto>>> response = boardService.getBoardByTitle(keyword, page, size);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
 
     @GetMapping(BOARD_SEARCH_NAME)
     @PermitAll
-    public ResponseEntity<ResponseDto<List<BoardResponseDto>>> getBoardByUserName(
-            @RequestParam(defaultValue = "") String name
+    public ResponseEntity<ResponseDto<PagedResponseDto<List<BoardResponseDto>>>> getBoardByUserName(
+            @RequestParam(defaultValue = "") String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
 
     ){
         System.out.println("Received name: " + name);
@@ -87,7 +95,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD));
         }
-        ResponseDto<List<BoardResponseDto>> response = boardService.getBoardByUserName(name);
+        ResponseDto<PagedResponseDto<List<BoardResponseDto>>> response = boardService.getBoardByUserName(name, page, size);
         System.out.println("User name: " + name);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
@@ -107,21 +115,25 @@ public class BoardController {
 
     @PutMapping(BOARD_PUT)
     public ResponseEntity<ResponseDto<BoardResponseDto>> updateBoard(
-            @AuthenticationPrincipal PrincipalUser principalUser,
+//            @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id,
             @Valid @RequestBody BoardRequestDto dto
     ){
-        ResponseDto<BoardResponseDto> response = boardService.updateBoard(principalUser.getId(), id, dto);
+//        ResponseDto<BoardResponseDto> response = boardService.updateBoard(principalUser.getId(), id, dto);
+        Long tempAuthorId = 1L;
+        ResponseDto<BoardResponseDto> response = boardService.updateBoard(tempAuthorId, id, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
     @DeleteMapping(BOARD_DELETE)
+    @PermitAll
     public ResponseEntity<ResponseDto<Void>> deleteBoard(
-            @AuthenticationPrincipal PrincipalUser principalUser,
+//            @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
     ) {
-       ResponseDto<Void> response = boardService.deleteBoard(principalUser.getId(), id);
+//       ResponseDto<Void> response = boardService.deleteBoard(principalUser.getId(), id);
+       ResponseDto<Void> response = boardService.deleteBoard(null, id);
        HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
        return ResponseEntity.status(status).body(response);
 
