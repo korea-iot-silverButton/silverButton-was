@@ -35,3 +35,6 @@ build/
 # macOS / Windows 시스템 파일 (운영체제 특유의 파일 무시)
 .DS_Store
 Thumbs.db
+
+# application.properties 파일 무시
+src/main/resources/application.properties
