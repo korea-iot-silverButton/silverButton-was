@@ -11,6 +11,6 @@ public interface MedicineService {
             MedicineSearchByNameRequestDto dto,
             int pageNo,
             int numOfRows
-                                                                 );
+    );
 }
 
