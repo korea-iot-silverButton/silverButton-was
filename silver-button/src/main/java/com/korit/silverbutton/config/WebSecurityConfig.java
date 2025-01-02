@@ -135,10 +135,10 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()) // 위에서 설정한 경로를 제외한 나머지 경로 인증 필요
 //                        .requestMatchers(new AntPathRequestMatcher("/test/**"))
 //                        .hasRole("ADMIN")
-                        // .anyRequest()
-                        //  : 위에서 설정한 url 이외의 요청에 대해 설정
-                        // .authenticated()
-                        //  : 별도의 인가는 필요하지 않지만 인증이 성공된 상태여야 접근 가능
+                // .anyRequest()
+                //  : 위에서 설정한 url 이외의 요청에 대해 설정
+                // .authenticated()
+                //  : 별도의 인가는 필요하지 않지만 인증이 성공된 상태여야 접근 가능
 
 
                 // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가

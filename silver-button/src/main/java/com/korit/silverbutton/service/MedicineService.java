@@ -1,15 +1,16 @@
 package com.korit.silverbutton.service;
 
-import com.korit.silverbutton.dto.medicine.response.MedicineResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.medicine.requset.MedicineSearchByNameRequestDto;
+import com.korit.silverbutton.dto.medicine.response.MedicineResponseDto;
 
 import java.util.List;
 
 public interface MedicineService {
-
-    ResponseDto<List<MedicineResponseDto>> getDrugInfoByName(String name);
-
-    ResponseDto<List<MedicineResponseDto>> getDrugInfoBySearchOption(String shape, String color, String line);
-
-
+    ResponseDto<List<MedicineResponseDto>> searchMedicinesByName(
+            MedicineSearchByNameRequestDto dto,
+            int pageNo,
+            int numOfRows
+    );
 }
+
