@@ -24,11 +24,11 @@ public class MedicineController {
     private final MedicineServiceImpl medicineService;
 
     // 외부 API 사용 데이터 조회
-    @GetMapping(MEDICINE_OPEN_API)
-    public ResponseEntity<ResponseDrugApi<List<OpenApiOneDto>>> getMedicineList(@RequestParam int pageNo, @RequestParam int numOfRows){
-        ResponseDrugApi<List<OpenApiOneDto>> medicines = medicineService.fetchMedicineData(pageNo, numOfRows);
-        return ResponseEntity.status(HttpStatus.OK).body(medicines);
-    }
+//    @GetMapping(MEDICINE_OPEN_API)
+//    public ResponseEntity<ResponseDrugApi<List<OpenApiOneDto>>> getMedicineList(@RequestParam int pageNo, @RequestParam int numOfRows){
+//        ResponseDrugApi<List<OpenApiOneDto>> medicines = medicineService.fetchMedicineData(pageNo, numOfRows);
+//        return ResponseEntity.status(HttpStatus.OK).body(medicines);
+//    }
 
     // 약품 이름이로 검색
 //    @GetMapping(MEDICINE_NAME)
