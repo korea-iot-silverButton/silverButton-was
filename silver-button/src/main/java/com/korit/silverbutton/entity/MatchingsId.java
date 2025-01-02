@@ -13,9 +13,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 public class MatchingsId implements Serializable {
-    @Column
+    @Column(name= "dependent_id")
     private Long dependentId;
 
-    @Column
+    @Column(name= "caregiver_id")
     private Long caregiverId;
 }
