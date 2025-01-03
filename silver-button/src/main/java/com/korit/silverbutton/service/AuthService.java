@@ -10,4 +10,8 @@ public interface AuthService {
 
     ResponseDto<SignUpResponseDto> signUp(SignUpRequestDto dto);
     ResponseDto<SignInResponseDto> login(SignInRequestDto dto);
+
+    ResponseDto<SignInResponseDto> dependentLogin(SignInRequestDto dto);
+
+    ResponseDto<String> logout(String token);
 }
