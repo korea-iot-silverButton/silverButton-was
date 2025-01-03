@@ -117,6 +117,7 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher("/api/v1/auth/**"),
                                 new AntPathRequestMatcher("/api/v1/board/**"),
                                 new AntPathRequestMatcher("/api/v1/boardlike/**"),
+                                new AntPathRequestMatcher("api/v1/board/comment/**"),
                                 new AntPathRequestMatcher("/api/v1/medicine/**")
                         )
                         // .permitAll()

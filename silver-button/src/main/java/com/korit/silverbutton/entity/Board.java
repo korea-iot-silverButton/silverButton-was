@@ -41,8 +41,6 @@ public class Board  {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-
-
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {
@@ -50,5 +48,9 @@ public class Board  {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Board{id=" + id + ", title='" + title + "', likes=" + likes + ", views=" + views + "}";
+    }
 
 }

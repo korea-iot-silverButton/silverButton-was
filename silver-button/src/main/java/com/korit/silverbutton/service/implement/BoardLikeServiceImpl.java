@@ -28,72 +28,51 @@ public class BoardLikeServiceImpl implements BoardLikeService {
     private final BoardRepository boardRepository;
 
     @Override
-    public ResponseDto<BoardLikeResponseDto> insertLike(Long userId, BoardLikeRequestDto dto)  {
-        BoardLikeResponseDto data = null;
-
-
-        try {
-        User liker = findUserById(userId);
-        Board board = findBoardById(dto.getBoardId());
-
-        Optional<BoardLike> existingLike = boardLikeRepository.findByBoardIdAndLikerId(board.getId(), liker.getId());
-        if (existingLike.isPresent()) {
-            return ResponseDto.setFailed(ResponseMessage.POST_ALREADY_LIKED);
-        }
-            BoardLike boardLike = BoardLike.builder()
-                    .id(dto.getId())
-                    .board(board)
-                    .liker(liker)
-                    .build();
-
-            boardLikeRepository.save(boardLike);
-
-            board.setLikes(board.getLikes() + 1);
-            boardRepository.save(board);
-
-            data = new BoardLikeResponseDto(boardLike);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-        }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS,data);
-    }
-
-    @Override
-    public ResponseDto<BoardLikeResponseDto> deleteLike(Long userId, Long id) {
+    public ResponseDto<BoardLikeResponseDto> toggleLike(Long userId, BoardLikeRequestDto dto) {
         BoardLikeResponseDto data = null;
 
         try {
-            // 사용자 확인
             User liker = findUserById(userId);
+            Board board = findBoardById(dto.getBoardId());
 
-            // 좋아요 엔티티 조회
-            Optional<BoardLike> optionalBoardLike = boardLikeRepository.findByLikerIdAndId(liker.getId(), id);
-            if (optionalBoardLike.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
+            Optional<BoardLike> existingLike = boardLikeRepository.findByBoardIdAndLikerId(board.getId(), liker.getId());
+
+            if (existingLike.isPresent()) {
+                // 이미 좋아요가 있으면 삭제하고, 좋아요 수 감소
+                removeLike(existingLike.get(), board);
+                data = new BoardLikeResponseDto(board.getId(), board.getLikes());
+            } else {
+                // 좋아요가 없으면 추가하고, 좋아요 수 증가
+                addLike(board, liker);
+                data = new BoardLikeResponseDto(board.getId(), board.getLikes());
             }
 
-            // 좋아요 엔티티 삭제
-            BoardLike boardLike = optionalBoardLike.get();
-            boardLikeRepository.delete(boardLike);
-
-            // 게시글 좋아요 수 감소
-            Board board = boardLike.getBoard();
-            if (board.getLikes() > 0) { // 좋아요 수가 0보다 클 경우에만 감소
-                board.setLikes(board.getLikes() - 1);
-                boardRepository.save(board);
-            }
-
-            // 응답 데이터 생성 (최신 좋아요 수 포함)
-            data = new BoardLikeResponseDto(boardLike);
-
+            // 게시글 좋아요 수 업데이트
+            boardRepository.save(board);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
 
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+    }
+
+    // 좋아요 추가
+    private void addLike(Board board, User liker) {
+        BoardLike boardLike = BoardLike.builder()
+                .board(board)
+                .liker(liker)
+                .build();
+        boardLikeRepository.save(boardLike);
+        board.setLikes(board.getLikes() + 1);  // 좋아요 수 증가
+    }
+
+    // 좋아요 삭제
+    private void removeLike(BoardLike boardLike, Board board) {
+        boardLikeRepository.delete(boardLike);
+        if (board.getLikes() > 0) {
+            board.setLikes(board.getLikes() - 1);  // 좋아요 수 감소
+        }
     }
 
     @Override
