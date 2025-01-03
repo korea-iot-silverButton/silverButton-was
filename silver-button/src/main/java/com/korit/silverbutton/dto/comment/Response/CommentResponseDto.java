@@ -9,13 +9,13 @@ public class CommentResponseDto {
 
     private Long id;
     private Long boardId;     // 게시글
-    private String writer;    // 작성자
+    private Long writer;    // 작성자
     private String content;
 
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
         this.boardId = (comment.getBoard() != null) ? comment.getBoard().getId() : null ;
-        this.writer = comment.getWriter();
+        this.writer = (comment.getWriter() != null) ? comment.getWriter().getId() : null ;
         this.content = comment.getContent();
     }
 }

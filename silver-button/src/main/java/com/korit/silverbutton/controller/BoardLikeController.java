@@ -20,30 +20,25 @@ public class BoardLikeController {
 
     private final BoardLikeService boardLikeService;
 
-    private static final String INSERT = "/boardlike/insert";
-    private static final String DELETE = "/boardlike/delete/{id}";
+    private static final String TOGGLE_LIKE = "/boardlike/toggle"; // 좋아요 토글 경로
 
-    @PostMapping(INSERT)
-    public ResponseEntity<ResponseDto<BoardLikeResponseDto>> insertLike(
-//            @AuthenticationPrincipal PrincipalUser principalUser,
+    @PostMapping(TOGGLE_LIKE)
+    public ResponseEntity<ResponseDto<BoardLikeResponseDto>> toggleLike(
+            @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestBody @Valid BoardLikeRequestDto dto
     ) {
-//        ResponseDto<BoardLikeResponseDto> response = boardLikeService.insertLike(principalUser.getId(), dto);
-        Long tempAuthorId = 1L;
-        ResponseDto<BoardLikeResponseDto> response = boardLikeService.insertLike(tempAuthorId, dto);
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-        return ResponseEntity.status(status).body(response);
-    }
+        if (dto.getBoardId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
-    @DeleteMapping(DELETE)
-    public ResponseEntity<ResponseDto<BoardLikeResponseDto>> deleteLike(
-//            @AuthenticationPrincipal PrincipalUser principalUser,
-            @PathVariable Long id
-    ) {
-//        ResponseDto<BoardLikeResponseDto> response = boardLikeService.deleteLike(principalUser.getId(), id);
-        Long testUserId = 1L;
-        ResponseDto<BoardLikeResponseDto> response = boardLikeService.deleteLike(testUserId, id);
-        HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
+        Long userId = principalUser != null ? principalUser.getId() : 1L; // 로그인된 사용자 ID 또는 테스트용 1L
+        System.out.println("Received DTO: " + dto);
+
+        // 좋아요 추가 또는 삭제 처리
+        ResponseDto<BoardLikeResponseDto> response = boardLikeService.toggleLike(userId, dto);
+        System.out.println("Toggle Like Response: " + response.getData());
+
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 }
