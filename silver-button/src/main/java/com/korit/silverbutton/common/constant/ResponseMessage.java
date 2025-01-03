@@ -45,4 +45,6 @@ public class ResponseMessage {
     // 기타 메시지
     public static final String TOKEN_CREATE_FAIL = "Token creation failed."; // 토큰 생성 실패 시 반환 메시지
     public static final String MESSAGE_SEND_FAIL = "Failed to send authentication number."; // 인증 번호 전송 실패 시 반환 메시지
+    public static final String LOGOUT_FAILED = "Logout Failed";
+    public static final String UNAUTHORIZED = "NOT Dependent error";
 }
