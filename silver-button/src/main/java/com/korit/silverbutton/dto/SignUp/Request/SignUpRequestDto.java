@@ -41,9 +41,6 @@ public class SignUpRequestDto {
     @Column(nullable = false)
     private String profileImage;
 
-    @Column(columnDefinition = "ENUM('노인', '보호자', '요양사')")
-    private String role;
-
     private String licenseNumber;
 
     private String specialization;

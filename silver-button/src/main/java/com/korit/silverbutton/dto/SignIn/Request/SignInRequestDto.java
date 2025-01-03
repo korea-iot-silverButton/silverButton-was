@@ -18,6 +18,4 @@ public class SignInRequestDto {
     private String name;
 
     private String role;
-
-
 }
