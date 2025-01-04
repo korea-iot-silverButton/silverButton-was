@@ -15,7 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +32,8 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+
+    private static final String UPLOAD_DIR = "src/main/resources/static/images/";
 
 
     @Override
@@ -100,8 +107,6 @@ public class BoardServiceImpl implements BoardService {
                     boardPage.getTotalElements()
             );
 
-            System.out.println("PagedResponseDto 생성된 데이터: " + paged);
-
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, paged);
 
         } catch (Exception e) {
@@ -137,6 +142,33 @@ public class BoardServiceImpl implements BoardService {
         }
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
 
+    }
+
+
+    @Override
+    public String uploadImage(MultipartFile file) throws IOException {
+        // 파일 이름을 가져오고 저장할 경로를 설정
+        String fileName = file.getOriginalFilename();
+        if (fileName == null || file.isEmpty()) {
+            throw new IOException("파일이 비어 있습니다.");
+        }
+
+        // 저장할 경로 정의
+        Path path = Paths.get(UPLOAD_DIR + fileName);
+
+        // 파일이 저장될 디렉토리 없으면 생성
+        Files.createDirectories(path.getParent());
+
+        try {
+            // 파일을 저장
+            file.transferTo(path);
+        } catch (IOException e) {
+            // IOException 예외 처리
+            throw new IOException("파일 저장에 실패했습니다: " + e.getMessage());
+        }
+
+        // 파일이 저장된 URL 반환
+        return "/images/" + fileName;  // 저장된 파일에 접근할 수 있는 URL 반환
     }
 
     @Override
@@ -216,9 +248,7 @@ public class BoardServiceImpl implements BoardService {
         String title = dto.getTitle();
         String content = dto.getContent();
 
-
         try {
-
             Optional<Board> boardOptional = boardRepository.findByUserIdAndId(userId, id);
             if(boardOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
@@ -242,11 +272,8 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public ResponseDto<Void> deleteBoard(Long userId, Long id) {
-
-
         try {
             Optional<Board> optionalBoard ;
-
             // userId가 null일 경우 userId 체크를 건너뜁니다.
             if (userId != null) {
                 optionalBoard = boardRepository.findByUserIdAndId(userId, id);

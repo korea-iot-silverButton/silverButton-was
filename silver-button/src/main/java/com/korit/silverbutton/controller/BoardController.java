@@ -16,8 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 
 //@CrossOrigin(origins = "http://localhost:3000")
 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
@@ -36,15 +39,26 @@ public class BoardController {
     private static final String BOARD_PUT = "/{id}";
     private static final String BOARD_DELETE = "/delete/{id}";
 
+
+
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("image") MultipartFile file) {
+        try {
+            String imageUrl = boardService.uploadImage(file); // 이미지 업로드 서비스 호출
+            return ResponseEntity.ok(Map.of("url", imageUrl)); // 업로드된 이미지 URL 반환
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Image upload failed"));
+        }
+    }
+
+
     @PostMapping(BOARD)
     @PermitAll
     public ResponseEntity<ResponseDto<BoardResponseDto>> createBoard(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @Valid @RequestBody BoardRequestDto dto
     ) {
-//        Long tempAuthorId = 1L; // 테스트용 사용자 ID (임Long tempAuthorId = 1L;의의 값 설정)
         ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto);
-//        ResponseDto<BoardResponseDto> response = boardService.createBoard(tempAuthorId, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -120,8 +134,6 @@ public class BoardController {
             @Valid @RequestBody BoardRequestDto dto
     ){
         ResponseDto<BoardResponseDto> response = boardService.updateBoard(principalUser.getId(), id, dto);
-//        Long tempAuthorId = 1L;
-//        ResponseDto<BoardResponseDto> response = boardService.updateBoard(tempAuthorId, id, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -133,7 +145,6 @@ public class BoardController {
             @PathVariable Long id
     ) {
        ResponseDto<Void> response = boardService.deleteBoard(principalUser.getId(), id);
-//       ResponseDto<Void> response = boardService.deleteBoard(null, id);
        HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
        return ResponseEntity.status(status).body(response);
 
