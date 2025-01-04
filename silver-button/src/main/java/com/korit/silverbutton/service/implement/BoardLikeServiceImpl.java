@@ -16,6 +16,7 @@ import com.korit.silverbutton.service.BoardLikeService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,10 +28,10 @@ public class BoardLikeServiceImpl implements BoardLikeService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
+    @Transactional
     @Override
     public ResponseDto<BoardLikeResponseDto> toggleLike(Long userId, BoardLikeRequestDto dto) {
-        BoardLikeResponseDto data = null;
-
+        BoardLikeResponseDto data;
         try {
             User liker = findUserById(userId);
             Board board = findBoardById(dto.getBoardId());
@@ -38,23 +39,21 @@ public class BoardLikeServiceImpl implements BoardLikeService {
             Optional<BoardLike> existingLike = boardLikeRepository.findByBoardIdAndLikerId(board.getId(), liker.getId());
 
             if (existingLike.isPresent()) {
-                // 이미 좋아요가 있으면 삭제하고, 좋아요 수 감소
+                // 좋아요가 존재하면 삭제
                 removeLike(existingLike.get(), board);
                 data = new BoardLikeResponseDto(board.getId(), board.getLikes());
             } else {
-                // 좋아요가 없으면 추가하고, 좋아요 수 증가
+                // 좋아요가 없으면 추가
                 addLike(board, liker);
                 data = new BoardLikeResponseDto(board.getId(), board.getLikes());
             }
 
-            // 게시글 좋아요 수 업데이트
-            boardRepository.save(board);
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
 
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
     // 좋아요 추가
@@ -64,14 +63,26 @@ public class BoardLikeServiceImpl implements BoardLikeService {
                 .liker(liker)
                 .build();
         boardLikeRepository.save(boardLike);
-        board.setLikes(board.getLikes() + 1);  // 좋아요 수 증가
+        incrementLikeCount(board);
     }
 
     // 좋아요 삭제
     private void removeLike(BoardLike boardLike, Board board) {
         boardLikeRepository.delete(boardLike);
+        decrementLikeCount(board);
+    }
+
+    // 좋아요 수 증가
+    private void incrementLikeCount(Board board) {
+        board.setLikes(board.getLikes() + 1);
+        boardRepository.save(board);
+    }
+
+    // 좋아요 수 감소
+    private void decrementLikeCount(Board board) {
         if (board.getLikes() > 0) {
-            board.setLikes(board.getLikes() - 1);  // 좋아요 수 감소
+            board.setLikes(board.getLikes() - 1);
+            boardRepository.save(board);
         }
     }
 
