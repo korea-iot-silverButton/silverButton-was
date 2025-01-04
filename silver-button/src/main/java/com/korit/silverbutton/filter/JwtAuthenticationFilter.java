@@ -79,9 +79,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //      , 컨트롤러의 메서드에서 주입시킬 수 있음 (@AuthenticationPrincipal)
 
             String requestURI = request.getRequestURI();
-            String isDependentId = jwtProvider.getIsDependentIdFromJwt(token);
+            Boolean isDependentId = jwtProvider.getIsDependentIdFromJwt(token);
             System.out.println("Extracted isDependentId: " + isDependentId);
-            if ("true".equals(isDependentId) && requestURI.startsWith("/api/v1/schedule/")) {
+            if (Boolean.TRUE.equals(isDependentId) && requestURI.startsWith("/api/v1/schedule/")) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "You cannot access this API.");
                 return; // 더 이상 필터 체인을 진행하지 않음
             }
