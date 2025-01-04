@@ -6,6 +6,7 @@ import com.korit.silverbutton.dto.boardlike.Request.BoardLikeRequestDto;
 import com.korit.silverbutton.dto.boardlike.Response.BoardLikeResponseDto;
 import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.BoardLikeService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class BoardLikeController {
     private static final String TOGGLE_LIKE = "/boardlike/toggle"; // 좋아요 토글 경로
 
     @PostMapping(TOGGLE_LIKE)
+    @PermitAll
     public ResponseEntity<ResponseDto<BoardLikeResponseDto>> toggleLike(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestBody @Valid BoardLikeRequestDto dto
@@ -31,7 +33,8 @@ public class BoardLikeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        Long userId = principalUser != null ? principalUser.getId() : 1L; // 로그인된 사용자 ID 또는 테스트용 1L
+        // 로그인된 사용자 ID 또는 테스트용 1L
+        Long userId = principalUser != null ? principalUser.getId() : 1L;
         System.out.println("Received DTO: " + dto);
 
         // 좋아요 추가 또는 삭제 처리
