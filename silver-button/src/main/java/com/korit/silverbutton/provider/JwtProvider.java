@@ -157,8 +157,8 @@ public class JwtProvider {
         return jwtParser.parseClaimsJws(token).getBody();
     }
 
-    public String getIsDependentIdFromJwt(String token) {
+    public Boolean getIsDependentIdFromJwt(String token) {
         Claims claims = getClaims(token); // 토큰에서 클레임을 가져옵니다.
-        return claims.get("isDependentId", String.class); // 클레임에서 "isDependentId" 값을 추출합니다.
+        return claims.get("isDependentLogin", Boolean.class); // 클레임에서 "isDependentId" 값을 추출합니다.
     }
 }
