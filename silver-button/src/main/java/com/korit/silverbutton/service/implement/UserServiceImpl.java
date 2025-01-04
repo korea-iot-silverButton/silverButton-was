@@ -25,16 +25,21 @@ public class UserServiceImpl implements UserService {
     private final ProfileImgService profileImgService;
 
     @Override
-    // 로그인
     public ResponseDto<UserResponseDto> signInUser(String userId, String password) {
-        UserResponseDto data = null;
         try {
+            // 아이디로 사용자 조회
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+                return ResponseDto.setFailed(ResponseMessage.DUPLICATED_USER_ID); // 아이디 중복 시 반환 메시지
             }
+
             User user = userOptional.get(); // 사용자 정보 가져오기
 
+            // 이메일 중복 체크
+            String email = user.getEmail(); // 사용자 이메일 가져오기
+            if (userRepository.existsByEmail(email) && !user.getUserId().equals(userId)) {
+                return ResponseDto.setFailed(ResponseMessage.DUPLICATED_USER_EMAIL); // 이메일 중복 시 반환 메시지
+            }
 
             // 비밀번호 일치 체크
             if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
@@ -45,7 +50,7 @@ public class UserServiceImpl implements UserService {
             UserResponseDto userResponseDto = new UserResponseDto(user);
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, userResponseDto);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }

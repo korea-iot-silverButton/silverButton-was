@@ -11,6 +11,7 @@ public class ResponseMessage {
     public static final String EXIST_USER = "User already exists."; // 사용자가 이미 존재할 때 반환 메시지
     public static final String NOT_EXIST_USER = "User does not exist."; // 사용자가 존재하지 않을 때 반환 메시지
     public static final String DUPLICATED_USER_ID = "Duplicated user ID."; // 사용자 ID 중복 시 반환 메시지
+    public static final String DUPLICATED_USER_EMAIL = "Duplicated user EMAIL."; // 사용자 email 중복 시 반환 메시지
 
     // 로그인 및 인증 관련 메시지
     public static final String SIGN_IN_FAIL = "Sign in failed."; // 로그인 실패 시 반환 메시지
