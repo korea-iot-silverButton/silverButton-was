@@ -31,5 +31,5 @@ public interface BoardService {
 
     ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id);
 
-    String uploadImage(MultipartFile file) throws IOException;
+
 }
