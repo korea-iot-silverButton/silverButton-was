@@ -5,6 +5,7 @@ package com.korit.silverbutton.provider;
 // 비밀키는 Base64로 인코딩 지정- 환경변수(jwt.secret)
 // -JWT 만료 기간은 10시간으로 지정 - 환경 변수 36000000
 
+import com.korit.silverbutton.service.TokenBlacklistService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -38,6 +39,7 @@ public class JwtProvider {
 
     // 환경 변수에 지정한 비밀키 값과 만료 시간을 가져옴
     private Key key; // JWT 서명에 사용할 암호화 키
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Value("${jwt.expiration}")
     private int jwtExpirationMs; // JWT 토큰의 만료 시간을 저장
@@ -47,11 +49,12 @@ public class JwtProvider {
         return jwtExpirationMs;
     }
 
-    public JwtProvider(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") int jwtExpirationMs) {
+    public JwtProvider(@Value("${jwt.secret}") String secret, TokenBlacklistService tokenBlacklistService, @Value("${jwt.expiration}") int jwtExpirationMs) {
         // 생성자: JWTProvider 객체를 생성할 때 비밀키와 만료 시간을 초기화
 
         //Base64로 인코딩된 비밀키를 디코딩하여 HMAC-SHA 알고리즘으로 암호화된 키 생성
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        this.tokenBlacklistService = tokenBlacklistService;
 
         // 환경 변수에서 가져온 만료 시간을 변수에 저장
         this.jwtExpirationMs = jwtExpirationMs;
@@ -65,16 +68,14 @@ public class JwtProvider {
      * @param : 사용자 정보 (User 객체)
      * @return : 생성된 JWT 토큰 문자열
      * */
-    public String generateJwtToken(String userId) {
+    public String generateJwtToken(String userId, boolean isDependentLogin) {
         return Jwts.builder()
-                .claim("userId", userId) // 클레임에 사용자 ID 저장 (사용자의 고유 ID)
-                .setIssuedAt(new Date()) // 현재 시간을 기준으로 토큰 발행 시간 설정
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                // 현재 시간에 만료 시간을 더해 토큰 만료시간 설정
-                .signWith(key, SignatureAlgorithm.HS256)
-                // HMAC-SHA256 알고리즘으로 생성된 비밀키로 서명
+                .claim("userId", userId) // 사용자 ID 추가
+                .claim("isDependentLogin", isDependentLogin) // 간편 로그인 여부 추가
+                .setIssuedAt(new Date()) // 발행 시각
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs)) // 만료 시간
+                .signWith(key, SignatureAlgorithm.HS256) // 서명
                 .compact();
-        // JWT를 최종적으로 직렬화하여 문자열로 반환
     }
 
     /*
@@ -130,6 +131,10 @@ public class JwtProvider {
      * */
     public boolean isValidToken(String token) {
         try {
+            // 블랙리스트 확인
+            if (tokenBlacklistService.isTokenBlacklisted(token)) {
+                return false; // 블랙리스트에 있으면 무효
+            }
             getClaims(token); // JWT 클레임을 가져오면서 유효성 검증
             return true;
         } catch (Exception e) {
@@ -150,5 +155,10 @@ public class JwtProvider {
 
         // JWT를 파싱하여 클레임 정보(body)를 반환
         return jwtParser.parseClaimsJws(token).getBody();
+    }
+
+    public Boolean getIsDependentIdFromJwt(String token) {
+        Claims claims = getClaims(token); // 토큰에서 클레임을 가져옵니다.
+        return claims.get("isDependentLogin", Boolean.class); // 클레임에서 "isDependentId" 값을 추출합니다.
     }
 }
