@@ -16,10 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 
 //@CrossOrigin(origins = "http://localhost:3000")
@@ -40,20 +37,7 @@ public class BoardController {
     private static final String BOARD_DELETE = "/delete/{id}";
 
 
-
-    @PostMapping("/upload")
-    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("image") MultipartFile file) {
-        try {
-            String imageUrl = boardService.uploadImage(file); // 이미지 업로드 서비스 호출
-            return ResponseEntity.ok(Map.of("url", imageUrl)); // 업로드된 이미지 URL 반환
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body(Map.of("message", "Image upload failed"));
-        }
-    }
-
-
     @PostMapping(BOARD)
-    @PermitAll
     public ResponseEntity<ResponseDto<BoardResponseDto>> createBoard(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @Valid @RequestBody BoardRequestDto dto
@@ -139,7 +123,6 @@ public class BoardController {
     }
 
     @DeleteMapping(BOARD_DELETE)
-    @PermitAll
     public ResponseEntity<ResponseDto<Void>> deleteBoard(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id

@@ -144,33 +144,6 @@ public class BoardServiceImpl implements BoardService {
 
     }
 
-
-    @Override
-    public String uploadImage(MultipartFile file) throws IOException {
-        // 파일 이름을 가져오고 저장할 경로를 설정
-        String fileName = file.getOriginalFilename();
-        if (fileName == null || file.isEmpty()) {
-            throw new IOException("파일이 비어 있습니다.");
-        }
-
-        // 저장할 경로 정의
-        Path path = Paths.get(UPLOAD_DIR + fileName);
-
-        // 파일이 저장될 디렉토리 없으면 생성
-        Files.createDirectories(path.getParent());
-
-        try {
-            // 파일을 저장
-            file.transferTo(path);
-        } catch (IOException e) {
-            // IOException 예외 처리
-            throw new IOException("파일 저장에 실패했습니다: " + e.getMessage());
-        }
-
-        // 파일이 저장된 URL 반환
-        return "/images/" + fileName;  // 저장된 파일에 접근할 수 있는 URL 반환
-    }
-
     @Override
     public ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByTitle(String keyword, int page, int size) {
 

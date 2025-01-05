@@ -18,7 +18,8 @@ public class BoardRequestDto {
     @NotBlank(message = "Content cannot be empty")
     private String content;
 
-    @Size(max = 255, message = "Image URL length must be less than 255 characters")
+    @Size(max = 100000000, message = "Image URL length must be less than 100000000 characters")
     private String imageUrl; // Optional field for image path or URL
+
 
 }
