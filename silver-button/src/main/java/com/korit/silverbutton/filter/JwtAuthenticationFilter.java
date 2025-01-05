@@ -77,8 +77,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // : UsernamePasswordAuthenticationToken을 생성하고, 해당 토큰에 userId값을 넣어 인증 정보로 등록
             // >> Spring Security는 SecurityContextHolder에 있는 인증 정보를 자동으로
             //      , 컨트롤러의 메서드에서 주입시킬 수 있음 (@AuthenticationPrincipal)
-            setAuthenticationContext(request, user);
 
+            String requestURI = request.getRequestURI();
+            Boolean isDependentId = jwtProvider.getIsDependentIdFromJwt(token);
+            System.out.println("Extracted isDependentId: " + isDependentId);
+            if (Boolean.TRUE.equals(isDependentId) && requestURI.startsWith("/api/v1/schedule/")) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "You cannot access this API.");
+                return; // 더 이상 필터 체인을 진행하지 않음
+            }
+
+            setAuthenticationContext(request, user);
         } catch (Exception e) {
             e.printStackTrace();
         }
