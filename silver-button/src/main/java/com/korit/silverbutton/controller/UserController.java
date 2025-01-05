@@ -63,7 +63,6 @@ public class UserController {
         ResponseDto<Void> response = userService.deleteUser(userId);
         HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
-
     }
 
 }
