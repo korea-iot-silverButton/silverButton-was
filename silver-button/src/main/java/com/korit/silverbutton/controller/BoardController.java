@@ -16,8 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 
 //@CrossOrigin(origins = "http://localhost:3000")
 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
@@ -36,15 +36,13 @@ public class BoardController {
     private static final String BOARD_PUT = "/{id}";
     private static final String BOARD_DELETE = "/delete/{id}";
 
+
     @PostMapping(BOARD)
-    @PermitAll
     public ResponseEntity<ResponseDto<BoardResponseDto>> createBoard(
-//            @AuthenticationPrincipal PrincipalUser principalUser,
+            @AuthenticationPrincipal PrincipalUser principalUser,
             @Valid @RequestBody BoardRequestDto dto
     ) {
-        Long tempAuthorId = 1L; // 테스트용 사용자 ID (임Long tempAuthorId = 1L;의의 값 설정)
-//        ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto);
-        ResponseDto<BoardResponseDto> response = boardService.createBoard(tempAuthorId, dto);
+        ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -115,25 +113,21 @@ public class BoardController {
 
     @PutMapping(BOARD_PUT)
     public ResponseEntity<ResponseDto<BoardResponseDto>> updateBoard(
-//            @AuthenticationPrincipal PrincipalUser principalUser,
+            @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id,
             @Valid @RequestBody BoardRequestDto dto
     ){
-//        ResponseDto<BoardResponseDto> response = boardService.updateBoard(principalUser.getId(), id, dto);
-        Long tempAuthorId = 1L;
-        ResponseDto<BoardResponseDto> response = boardService.updateBoard(tempAuthorId, id, dto);
+        ResponseDto<BoardResponseDto> response = boardService.updateBoard(principalUser.getId(), id, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
     @DeleteMapping(BOARD_DELETE)
-    @PermitAll
     public ResponseEntity<ResponseDto<Void>> deleteBoard(
-//            @AuthenticationPrincipal PrincipalUser principalUser,
+            @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
     ) {
-//       ResponseDto<Void> response = boardService.deleteBoard(principalUser.getId(), id);
-       ResponseDto<Void> response = boardService.deleteBoard(null, id);
+       ResponseDto<Void> response = boardService.deleteBoard(principalUser.getId(), id);
        HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
        return ResponseEntity.status(status).body(response);
 

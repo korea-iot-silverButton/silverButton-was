@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface CommentService {
 
-    ResponseDto<CommentResponseDto> createComment(String userId, @Valid CommentRequestDto dto);
+    ResponseDto<CommentResponseDto> createComment(Long userId, @Valid CommentRequestDto dto);
 
     ResponseDto<List<CommentResponseDto>> getAllComments();
 
-    ResponseDto<Void> deleteComment(String userId, Long id);
+    ResponseDto<Void> deleteComment(Long userId, Long id);
 }
