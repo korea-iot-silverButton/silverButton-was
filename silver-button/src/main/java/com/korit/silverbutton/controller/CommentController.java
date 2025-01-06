@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(ApiMappingPattern.BOARD)
 @RequiredArgsConstructor
@@ -31,11 +32,16 @@ public class CommentController {
 
 
     @PostMapping(COMMENT)
+    @PermitAll
     public ResponseEntity<ResponseDto<CommentResponseDto>>  createComment(
-            @Valid @RequestBody CommentRequestDto dto,
-            @AuthenticationPrincipal PrincipalUser principalUser
+            @Valid @RequestBody CommentRequestDto dto
+//            @AuthenticationPrincipal PrincipalUser principalUser
+
     ){
-        ResponseDto<CommentResponseDto> reponse = commentService.createComment(principalUser.getUserId(), dto);
+
+//        ResponseDto<CommentResponseDto> reponse = commentService.createComment(principalUser.getId(), dto);
+        Long tempAuthorId = 1L;
+        ResponseDto<CommentResponseDto> reponse = commentService.createComment(tempAuthorId, dto);
         HttpStatus status = reponse.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(reponse);
     }
@@ -50,11 +56,14 @@ public class CommentController {
     }
 
     @DeleteMapping(COMMENT_DELETE)
+    @PermitAll
     public ResponseEntity<ResponseDto<Void>> deleteComment(
-            @AuthenticationPrincipal PrincipalUser principalUser,
+//            @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
     ) {
-        ResponseDto<Void> reponse = commentService.deleteComment(principalUser.getUserId(), id);
+//        ResponseDto<Void> reponse = commentService.deleteComment(principalUser.getUserId(), id);
+        Long tempAuthorId = 1L;
+        ResponseDto<Void> reponse = commentService.deleteComment(tempAuthorId, id);
         HttpStatus status = reponse.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(reponse);
     }

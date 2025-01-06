@@ -17,7 +17,12 @@ public class BoardLikeResponseDto {
         this.id = boardLike.getId();
         this.boardId = boardLike.getBoard().getId();
         this.likerId = boardLike.getLiker().getId();
-
         this.likes = boardLike.getBoard().getLikes();
+    }
+
+    // 새로운 생성자 추가
+    public BoardLikeResponseDto(Long boardId, int likes) {
+        this.boardId = boardId;
+        this.likes = likes;
     }
 }
