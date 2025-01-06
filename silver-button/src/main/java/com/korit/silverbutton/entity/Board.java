@@ -27,6 +27,9 @@ public class Board  {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "image_url", columnDefinition = "LONGTEXT", nullable = true)
+    private String imageUrl; // 추가된 필드
+
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition =  "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
@@ -41,8 +44,6 @@ public class Board  {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-
-
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {
@@ -50,5 +51,9 @@ public class Board  {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Board{id=" + id + ", title='" + title + "', likes=" + likes + ", views=" + views + "}";
+    }
 
 }
