@@ -15,7 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +34,8 @@ public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
 
 
+
+
     @Override
     public ResponseDto<BoardResponseDto> createBoard(Long userId, BoardRequestDto dto) {
 
@@ -40,6 +47,7 @@ public class BoardServiceImpl implements BoardService {
         BoardResponseDto data = null;
         String title = dto.getTitle();
         String content = dto.getContent();
+        String imageUrl = dto.getImageUrl();
 
 
 
@@ -55,6 +63,7 @@ public class BoardServiceImpl implements BoardService {
                     .user(user)
                     .title(title)
                     .content(content)
+                    .imageUrl(imageUrl)
                     .likes(0)
                     .views(0)
                     .createdAt(LocalDateTime.now())
@@ -99,8 +108,6 @@ public class BoardServiceImpl implements BoardService {
                     boardPage.getTotalPages(),
                     boardPage.getTotalElements()
             );
-
-            System.out.println("PagedResponseDto 생성된 데이터: " + paged);
 
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, paged);
 
@@ -216,9 +223,7 @@ public class BoardServiceImpl implements BoardService {
         String title = dto.getTitle();
         String content = dto.getContent();
 
-
         try {
-
             Optional<Board> boardOptional = boardRepository.findByUserIdAndId(userId, id);
             if(boardOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
@@ -242,11 +247,8 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public ResponseDto<Void> deleteBoard(Long userId, Long id) {
-
-
         try {
             Optional<Board> optionalBoard ;
-
             // userId가 null일 경우 userId 체크를 건너뜁니다.
             if (userId != null) {
                 optionalBoard = boardRepository.findByUserIdAndId(userId, id);
