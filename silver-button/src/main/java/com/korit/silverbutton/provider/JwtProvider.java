@@ -124,6 +124,14 @@ public class JwtProvider {
         return claims.get("userId", String.class);
     }
 
+    public String getUsernameFromEmailJwt(String token) {
+        // JWT에서 클레임 정보를 추출 - claim 객체에 저장
+        Claims claims = getClaims(token);
+
+        // 클레임에서 userId 값을 문자열 형태로 반환
+        return claims.get("username", String.class);
+    }
+
     /*
      * JWT 유효성 검증
      * @param token - JWT 토큰
@@ -161,4 +169,5 @@ public class JwtProvider {
         Claims claims = getClaims(token); // 토큰에서 클레임을 가져옵니다.
         return claims.get("isDependentLogin", Boolean.class); // 클레임에서 "isDependentId" 값을 추출합니다.
     }
+
 }
