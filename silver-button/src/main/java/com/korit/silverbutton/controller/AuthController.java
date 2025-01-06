@@ -9,7 +9,6 @@ import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.provider.JwtProvider;
 import com.korit.silverbutton.service.AuthService;
-import com.korit.silverbutton.service.DependentService;
 import com.korit.silverbutton.service.TokenBlacklistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
