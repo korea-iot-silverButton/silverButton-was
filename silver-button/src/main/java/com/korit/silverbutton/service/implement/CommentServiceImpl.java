@@ -6,6 +6,7 @@ import com.korit.silverbutton.dto.comment.Request.CommentRequestDto;
 import com.korit.silverbutton.dto.comment.Response.CommentResponseDto;
 import com.korit.silverbutton.entity.Board;
 import com.korit.silverbutton.entity.Comment;
+import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.BoardRepository;
 import com.korit.silverbutton.repository.CommentRepository;
 import com.korit.silverbutton.repository.UserRepository;
@@ -26,23 +27,26 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseDto<CommentResponseDto> createComment(String userId, CommentRequestDto dto) {
+    public ResponseDto<CommentResponseDto> createComment(Long userId, CommentRequestDto dto) {
         CommentResponseDto data = null;
         String content = dto.getContent();
         Long boardId = dto.getBoardId();
+        User user = userRepository.findById(userId).orElse(null);
 
 
         try {
+            if (boardId == null) {
+                return ResponseDto.setFailed(ResponseMessage.INVALID_POST_ID); // boardId가 null일 경우 처리
+            }
 
             Optional<Board> board = boardRepository.findById(boardId);
             if (!board.isPresent()) {
-                return ResponseDto.setFailed(ResponseMessage.INVALID_POST_ID);
+                return ResponseDto.setFailed(ResponseMessage.INVALID_POST_ID); // board가 없을 경우 처리
             }
-
             Comment comment = Comment.builder()
                     .content(content)
                     .board(board.get())
-                    .writer(userId)
+                    .writer(user)
                     .build();
             commentRepository.save(comment);
             data = new CommentResponseDto(comment);
@@ -71,10 +75,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public ResponseDto<Void> deleteComment(String userId, Long id) {
+    public ResponseDto<Void> deleteComment(Long userId, Long id) {
 
         try {
-            Optional<Comment> optionalComment = commentRepository.findByWriterAndId(userId, id);
+            Optional<Comment> optionalComment = commentRepository.findByWriter_IdAndId(userId, id);
 
             if(optionalComment.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);

@@ -9,13 +9,9 @@ import jakarta.validation.Valid;
 
 public interface BoardLikeService  {
 
-
-    ResponseDto<BoardLikeResponseDto> insertLike(Long userId, @Valid BoardLikeRequestDto dto);
-
-    ResponseDto<BoardLikeResponseDto> deleteLike(Long userId, Long id);
-
-
     User findUserById(Long likerId);
 
     Board findBoardById(Long boardId);
+
+    ResponseDto<BoardLikeResponseDto> toggleLike(Long userId, @Valid BoardLikeRequestDto dto);
 }
