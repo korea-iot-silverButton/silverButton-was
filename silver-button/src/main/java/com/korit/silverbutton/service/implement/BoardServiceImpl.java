@@ -33,7 +33,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/images/";
+
 
 
     @Override
@@ -47,6 +47,7 @@ public class BoardServiceImpl implements BoardService {
         BoardResponseDto data = null;
         String title = dto.getTitle();
         String content = dto.getContent();
+        String imageUrl = dto.getImageUrl();
 
 
 
@@ -62,6 +63,7 @@ public class BoardServiceImpl implements BoardService {
                     .user(user)
                     .title(title)
                     .content(content)
+                    .imageUrl(imageUrl)
                     .likes(0)
                     .views(0)
                     .createdAt(LocalDateTime.now())

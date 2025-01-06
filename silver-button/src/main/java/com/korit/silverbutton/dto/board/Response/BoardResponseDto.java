@@ -20,6 +20,7 @@ public class BoardResponseDto {
     private String username;
     private String title;
     private String content;
+    private String imageUrl;
     private LocalDateTime createdAt;
     private int likes;
     private int views;
@@ -32,6 +33,7 @@ public class BoardResponseDto {
         this.username = board.getUser().getName();
         this.title = board.getTitle();
         this.content = board.getContent();
+        this.imageUrl = board.getImageUrl();
         this.createdAt = board.getCreatedAt();
         this.likes = board.getLikes();
         this.views = board.getViews();
