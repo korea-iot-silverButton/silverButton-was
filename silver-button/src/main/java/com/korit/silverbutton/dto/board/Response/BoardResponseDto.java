@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Data
@@ -20,7 +22,8 @@ public class BoardResponseDto {
     private String username;
     private String title;
     private String content;
-    private String imageUrl;
+    private String textOnly;
+    private String imageUrl; // 업로드된 이미지 URL
     private LocalDateTime createdAt;
     private int likes;
     private int views;
@@ -42,5 +45,8 @@ public class BoardResponseDto {
                 .map(CommentResponseDto::new)
                 .collect(Collectors.toList()):
                 Collections.emptyList();
+
+
     }
+
 }
