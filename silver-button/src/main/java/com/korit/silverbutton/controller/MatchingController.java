@@ -31,7 +31,7 @@ public class MatchingController {
     }
 
 
-    // 특정 매칭 조회
+    // 특정 매칭 조회 요양사 특정인의 정보
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<MatchingResponseDto>> getMatchingById(
             @AuthenticationPrincipal Long id
