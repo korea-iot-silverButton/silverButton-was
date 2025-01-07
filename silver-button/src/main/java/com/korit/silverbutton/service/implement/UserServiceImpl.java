@@ -2,6 +2,7 @@ package com.korit.silverbutton.service.implement;
 
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.UpdateRequestDto;
 import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.dto.User.Request.UserRequestDto;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,18 +56,22 @@ public class UserServiceImpl implements UserService {
             if (userOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
-            UserProfileDto userProfileDto= new UserProfileDto(userOptional.get());
+            UserProfileDto userProfileDto = new UserProfileDto(userOptional.get());
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, userProfileDto);
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-    } //http://localhost:4040/api/v1/manage/profile 오퍼 확인
+    }
+
+
+
+    //http://localhost:4040/api/v1/manage/profile 오퍼 확인
 
     // 사용자 정보 수정 및 업데이트
     @Override
-    public ResponseDto<UserProfileDto> updateUser(String userId, UserRequestDto dto) {
+    public ResponseDto<UserProfileDto> updateUser(String userId, UpdateRequestDto dto) {
         try {
             // 사용자 ID로 해당 사용자 검색
             Optional<User> userOptional = userRepository.findByUserId(userId);
@@ -97,7 +103,7 @@ public class UserServiceImpl implements UserService {
                     .email(dto.getEmail())  // 이메일 변경
                     .phone(dto.getPhone())  // 전화번호 변경
                     .nickname(dto.getNickname())  // 닉네임 변경
-                    .build(); // 이메일, phone, 닉네임만 변경가능하다는 뜻 더 있으면 추가 가능
+                    .build(); // 이메일, phone, 닉네임만 변경가능
 
             // 사용자 정보 저장
             userRepository.save(user);
@@ -130,6 +136,86 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-    } //http://localhost:4040/api/v1/manage/delete-account 작동 확인
+    }
+    //http://localhost:4040/api/v1/manage/delete-account 작동 확인
+
+    // 프로필 이미지 업로드
+    public ResponseDto<String> uploadFile(String userId, MultipartFile file) {
+        try {
+            // 사용자 확인
+            Optional<User> userOptional = userRepository.findByUserId(userId);
+            if (userOptional.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            }
+
+            // 프로필 이미지 업로드
+            String filePath = profileImgService.uploadFile(file);
+
+            if (filePath == null) {
+                return ResponseDto.setFailed("PROFILE_IMG_UPLOAD_FAIL");
+            }
+
+            // 이미지 경로 DB에 저장
+            User user = userOptional.get();
+            user.setProfileImg(filePath);
+            userRepository.save(user);
+
+            return ResponseDto.setSuccess("PROFILE_IMG_UPLOAD_SUCCESS", filePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed("PROFILE_IMG_UPDATE_FAIL");
+        }
+    }
+
+    // 프로필 이미지 삭제
+    public ResponseDto<Void> deleteFile(String userId) {
+        try {
+            // 사용자 확인
+            Optional<User> userOptional = userRepository.findByUserId(userId);
+            if (userOptional.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            }
+
+            User user = userOptional.get();
+            String profileImg = user.getProfileImg();
+
+            // 기존 프로필 이미지 삭제
+            if (profileImg != null) {
+                boolean deleted = profileImgService.deleteFile(profileImg);
+                if (deleted) {
+                    user.setProfileImg(null);
+                    userRepository.save(user);
+                    return ResponseDto.setSuccess("PROFILE_IMG_DELETE_SUCCESS", null);
+                } else {
+                    return ResponseDto.setFailed("PROFILE_IMG_DELETE_FAIL");
+                }
+            }
+            return ResponseDto.setFailed("PROFILE_IMG_DELETE_FAIL");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed("PROFILE_IMG_DELETE_FAIL");
+        }
+    }
+
+    // 프로필 이미지 조회
+    public ResponseDto<String> getProfileImg(String userId) {
+        try {
+            Optional<User> userOptional = userRepository.findByUserId(userId);
+            if (userOptional.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            }
+
+            String profileImg = userOptional.get().getProfileImg();
+            if (profileImg != null) {
+                return ResponseDto.setSuccess("PROFILE_IMG_NOT_FOUND", profileImg);
+            }
+            return ResponseDto.setFailed("PROFILE_IMG_NOT_FOUND");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed("PROFILE_IMG_NOT_FOUND");
+        }
+    }
 }
+
 // 프로필 이미지만 어떻게 좀 해야되는데
