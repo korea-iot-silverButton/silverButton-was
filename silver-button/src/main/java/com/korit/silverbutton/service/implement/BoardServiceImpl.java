@@ -265,6 +265,7 @@ public class BoardServiceImpl implements BoardService {
                 optionalBoard = boardRepository.findById(id);  // userId 없이 id로만 조회
             }
             Board board = optionalBoard.get();
+
             boardRepository.delete(board);
 
         } catch (Exception e) {
