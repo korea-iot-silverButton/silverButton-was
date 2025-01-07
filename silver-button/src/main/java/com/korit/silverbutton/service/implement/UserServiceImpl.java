@@ -23,6 +23,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final ProfileImgService profileImgService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     // user 조회
@@ -32,6 +34,7 @@ public class UserServiceImpl implements UserService {
             if (userOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
+
             List<User> allUsers = userRepository.findAll();
             List<UserResponseDto> data = allUsers.stream()
                     .map(UserResponseDto::new)
