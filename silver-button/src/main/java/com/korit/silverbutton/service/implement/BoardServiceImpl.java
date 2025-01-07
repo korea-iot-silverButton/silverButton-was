@@ -32,7 +32,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final ImageServiceImpl imageServiceImpl;
+
 
 
 
@@ -50,14 +50,7 @@ public class BoardServiceImpl implements BoardService {
         String content = dto.getContent();
         String imageUrl = null;
 
-        // 이미지 업로드 로직
-        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
-            try {
-                imageUrl = imageServiceImpl.uploadImage(dto.getImage());  // MultipartFile로 업로드
-            } catch (Exception e) {
-                return ResponseDto.setFailed("이미지 업로드 실패: " + e.getMessage());
-            }
-        }
+
 
 
         try {
