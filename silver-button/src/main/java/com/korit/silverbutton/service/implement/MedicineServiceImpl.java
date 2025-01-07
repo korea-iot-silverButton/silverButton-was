@@ -37,20 +37,20 @@ public class MedicineServiceImpl implements MedicineService {
         String encodedServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8);
 
         try {
-            var firstApiResponse = webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .scheme("https")
-                            .host("apis.data.go.kr")
-                            .path("/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01")
-                            .queryParam("serviceKey", "jptKXkEhoWS2pwVQ34adwBGaLMbSQxl8jipaqrcP3oFbUD%2BVSG73q0mvxhSxJ46NK3v%2BsGLTPy0bH0oTQmuSdQ%3D%3D")
-                            .queryParam("type", "json")
-                            .queryParam("pageNo", pageNo)
-                            .queryParam("numOfRows", numOfRows)
-                            .queryParam("ITEM_NAME", medicineName)
-                            .build())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+//            var firstApiResponse = webClient.get()
+//                    .uri(uriBuilder -> uriBuilder
+//                            .scheme("https")
+//                            .host("apis.data.go.kr")
+//                            .path("/1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01")
+//                            .queryParam("serviceKey", "jptKXkEhoWS2pwVQ34adwBGaLMbSQxl8jipaqrcP3oFbUD%2BVSG73q0mvxhSxJ46NK3v%2BsGLTPy0bH0oTQmuSdQ%3D%3D")
+//                            .queryParam("type", "json")
+//                            .queryParam("pageNo", pageNo)
+//                            .queryParam("numOfRows", numOfRows)
+//                            .queryParam("ITEM_NAME", medicineName)
+//                            .build())
+//                    .retrieve()
+//                    .bodyToMono(String.class)
+//                    .block();
 
             var secondApiResponse = webClient.get()
                     .uri(uriBuilder -> uriBuilder
@@ -69,7 +69,7 @@ public class MedicineServiceImpl implements MedicineService {
 
             System.out.println("Service Key: " + serviceKey);
 
-            data.add(new MedicineApi1ResponseDto("API1", firstApiResponse));
+//            data.add(new MedicineApi1ResponseDto("API1", firstApiResponse));
             data.add(new MedicineApi2ResponseDto("API2", secondApiResponse));
 
         } catch (Exception e) {
