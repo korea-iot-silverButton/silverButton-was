@@ -2,6 +2,7 @@ package com.korit.silverbutton.service.implement;
 
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.dto.User.Request.UserRequestDto;
 import com.korit.silverbutton.entity.User;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,64 +23,46 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ProfileImgService profileImgService;
-
-    @Override
-    public ResponseDto<UserResponseDto> signInUser(String userId, String password) {
-        try {
-            // 아이디로 사용자 조회
-            Optional<User> userOptional = userRepository.findByUserId(userId);
-            if (userOptional.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.DUPLICATED_USER_ID); // 아이디 중복 시 반환 메시지
-            }
-
-            User user = userOptional.get(); // 사용자 정보 가져오기
-
-            // 이메일 중복 체크
-            String email = user.getEmail(); // 사용자 이메일 가져오기
-            if (userRepository.existsByEmail(email) && !user.getUserId().equals(userId)) {
-                return ResponseDto.setFailed(ResponseMessage.DUPLICATED_USER_EMAIL); // 이메일 중복 시 반환 메시지
-            }
-
-            // 비밀번호 일치 체크
-            if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
-                return ResponseDto.setFailed(ResponseMessage.NOT_MATCH_PASSWORD);
-            }
-
-            // 로그인 성공
-            UserResponseDto userResponseDto = new UserResponseDto(user);
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, userResponseDto);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-        }
-    }
 
     @Override
     // user 조회
-    public ResponseDto<UserResponseDto> getAllUsers(String userId) {
+    public ResponseDto<List<UserResponseDto>> getAllUsers(String userId) {
         try{
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
-
-            User user = userOptional.get();
-            UserResponseDto data = new UserResponseDto(user);
+            List<User> allUsers = userRepository.findAll();
+            List<UserResponseDto> data = allUsers.stream()
+                    .map(UserResponseDto::new)
+                    .toList();
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+    }//http://localhost:4040/api/v1/manage/allusers 오퍼레이션 확인
+
+    @Override
+    public ResponseDto<UserProfileDto> getUser(String userId) {
+        try {
+            Optional<User> userOptional = userRepository.findByUserId(userId);
+
+            if (userOptional.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            }
+            UserProfileDto userProfileDto= new UserProfileDto(userOptional.get());
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, userProfileDto);
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-
-    }
+    } //http://localhost:4040/api/v1/manage/profile 오퍼 확인
 
     // 사용자 정보 수정 및 업데이트
     @Override
-    public ResponseDto<UserResponseDto> updateUser(String userId, UserRequestDto dto) {
+    public ResponseDto<UserProfileDto> updateUser(String userId, UserRequestDto dto) {
         try {
             // 사용자 ID로 해당 사용자 검색
             Optional<User> userOptional = userRepository.findByUserId(userId);
@@ -89,51 +73,51 @@ public class UserServiceImpl implements UserService {
             // 사용자가 존재하면 해당 사용자 객체 가져오기
             User user = userOptional.get();
 
-            // 이메일 중복 체크
+            // 이메일 중복 체크 (이메일이 변경되었을 경우만 체크)
             if (!user.getEmail().equals(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
                 return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
             }
-            // userId 중복 체크
-            if (!user.getUserId().equals(dto.getUserId()) && userRepository.existsByUserId(dto.getUserId())) {
+
+            // 전화번호 중복 체크 (전화번호가 변경되었을 경우만 체크)
+            if (!user.getPhone().equals(dto.getPhone()) && userRepository.existsByPhone(dto.getPhone())) {
                 return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
             }
-            // 닉네임 중복 체크
+
+            // 닉네임 중복 체크 (닉네임이 변경되었을 경우만 체크)
             if (!user.getNickname().equals(dto.getNickname()) && userRepository.existsByNickname(dto.getNickname())) {
                 return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
             }
 
-            // 사용자 정보 업데이트
+            // 비밀번호는 변경하지 않음
+            // 비밀번호 변경 없이 다른 값들만 업데이트
             user = user.toBuilder()
-                    .email(dto.getEmail())
-                    .phone(dto.getPhone())
-                    .nickname(dto.getNickname())
-                    .password(dto.getPassword())
-                    .build();
+                    .email(dto.getEmail())  // 이메일 변경
+                    .phone(dto.getPhone())  // 전화번호 변경
+                    .nickname(dto.getNickname())  // 닉네임 변경
+                    .build(); // 이메일, phone, 닉네임만 변경가능하다는 뜻 더 있으면 추가 가능
 
             // 사용자 정보 저장
             userRepository.save(user);
 
             // 업데이트된 사용자 정보 반환
-            UserResponseDto data = new UserResponseDto(user);
+            UserProfileDto data = new UserProfileDto(user);
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-    }
+    } // http://localhost:4040/api/v1/manage/allusers 작동 함
 
 
     @Override
     public ResponseDto<Void> deleteUser(String userId) {
         try {
-            // 사용자 ID로 검색
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
 
-            // 사용자 존재하면 삭제
             User user = userOptional.get();
             userRepository.delete(user);
 
@@ -143,5 +127,6 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-    }
+    } //http://localhost:4040/api/v1/manage/delete-account 작동 확인
 }
+// 프로필 이미지만 어떻게 좀 해야되는데
