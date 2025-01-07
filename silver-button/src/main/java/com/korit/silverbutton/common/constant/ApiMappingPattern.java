@@ -9,4 +9,5 @@ public class ApiMappingPattern {
     public static final String MEDICINE= "api/v1/medicine";
     public static final String MESSAGE = "/api/v1/message";
     public static final String MATCHING = "/api/v1/matching";
+    public static final String MANAGE= "/api/v1/manage";
 }
