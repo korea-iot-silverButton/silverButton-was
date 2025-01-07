@@ -13,7 +13,6 @@ import java.util.UUID;
 @Service
 public class ProfileImgService {
 
-
     public String uploadFile(MultipartFile file) {
         if(file == null) {return null;}
 
