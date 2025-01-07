@@ -48,4 +48,14 @@ public class ResponseMessage {
     public static final String MESSAGE_SEND_FAIL = "Failed to send authentication number."; // 인증 번호 전송 실패 시 반환 메시지
     public static final String LOGOUT_FAILED = "Logout Failed";
     public static final String UNAUTHORIZED = "NOT Dependent error";
+
+    // 프로필 이미지 관련 메시지
+    public static final String PROFILE_IMG_UPLOAD_SUCCESS = "Profile image uploaded successfully."; // 프로필 이미지 업로드 성공
+    public static final String PROFILE_IMG_UPLOAD_FAIL = "Failed to upload profile image."; // 프로필 이미지 업로드 실패
+    public static final String PROFILE_IMG_DELETE_SUCCESS = "Profile image deleted successfully."; // 프로필 이미지 삭제 성공
+    public static final String PROFILE_IMG_DELETE_FAIL = "Failed to delete profile image."; // 프로필 이미지 삭제 실패
+    public static final String PROFILE_IMG_NOT_FOUND = "Profile image not found."; // 프로필 이미지 없음
+    public static final String PROFILE_IMG_UPDATE_SUCCESS = "Profile image updated successfully."; // 프로필 이미지 업데이트 성공
+    public static final String PROFILE_IMG_UPDATE_FAIL = "Failed to update profile image."; // 프로필 이미지 업데이트 실패
+
 }
