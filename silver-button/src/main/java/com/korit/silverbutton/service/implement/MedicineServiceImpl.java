@@ -57,7 +57,7 @@ public class MedicineServiceImpl implements MedicineService {
                             .scheme("https")
                             .host("apis.data.go.kr")
                             .path("/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList")
-                            .queryParam("ServiceKey", "jptKXkEhoWS2pwVQ34adwBGaLMbSQxl8jipaqrcP3oFbUD%2BVSG73q0mvxhSxJ46NK3v%2BsGLTPy0bH0oTQmuSdQ%3D%3D")
+                            .queryParam("ServiceKey", "%2F7RqWGkZNa41%2BJu%2BUI%2FXto4k4P%2FIYYswK8OVRWcdkKGqC10Hf9BMYlzB%2BeZKemj6aT0TivPXHpJDOs2gKeJSYQ%3D%3D")
                             .queryParam("type", "json")
                             .queryParam("pageNo", pageNo)
                             .queryParam("numOfRows", numOfRows)
