@@ -28,7 +28,7 @@ public class Board  {
     private String content;
 
     @Column(name = "image_url", columnDefinition = "LONGTEXT", nullable = true)
-    private String imageUrl; // 추가된 필드
+    private String imageUrl; // 이미지 URL 필드
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition =  "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
