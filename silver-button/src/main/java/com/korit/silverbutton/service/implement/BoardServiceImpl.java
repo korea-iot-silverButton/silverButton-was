@@ -10,6 +10,7 @@ import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.BoardRepository;
 import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.BoardService;
+import com.korit.silverbutton.service.ProfileImgService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,8 +33,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-
-
+    private final ProfileImgService profileImgService;
 
 
 
@@ -50,8 +50,11 @@ public class BoardServiceImpl implements BoardService {
         String content = dto.getContent();
         String imageUrl = null;
 
-
-
+        // 이미지 파일 처리 (Content에서 이미지 URL 추출)
+        MultipartFile imageFile = dto.getImage(); // 요청에서 이미지를 받을 때 MultipartFile로 받기
+        if (imageFile != null && !imageFile.isEmpty()) {
+            imageUrl = profileImgService.uploadFile(imageFile); // 이미지 업로드 후 URL 반환
+        } 
 
         try {
             User user = userRepository.findById(userId)
