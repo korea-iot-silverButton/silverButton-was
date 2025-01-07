@@ -2,6 +2,7 @@ package com.korit.silverbutton.controller;
 
 import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.UpdateRequestDto;
 import com.korit.silverbutton.dto.User.Request.UserRequestDto;
 import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
@@ -46,7 +47,8 @@ public class UserController {
     @PutMapping("/update")
     public ResponseEntity<ResponseDto<UserProfileDto>> updateUser(
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @RequestBody UserRequestDto dto // 요청 데이터를 받기 위해 @RequestBody 사용
+            @RequestBody @ModelAttribute UpdateRequestDto dto // 요청 데이터를 받기 위해 @RequestBody 사용
+            // @ModelAttribute >> formdata를 전송하기 위해 해당 어노테이션 필요
     ) {
         ResponseDto<UserProfileDto> response = userService.updateUser(principalUser.getUserId(), dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
