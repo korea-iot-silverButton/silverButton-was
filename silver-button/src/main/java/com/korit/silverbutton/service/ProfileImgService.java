@@ -18,7 +18,7 @@ public class ProfileImgService {
         if(file == null) {return null;}
 
         String newFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        String rootPath = "C:/silverButtonImg/upload/";
+        String rootPath = "C://korea-iot-silverButton/silverButtonImg/upload/";
         String filePath = "profile/" + newFileName;
 
         File f = new File(rootPath, "profile");
