@@ -19,4 +19,9 @@ public class UpdateRequestDto {
 
     @NotBlank
     private String password;
+
+    @NotBlank
+    private String nickname;
+
+    private String profileImg;
 }

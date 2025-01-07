@@ -60,4 +60,11 @@ public class User {
     private String specialization;
 
     private Long protectorId;
+
+    public void setProfileImg(String filePath) {
+    }
+
+    public String getProfileImg() {
+        return null;
+    }
 }
