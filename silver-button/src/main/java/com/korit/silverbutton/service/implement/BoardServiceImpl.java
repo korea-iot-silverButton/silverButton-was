@@ -124,7 +124,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id) {
+    public ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long userId, Long id) {
         BoardResponseDto data = null;
         Long boardId = id;
 
