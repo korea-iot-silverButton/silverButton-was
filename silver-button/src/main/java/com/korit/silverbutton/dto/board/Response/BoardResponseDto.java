@@ -1,5 +1,6 @@
 package com.korit.silverbutton.dto.board.Response;
 
+import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.dto.comment.Response.CommentResponseDto;
 import com.korit.silverbutton.entity.Board;
 import lombok.Data;
@@ -22,12 +23,13 @@ public class BoardResponseDto {
     private String username;
     private String title;
     private String content;
-    private String textOnly;
     private String imageUrl; // 업로드된 이미지 URL
     private LocalDateTime createdAt;
     private int likes;
     private int views;
     private List<CommentResponseDto> comments;
+    private Long currentUserId;  // 현재 로그인 사용자 ID
+
 
 
     public BoardResponseDto(Board board) {
@@ -45,6 +47,8 @@ public class BoardResponseDto {
                 .map(CommentResponseDto::new)
                 .collect(Collectors.toList()):
                 Collections.emptyList();
+        this.currentUserId = null;  // 현재 로그인 사용자 ID
+
 
 
     }
