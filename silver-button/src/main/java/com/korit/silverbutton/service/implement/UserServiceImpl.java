@@ -5,7 +5,6 @@ import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.UpdateRequestDto;
 import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
-import com.korit.silverbutton.dto.User.Request.UserRequestDto;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.ProfileImgService;
@@ -71,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
     // 사용자 정보 수정 및 업데이트
     @Override
-    public ResponseDto<UserProfileDto> updateUser(String userId, UpdateRequestDto dto) {
+    public ResponseDto<UserProfileDto> updateUser(String userId, UserProfileDto dto) {
         try {
             // 사용자 ID로 해당 사용자 검색
             Optional<User> userOptional = userRepository.findByUserId(userId);
