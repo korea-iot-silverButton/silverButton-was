@@ -47,7 +47,7 @@ public class UserController {
     @PutMapping("/update")
     public ResponseEntity<ResponseDto<UserProfileDto>> updateUser(
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @RequestBody @ModelAttribute UpdateRequestDto dto // 요청 데이터를 받기 위해 @RequestBody 사용
+            @RequestBody @ModelAttribute UserProfileDto dto // 요청 데이터를 받기 위해 @RequestBody 사용
             // @ModelAttribute >> formdata를 전송하기 위해 해당 어노테이션 필요
     ) {
         ResponseDto<UserProfileDto> response = userService.updateUser(principalUser.getUserId(), dto);
@@ -63,4 +63,5 @@ public class UserController {
         HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }//complete
+
 }

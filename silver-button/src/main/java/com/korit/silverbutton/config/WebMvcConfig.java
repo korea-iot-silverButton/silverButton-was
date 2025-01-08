@@ -12,13 +12,18 @@ import java.io.IOException;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Value("${file.upload-dir}")
+    @Value("${root.path}")
     private String rootPath;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Ensure rootPath ends with a slash for consistency
+        if (!rootPath.endsWith("/")) {
+            rootPath += "/";
+        }
+
         registry.addResourceHandler("/file/**")
-                .addResourceLocations("file:///" + rootPath + "/file/")
+                .addResourceLocations("file:///" + rootPath)
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver() {
                     @Override
