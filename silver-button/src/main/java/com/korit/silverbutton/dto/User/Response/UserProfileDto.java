@@ -10,7 +10,7 @@ public class UserProfileDto {
     private final String phone;
     private final String email;
     private final String nickname;
-    private final Long protectorId;
+    private final Long protectorId; // 노인의 경우 요양사 아이디
 
     public UserProfileDto(User user){
         this.userId= user.getUserId();
