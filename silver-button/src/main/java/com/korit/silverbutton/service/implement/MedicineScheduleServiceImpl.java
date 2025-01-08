@@ -7,6 +7,7 @@ import com.korit.silverbutton.dto.medicine.MedicineScheduleResponseDto;
 import com.korit.silverbutton.entity.MedicineSchedule;
 import com.korit.silverbutton.repository.MedicineScheduleRepository;
 import com.korit.silverbutton.service.MedicineScheduleService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MedicineScheduleServiceImpl implements MedicineScheduleService {
     private final MedicineScheduleRepository medicineScheduleRepository; //
@@ -24,7 +26,7 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
     public ResponseDto<MedicineScheduleResponseDto> postMedicineByUserId(String userId, MedicineScheduleRequestDto dto) {
         MedicineScheduleResponseDto data = null;
         String itemName = dto.getItemName();
-        String itemSeq = dto.getItemSeq();
+        Long itemSeq = dto.getItemSeq();
         String useMethodQesitm = dto.getUseMethodQesitm();
         String atpnQesitm = dto.getAtpnQesitm();
         String seQesitm = dto.getSeQesitm();
@@ -76,7 +78,7 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
 
     // 약품 정보 단건 조회
     @Override
-    public ResponseDto<MedicineScheduleResponseDto> getMedicineByUserIdAndItemSeq(String userId, String itemSeq) {
+    public ResponseDto<MedicineScheduleResponseDto> getMedicineByUserIdAndItemSeq(String userId, Long itemSeq) {
         MedicineScheduleResponseDto data = null;
 
         try {
@@ -96,19 +98,14 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
 
     // 약품 정보 삭제
     @Override
-    public ResponseDto<MedicineScheduleResponseDto> deleteMedicineByUserIdAndItemSeq(String userId, String itemSeq) {
+    public ResponseDto<Boolean> deleteMedicineByUserIdAndItemSeq(String userId, Long itemSeq) {
 
         try {
-            Optional<MedicineSchedule> optionalMedicineSchedule = medicineScheduleRepository.deleteMedicineByUserIdAndItemSeq(userId, itemSeq);
-            if (optionalMedicineSchedule.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-            }
-            MedicineSchedule medicineSchedule = optionalMedicineSchedule.get();
-            medicineScheduleRepository.delete(medicineSchedule);
+            medicineScheduleRepository.deleteMedicineByUserIdAndItemSeq(userId, itemSeq);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, true);
     }
 }

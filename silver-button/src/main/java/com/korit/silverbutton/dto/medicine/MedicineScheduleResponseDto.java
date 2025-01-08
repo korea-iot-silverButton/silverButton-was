@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MedicineScheduleResponseDto {
-    private String itemSeq;
+    private Long itemSeq;
 
     private String itemName;
 
