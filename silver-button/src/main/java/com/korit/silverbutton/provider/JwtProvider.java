@@ -68,7 +68,7 @@ public class JwtProvider {
      * @param : 사용자 정보 (User 객체)
      * @return : 생성된 JWT 토큰 문자열
      * */
-    public String generateJwtToken(String userId, boolean isDependentLogin) {
+    public String generateJwtToken(String userId, boolean isDependentLogin, String role) {
         return Jwts.builder()
                 .claim("userId", userId) // 사용자 ID 추가
                 .claim("isDependentLogin", isDependentLogin) // 간편 로그인 여부 추가
@@ -169,5 +169,4 @@ public class JwtProvider {
         Claims claims = getClaims(token); // 토큰에서 클레임을 가져옵니다.
         return claims.get("isDependentLogin", Boolean.class); // 클레임에서 "isDependentId" 값을 추출합니다.
     }
-
 }
