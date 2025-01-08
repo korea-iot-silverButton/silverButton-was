@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.korit.silverbutton.common.constant.ApiMappingPattern.MEDICINE;
+
 @RestController
-@RequestMapping("/api/v1/medicine-schedule")
+@RequestMapping(MEDICINE)
 @RequiredArgsConstructor
 public class MedicineScheduleController {
 
