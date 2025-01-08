@@ -19,8 +19,6 @@ public interface BoardService {
 
     ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getAllBoards(int page, int size);
 
-
-
     ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByTitle(String keyword, int page, int size);
 
     ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByUserName(String name, int page, int size);
@@ -29,7 +27,7 @@ public interface BoardService {
 
     ResponseDto<Void> deleteBoard(Long userId, Long id);
 
-    ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id);
+    ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long userId, Long id);
 
 
 }

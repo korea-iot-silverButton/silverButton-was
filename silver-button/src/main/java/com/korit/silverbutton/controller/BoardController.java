@@ -103,9 +103,10 @@ public class BoardController {
     @GetMapping(BOARD_ID)
     @PermitAll
     public ResponseEntity<ResponseDto<BoardResponseDto>> getBoardById(
+            @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
     ) {
-        ResponseDto<BoardResponseDto> response = boardService.getBoardAndIncreaseViews(id);
+        ResponseDto<BoardResponseDto> response = boardService.getBoardAndIncreaseViews(principalUser.getId(), id);
 
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
