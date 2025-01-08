@@ -60,7 +60,6 @@ public class ScheduleController {
     }
 
     // 선택된 본인의 스케줄 삭제
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseDto<Void>> deleteSchedule(@PathVariable Long id, @AuthenticationPrincipal PrincipalUser principalUser){
         ResponseDto<Void> result = scheduleservice.deleteSchedule(id, principalUser.getId());

@@ -147,9 +147,10 @@ public class AuthServiceImpl implements AuthService {
             if (!bCryptpasswordEncoder.matches(password, user.getPassword())) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_MATCH_PASSWORD);
             }
+            String role= user.getRole();
 
             // JWT 생성시 isDependentLogin 값은 false로 설정
-            String token = jwtProvider.generateJwtToken(userId, false);
+            String token = jwtProvider.generateJwtToken(userId, false, role);
             int exprTime = jwtProvider.getExpiration();
 
             data = new SignInResponseDto(user, token, exprTime);
@@ -183,9 +184,10 @@ public class AuthServiceImpl implements AuthService {
             if (!"노인".equals(user.getRole())) {
                 return ResponseDto.setFailed(ResponseMessage.UNAUTHORIZED);
             }
+            String role= user.getRole();
 
             // JWT 생성시 isDependentLogin 값은 true로 설정
-            String token = jwtProvider.generateJwtToken(user.getUserId(), true);
+            String token = jwtProvider.generateJwtToken(user.getUserId(), true, role);
             int exprTime = jwtProvider.getExpiration();
             data = new SignInResponseDto(user, token, exprTime);
 
