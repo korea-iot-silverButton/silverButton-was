@@ -2,7 +2,6 @@ package com.korit.silverbutton.service.implement;
 
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.ResponseDto;
-import com.korit.silverbutton.dto.UpdateRequestDto;
 import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.entity.User;
@@ -117,6 +116,46 @@ public class UserServiceImpl implements UserService {
         }
     } // http://localhost:4040/api/v1/manage/allusers 작동 함
 
+    @Override
+    public ResponseDto<UserProfileDto> updatePassword(String userId, String currentPassword, String newPassword) {
+        try {
+            // 사용자 ID로 해당 사용자 검색
+            Optional<User> userOptional = userRepository.findByUserId(userId);
+            if (userOptional.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            }
+
+            // 사용자가 존재하면 해당 사용자 객체 가져오기
+            User user = userOptional.get();
+
+            // 현재 비밀번호 검증 (입력한 비밀번호가 DB에 저장된 비밀번호와 일치하는지 확인)
+            if (!bCryptPasswordEncoder.matches(currentPassword, user.getPassword())) {
+                return ResponseDto.setFailed("CURRENT_PASSWORD_INCORRECT");
+            }
+
+            // 새 비밀번호가 너무 간단하지 않은지 추가적으로 체크할 수 있음 (예: 길이, 특수문자 포함 등)
+            if (newPassword.length() < 8) {
+                return ResponseDto.setFailed("NEW_PASSWORD_TOO_SHORT");
+            }
+
+            // 새 비밀번호 암호화
+            String encodedNewPassword = bCryptPasswordEncoder.encode(newPassword);
+
+            // 비밀번호만 변경
+            user.setPassword(encodedNewPassword);
+
+            // 사용자 정보 저장
+            userRepository.save(user);
+
+            // 변경된 사용자 정보를 반환
+            UserProfileDto data = new UserProfileDto(user);
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+    }
 
     @Override
     public ResponseDto<Void> deleteUser(String userId) {
