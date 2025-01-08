@@ -3,12 +3,14 @@ package com.korit.silverbutton.controller;
 import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.UpdateRequestDto;
+import com.korit.silverbutton.dto.User.Request.UpdatePasswordRequestDto;
 import com.korit.silverbutton.dto.User.Request.UserRequestDto;
 import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Lazy;
@@ -54,6 +56,21 @@ public class UserController {
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     } // complete
+
+    // 비밀번호 업데이트 API
+    @PutMapping("/update-password")
+    public ResponseEntity<ResponseDto<UserProfileDto>> updatePassword(
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @RequestBody @Valid UpdatePasswordRequestDto dto) {
+
+        // 비밀번호 업데이트 처리
+        ResponseDto<UserProfileDto> response = userService.updatePassword(
+                principalUser.getUserId(), dto.getCurrentPassword(), dto.getNewPassword());
+
+        // 상태 코드 설정 (성공이면 200, 실패하면 400)
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
 
     @DeleteMapping("/delete-account")
     public ResponseEntity<ResponseDto<Void>> deleteUser(
