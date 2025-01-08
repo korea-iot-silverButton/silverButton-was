@@ -6,6 +6,7 @@ import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.UserRepository;
+import com.korit.silverbutton.service.MailService;
 import com.korit.silverbutton.service.ProfileImgService;
 import com.korit.silverbutton.service.UserService;
 
@@ -23,8 +24,9 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final ProfileImgService profileImgService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ProfileImgService profileImgService; // 프로필 이미지 추가
+    private final BCryptPasswordEncoder bCryptPasswordEncoder; // 비번 검증
+    private final MailService mailService; // 이메일 인증을 위한 서비스 주입
 
     @Override
     // user 조회
@@ -206,10 +208,10 @@ public class UserServiceImpl implements UserService {
     }
 
     // 프로필 이미지 삭제
-    public ResponseDto<Void> deleteFile(String userId) {
+    public ResponseDto<Void> deleteFile(String filePath) {
         try {
             // 사용자 확인
-            Optional<User> userOptional = userRepository.findByUserId(userId);
+            Optional<User> userOptional = userRepository.findByUserId(filePath);
             if (userOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
@@ -254,6 +256,8 @@ public class UserServiceImpl implements UserService {
             return ResponseDto.setFailed("PROFILE_IMG_NOT_FOUND");
         }
     }
+
 }
 
-// 프로필 이미지만 어떻게 좀 해야되는데
+
+
