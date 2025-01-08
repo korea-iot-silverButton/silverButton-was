@@ -25,6 +25,8 @@ public interface UserService {
 //    ResponseDto<UserProfileDto> updateUser(String userId, UpdateRequestDto dto) // http://localhost:4040/api/v1/manage/allusers 작동 함
 //    ;
 
+    ResponseDto<UserProfileDto> updatePassword(String userId, String currentPassword, String newPassword);
+
     // user 삭제
     ResponseDto<Void> deleteUser(String userId);
 
