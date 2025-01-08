@@ -19,7 +19,7 @@ public class MailController {
 
     @PostMapping("/send")
     public String sendEmail(@RequestBody SendMailRequestDto mailDto) throws MessagingException {
-        return mailService.sendSimpleMessage(mailDto.getEmail(), mailDto.getUsername());
+        return mailService.sendSimpleMessage(mailDto.getEmail(), mailDto.getUserId());
     }
 
     @GetMapping("/verify")
