@@ -12,7 +12,7 @@ public interface MedicineScheduleRepository extends JpaRepository<MedicineSchedu
 
     Optional<List<MedicineSchedule>> getMedicineAllByUserId(String userId);
 
-    Optional<MedicineSchedule> getMedicineByUserIdAndItemSeq(String userId, String itemSeq);
+    Optional<MedicineSchedule> getMedicineByUserIdAndItemSeq(String userId, Long itemSeq);
 
-    Optional<MedicineSchedule> deleteMedicineByUserIdAndItemSeq(String userId, String itemSeq);
+    Optional<MedicineSchedule> deleteMedicineByUserIdAndItemSeq(String userId, Long itemSeq);
 }

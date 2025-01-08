@@ -47,16 +47,16 @@ public class MedicineScheduleController {
     }
 
     @GetMapping(MEDICINE_GET)
-    public ResponseEntity<ResponseDto<MedicineScheduleResponseDto>> getMedicineByUserIdAndItemSeq(@AuthenticationPrincipal String userId, @PathVariable String itemSeq) {
+    public ResponseEntity<ResponseDto<MedicineScheduleResponseDto>> getMedicineByUserIdAndItemSeq(@AuthenticationPrincipal String userId, @PathVariable Long itemSeq) {
         ResponseDto<MedicineScheduleResponseDto> response = medicineScheduleService.getMedicineByUserIdAndItemSeq(userId, itemSeq);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
 
     @DeleteMapping(MEDICINE_DELETE)
-    public ResponseEntity<Void> deleteMedicineByUserIdAndItemSeq(@AuthenticationPrincipal String userId, @PathVariable String itemSeq) {
-        ResponseDto<MedicineScheduleResponseDto> response = medicineScheduleService.deleteMedicineByUserIdAndItemSeq(userId, itemSeq);
+    public ResponseEntity<ResponseDto<Boolean>> deleteMedicineByUserIdAndItemSeq(@AuthenticationPrincipal String userId, @PathVariable Long itemSeq) {
+        ResponseDto<Boolean> response = medicineScheduleService.deleteMedicineByUserIdAndItemSeq(userId, itemSeq);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-        return ResponseEntity.status(status).body(null);
+        return ResponseEntity.status(status).body(response);
     }
 }

@@ -6,9 +6,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MedicineScheduleRequestDto {
-    private String userId;
 
-    private String itemSeq;
+    private Long itemSeq;
 
     private String itemName;
 

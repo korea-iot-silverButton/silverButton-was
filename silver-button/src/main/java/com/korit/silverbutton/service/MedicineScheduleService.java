@@ -4,6 +4,7 @@ package com.korit.silverbutton.service;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleRequestDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleResponseDto;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface MedicineScheduleService {
 
     ResponseDto<List<MedicineScheduleResponseDto>> getMedicineAllByUserId(String userId);
 
-    ResponseDto<MedicineScheduleResponseDto> getMedicineByUserIdAndItemSeq(String userId, String itemSeq);
+    ResponseDto<MedicineScheduleResponseDto> getMedicineByUserIdAndItemSeq(String userId, Long itemSeq);
 
-    ResponseDto<MedicineScheduleResponseDto> deleteMedicineByUserIdAndItemSeq(String userId, String itemSeq);
+    ResponseDto<Boolean> deleteMedicineByUserIdAndItemSeq(String userId, Long itemSeq);
 }
