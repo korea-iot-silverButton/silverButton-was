@@ -1,8 +1,5 @@
 package com.korit.silverbutton.service;
 
-import com.korit.silverbutton.service.implement.UserServiceImpl;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +24,7 @@ public class ProfileImgService {
 
         // 저장할 경로
         String rootPath = "C:/silverButtonImg/upload/"; // 실제로는 외부 설정 파일로 분리 가능
-        String filePath = "profile/" + newFileName;
+        String filePath = "profile/";
 
         // 프로필 이미지를 저장할 디렉토리 생성
         File dir = new File(rootPath, "profile");
