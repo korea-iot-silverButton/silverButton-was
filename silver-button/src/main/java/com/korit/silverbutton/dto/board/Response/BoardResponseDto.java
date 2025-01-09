@@ -3,6 +3,8 @@ package com.korit.silverbutton.dto.board.Response;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.dto.comment.Response.CommentResponseDto;
 import com.korit.silverbutton.entity.Board;
+import com.korit.silverbutton.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class BoardResponseDto {
 
     private Long id;
@@ -28,11 +31,12 @@ public class BoardResponseDto {
     private int likes;
     private int views;
     private List<CommentResponseDto> comments;
-    private Long currentUserId;  // 현재 로그인 사용자 ID
+    private User boardAuthor;  // 게시글 작성자
+    private User currentUser;  // 현재 사용자
 
 
 
-    public BoardResponseDto(Board board) {
+    public BoardResponseDto(Board board, User boardAuthor) {
         this.id = board.getId();
         this.user = board.getUser().getId();
         this.username = board.getUser().getName();
@@ -47,7 +51,8 @@ public class BoardResponseDto {
                 .map(CommentResponseDto::new)
                 .collect(Collectors.toList()):
                 Collections.emptyList();
-        this.currentUserId = null;  // 현재 로그인 사용자 ID
+        this.boardAuthor = boardAuthor;
+        this.currentUser = null;
 
 
 
