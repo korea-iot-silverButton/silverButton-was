@@ -114,8 +114,8 @@ public class WebSecurityConfig {
                                 // 특정 경로에 대한 엑세스 설정
                                 // .requestMatchers()
                                 //  : 특정 요청과 일치하는 url에 대한 엑세스
-                                new AntPathRequestMatcher("/api/v1/auth/**"),
                                 new AntPathRequestMatcher("/api/v1/board/**"),
+                                new AntPathRequestMatcher("/api/v1/auth/**"),
                                 new AntPathRequestMatcher("/api/v1/medicine-schedule/**")
 
                         )
@@ -124,7 +124,10 @@ public class WebSecurityConfig {
                         //  : 해당 경로와 일치하는 요청이 오면 인증, 인가 없이도 접근 가능
                         .permitAll()
                         .requestMatchers(
-                                new AntPathRequestMatcher("api/v1/board/**"),
+                                new AntPathRequestMatcher("api/v1/board/create/**"),
+                                new AntPathRequestMatcher("api/v1/board/search/**"),
+                                new AntPathRequestMatcher("api/v1/board/edit/**"),
+                                new AntPathRequestMatcher("api/v1/board/delete/**"),
                                 new AntPathRequestMatcher("api/v1/board/comment/**"),
                                 new AntPathRequestMatcher("api/v1/board/boardlike/**")
                         ).authenticated()
