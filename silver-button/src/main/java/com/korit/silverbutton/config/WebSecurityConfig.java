@@ -116,7 +116,8 @@ public class WebSecurityConfig {
                                 //  : 특정 요청과 일치하는 url에 대한 엑세스
                                 new AntPathRequestMatcher("/api/v1/auth/**"),
                                 new AntPathRequestMatcher("/api/v1/board/**"),
-                                new AntPathRequestMatcher("/api/v1/medicine-schedule/**")
+                                new AntPathRequestMatcher("/api/v1/medicine-schedule/**"),
+                                new AntPathRequestMatcher("/api/v1/health-magazine/**")
 
                         )
                         // .permitAll()
@@ -126,7 +127,8 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 new AntPathRequestMatcher("api/v1/board/**"),
                                 new AntPathRequestMatcher("api/v1/board/comment/**"),
-                                new AntPathRequestMatcher("api/v1/board/boardlike/**")
+                                new AntPathRequestMatcher("api/v1/board/boardlike/**"),
+                                new AntPathRequestMatcher("/api/v1/health-magazine")
                         ).authenticated()
                         // .anyRequest()
                         //  : 위에서 설정한 url 이외의 요청에 대해 설정

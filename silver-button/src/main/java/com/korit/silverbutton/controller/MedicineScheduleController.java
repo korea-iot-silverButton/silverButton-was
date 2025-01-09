@@ -1,6 +1,5 @@
 package com.korit.silverbutton.controller;
 
-
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleRequestDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleResponseDto;
@@ -21,13 +20,12 @@ import static com.korit.silverbutton.common.constant.ApiMappingPattern.MEDICINE;
 @RequiredArgsConstructor
 public class MedicineScheduleController {
 
-    private final MedicineScheduleService medicineScheduleService;
-
     // 약품 저장
     private static final String MEDICINE_POST = "/";
     private static final String MEDICINE_LIST_GET = "/";
     private static final String MEDICINE_GET = "/{itemSeq}";
     private static final String MEDICINE_DELETE = "/{itemSeq}";
+    private final MedicineScheduleService medicineScheduleService;
 
     @PostMapping(MEDICINE_POST)
     public ResponseEntity<ResponseDto<MedicineScheduleResponseDto>> postMedicineByUserId(
