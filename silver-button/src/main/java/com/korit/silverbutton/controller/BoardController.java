@@ -33,7 +33,7 @@ public class BoardController {
     private static final String BOARD_ID = "/{id}";
     private static final String BOARD_SEARCH_TITLE = "/search/title";
     private static final String BOARD_SEARCH_NAME = "/search/name";
-    private static final String BOARD_PUT = "/{id}";
+    private static final String BOARD_PUT = "/edit/{id}";
     private static final String BOARD_DELETE = "/delete/{id}";
 
 
@@ -103,10 +103,11 @@ public class BoardController {
     @GetMapping(BOARD_ID)
     @PermitAll
     public ResponseEntity<ResponseDto<BoardResponseDto>> getBoardById(
-            @AuthenticationPrincipal PrincipalUser principalUser,
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestParam Long userId
+
     ) {
-        ResponseDto<BoardResponseDto> response = boardService.getBoardAndIncreaseViews(principalUser.getId(), id);
+        ResponseDto<BoardResponseDto> response = boardService.getBoardAndIncreaseViews(id, userId);
 
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
