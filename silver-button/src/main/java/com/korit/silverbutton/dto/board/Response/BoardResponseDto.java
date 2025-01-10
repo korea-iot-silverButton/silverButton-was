@@ -30,8 +30,6 @@ public class BoardResponseDto {
     private int likes;
     private int views;
     private List<CommentResponseDto> comments;
-//    private User boardAuthor;  // 게시글 작성자
-//    private User currentUser;  // 현재 사용자
 
 
 
@@ -50,8 +48,6 @@ public class BoardResponseDto {
                 .map(CommentResponseDto::new)
                 .collect(Collectors.toList()):
                 Collections.emptyList();
-//        this.boardAuthor = boardAuthor;
-//        this.currentUser = null;
 
 
 
