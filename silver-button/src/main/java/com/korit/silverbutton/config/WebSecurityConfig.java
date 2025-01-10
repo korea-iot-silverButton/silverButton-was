@@ -53,6 +53,7 @@ public class WebSecurityConfig {
                 // "/static/**" 경로의 정적 리소스를 보안 검사에서 제외
                 .requestMatchers(new AntPathRequestMatcher("/api/v1/static/**"),
                         new AntPathRequestMatcher("/api/v1/auth")
+
                 );
     }
 
