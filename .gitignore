@@ -60,4 +60,4 @@ __pycache__/
 *.orig
 
 # application.properties 파일 무시
-src/main/resources/application.properties
+application.properties
