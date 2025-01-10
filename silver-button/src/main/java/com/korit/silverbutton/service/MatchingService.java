@@ -15,7 +15,6 @@ public interface MatchingService {
 
     ResponseDto<MatchingResponseDto> createMatching(MatchingRequestDto dto, Long id);
 
-
     ResponseDto<String> getUserRole(String userId);
 
     void validateUserRole(Long userId, String requiredRole);
