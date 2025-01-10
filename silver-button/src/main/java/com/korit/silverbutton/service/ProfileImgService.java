@@ -26,8 +26,9 @@ public class ProfileImgService {
         String newFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
         // 저장할 경로
-        String rootPath = "C:/silverButtonImg/upload/"; // 실제로는 외부 설정 파일로 분리 가능
-        String filePath = "profile/";
+//        String rootPath = "C:/silverButtonImg/upload/"; // 실제로는 외부 설정 파일로 분리 가능
+        String filePath = rootPath + "/profile/";
+        
 
         // 프로필 이미지를 저장할 디렉토리 생성
         File dir = new File(rootPath, "profile");
