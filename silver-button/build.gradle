@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
 
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.1'
+//    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.1'
     // 프로젝트 개발에 필요한 기능인 의존성을 입력
     // : 스프링부트 웹 관련 기능 제공 | 테스트 기능을 제공
     implementation('org.springframework.boot:spring-boot-starter-web')

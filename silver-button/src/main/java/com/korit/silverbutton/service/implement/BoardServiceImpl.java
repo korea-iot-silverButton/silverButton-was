@@ -75,7 +75,7 @@ public class BoardServiceImpl implements BoardService {
                     .build();
 
             boardRepository.save(board);
-            data = new BoardResponseDto(board, user);
+            data = new BoardResponseDto(board);
 
 
         } catch (Exception e) {
@@ -102,7 +102,7 @@ public class BoardServiceImpl implements BoardService {
             data = boardPage
                     .getContent()
                     .stream()
-                    .map(board -> new BoardResponseDto(board, board.getUser()))
+                    .map(BoardResponseDto::new)
                     .collect(Collectors.toList());
 
             if(data.isEmpty()) {
@@ -126,7 +126,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id, Long userId) {
+    public ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id) {
         BoardResponseDto data = null;
         Long boardId = id;
 
@@ -143,7 +143,7 @@ public class BoardServiceImpl implements BoardService {
                 User boardAuthor = userRepository.findById(board.getUser().getId())
                         .orElseThrow(() -> new RuntimeException(ResponseMessage.NOT_EXIST_USER));
 
-                data = new BoardResponseDto(board, boardAuthor);
+                data = new BoardResponseDto(board);
 
             } else {
                 return ResponseDto.setFailed(ResponseMessage.INVALID_POST_ID);
@@ -184,7 +184,7 @@ public class BoardServiceImpl implements BoardService {
             }
 
             List<BoardResponseDto> data = boardPage.getContent().stream()
-                    .map(board -> new BoardResponseDto(board, board.getUser()))
+                    .map(BoardResponseDto::new)
                     .collect(Collectors.toList());
 
             PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
@@ -214,7 +214,7 @@ public class BoardServiceImpl implements BoardService {
 
 
                 List<BoardResponseDto> data = boardPage.getContent().stream()
-                        .map(board -> new BoardResponseDto(board, board.getUser()))
+                        .map(BoardResponseDto::new)
                         .collect(Collectors.toList());
 
                 PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
@@ -246,7 +246,7 @@ public class BoardServiceImpl implements BoardService {
                         .build();
 
                 boardRepository.save(board);
-                data = new BoardResponseDto(board, board.getUser());
+                data = new BoardResponseDto(board);
 
 
         } catch (Exception e) {
