@@ -27,6 +27,8 @@ public interface UserService {
 
     ResponseDto<UserProfileDto> updatePassword(String userId, String currentPassword, String newPassword);
 
+    boolean verifyPassword(String userId, String currentPassword);
+
     // user 삭제
     ResponseDto<Void> deleteUser(String userId);
 
