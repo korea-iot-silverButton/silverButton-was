@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class BoardResponseDto {
 
     private Long id;
@@ -31,12 +30,12 @@ public class BoardResponseDto {
     private int likes;
     private int views;
     private List<CommentResponseDto> comments;
-    private User boardAuthor;  // 게시글 작성자
-    private User currentUser;  // 현재 사용자
+//    private User boardAuthor;  // 게시글 작성자
+//    private User currentUser;  // 현재 사용자
 
 
 
-    public BoardResponseDto(Board board, User boardAuthor) {
+    public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.user = board.getUser().getId();
         this.username = board.getUser().getName();
@@ -51,8 +50,8 @@ public class BoardResponseDto {
                 .map(CommentResponseDto::new)
                 .collect(Collectors.toList()):
                 Collections.emptyList();
-        this.boardAuthor = boardAuthor;
-        this.currentUser = null;
+//        this.boardAuthor = boardAuthor;
+//        this.currentUser = null;
 
 
 

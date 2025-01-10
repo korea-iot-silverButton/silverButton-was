@@ -27,7 +27,7 @@ public interface BoardService {
 
     ResponseDto<Void> deleteBoard(Long userId, Long id);
 
-    ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id, Long userId);
+    ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id);
 
 
 }
