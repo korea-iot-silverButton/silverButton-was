@@ -160,6 +160,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean verifyPassword(String userId, String currentPassword) {
+        try {
+            // 사용자 조회
+            Optional<User> userOptional = userRepository.findByUserId(userId);
+            if (userOptional.isEmpty()) {
+                return false;  // 사용자가 존재하지 않으면 false 반환
+            }
+
+            User user = userOptional.get();
+
+            // 현재 비밀번호와 저장된 암호화된 비밀번호 비교
+            return bCryptPasswordEncoder.matches(currentPassword, user.getPassword());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;  // 예외 발생 시 false 반환
+        }
+    }//http://localhost:4040/api/v1/manage/verify-password
+
+    @Override
     public ResponseDto<Void> deleteUser(String userId) {
         try {
             Optional<User> userOptional = userRepository.findByUserId(userId);
