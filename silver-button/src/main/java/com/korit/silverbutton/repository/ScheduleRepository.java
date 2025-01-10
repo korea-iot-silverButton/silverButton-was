@@ -27,7 +27,7 @@ public interface ScheduleRepository extends JpaRepository<Matchings, MatchingsId
             "SELECT " +
             "scd.id AS schedule_id, " +
             "scd.dependent_id AS schedule_user_id, " +
-            "scd.task, " +
+            "CONCAT('(depen)', scd.task) AS task,  " +
             "scd.schedule_date AS scddate, " +
             "uc.user_id AS schedule_username " +
             "FROM Matchings mc " +
