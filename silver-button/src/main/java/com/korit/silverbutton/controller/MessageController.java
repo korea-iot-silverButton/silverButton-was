@@ -25,7 +25,7 @@ public class MessageController {
     private static final Logger log = LoggerFactory.getLogger(MessageController.class);
 
     //  모든 쪽지 조회
-    @GetMapping("/aaa")
+    @GetMapping
     public ResponseEntity<ResponseDto<List<MessageResponseDto>>> getAllMessages(
             @AuthenticationPrincipal PrincipalUser principalUser
     )
