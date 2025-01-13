@@ -39,6 +39,22 @@ public class ScheduleService {
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
+    // 오늘 날짜에 해당하는 스케줄 조회
+    public ResponseDto<List<ScheduleResponseDto>> getScheduleForToday(String userId) {
+        List<ScheduleResponseDto> data = null;
+        try {
+            // 오늘 날짜에 해당하는 스케줄만 조회
+            List<Object[]> results = scheduleRepository.findSchedulesForToday(userId);
+            data = results.stream()
+                    .map(result -> new ScheduleResponseDto((Long) result[0], (String) result[2], (String) result[1]))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+    }
+
     // 자신이 피부양자일 경우 스케줄 스스로 추가
     public ResponseDto<ScheduleCreateResponseDto> createScheduleSelf(ScheduleCreateRequestDto dto, Long userId){
         ScheduleCreateResponseDto data= null;
