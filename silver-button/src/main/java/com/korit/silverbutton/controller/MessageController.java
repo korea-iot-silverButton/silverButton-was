@@ -4,6 +4,7 @@ import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.Message.Request.MessageRequestDto;
 import com.korit.silverbutton.dto.Message.Response.MessageResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.MessageService;
 import jakarta.validation.Valid;
@@ -45,8 +46,9 @@ public class MessageController {
     // 발신 쪽지 조회
     @GetMapping("/sender")
     public ResponseEntity<ResponseDto<List<MessageResponseDto>>> getOutGoingMessages(
-            @AuthenticationPrincipal Long id
+            @AuthenticationPrincipal PrincipalUser principalUser
     ){
+        Long id = principalUser.getId();
         ResponseDto<List<MessageResponseDto>> response = messageService.getOutGoingMessages(id);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
