@@ -5,7 +5,9 @@ import com.korit.silverbutton.dto.Message.Request.MessageRequestDto;
 import com.korit.silverbutton.dto.Message.Response.MessageResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.entity.Message;
+import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.MessageRepository;
+import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
+    private final UserRepository userRepository;
 
 
     // 쪽지 전체 조회
@@ -44,31 +47,51 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
+    // 특정 쪽지 조회
+    @Override
+    public ResponseDto<MessageResponseDto> getMessageById(Long id) {
+        try{
+            Optional<Message> optionalMessage = messageRepository.findById(id);
+            if (optionalMessage.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
+
+            }
+            MessageResponseDto data = new MessageResponseDto(optionalMessage.get());
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+    }
+
 
     // 쪽지 삭제
     @Override
     public ResponseDto<Void> deleteMessage(Long id) {
-
-        try {
-            Optional<Message> optionalMessage = messageRepository.findById(id);
-            if (optionalMessage.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
-            }
-
-            Message message = optionalMessage.get();
-            messageRepository.delete(message);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-        }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
+        return null;
     }
+//
+//        try {
+//            Optional<Message> optionalMessage = messageRepository.findMessageById(id);
+//            if (optionalMessage.isEmpty()) {
+//                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
+//            }
+//
+//            Message message = optionalMessage.get();
+//            messageRepository.delete(message);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+//        }
+//        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
+//    }
 
     // 쪽지 작성
     @Override
-    public ResponseDto<MessageResponseDto> createMessage(MessageRequestDto dto, Long id) {
-        return null;
+    public ResponseDto<MessageResponseDto> createMessage(MessageRequestDto dto, Long senderId) {
 //        MessageResponseDto data = null;
 //        String title = dto.getTitle();
 //        String content = dto.getContent();
@@ -93,54 +116,33 @@ public class MessageServiceImpl implements MessageService {
 //        }
 //
 //        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-
+return null;
     }
 
-    // 특정 쪽지 조회
+
+
+    // 발신 쪽지 조회
     @Override
-    public ResponseDto<MessageResponseDto> getMessageById(Long id) {
-        MessageResponseDto data = null;
-        Long messageId = id;
-
-        try{
-            Optional<Message> optionalMessage = messageRepository.findById(messageId);
-            if (optionalMessage.isEmpty()) {
+    public ResponseDto<List<MessageResponseDto>> getOutGoingMessages(Long senderId) {
+        User sender = new User();
+        sender.setId(senderId);
+        try {
+            List<Message> messages = messageRepository.findAllBySender(sender);
+            if (messages.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
-
             }
-            Message message = optionalMessage.get();
-            data = new MessageResponseDto(message);
 
+            List<MessageResponseDto> messageDtos = messages.stream()
+                    .map(MessageResponseDto::new)
+                    .collect(Collectors.toList());
 
-        }catch (Exception e){
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, messageDtos);
+
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
 
-
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-    }
-
-    // 발신 쪽지 조회
-    @Override
-    public ResponseDto<List<MessageResponseDto>> getOutGoingMessages(Long id) {
-//        try {
-//            List<Message> messages = messageRepository.findAllBySenderId();
-//            if (messages.isEmpty()) {
-//                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
-//            }
-//
-//            List<MessageResponseDto> messageDtos = messages.stream()
-//                    .map(MessageResponseDto::new)
-//                    .collect(Collectors.toList());
-//
-//            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, messageDtos);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-//        }
-        return null;
     }
 
     // 수신 쪽지 조회
