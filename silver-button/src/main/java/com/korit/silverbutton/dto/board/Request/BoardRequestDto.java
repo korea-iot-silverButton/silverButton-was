@@ -20,6 +20,4 @@ public class BoardRequestDto {
 
     @Size(max = 2083, message = "Image URL length must be less than 2083 characters")
     private MultipartFile image;// Optional field for image path or URL
-
-
 }
