@@ -126,4 +126,39 @@ public class HealthMagazineServiceImpl implements HealthMagazineService {
         }
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
+
+    @Override
+    public ResponseDto<List<HealthMagazineResponseDto>> findLatestByOrderByPublishedDateDesc() {
+        List<HealthMagazineResponseDto> data = null;
+
+        try {
+            List<HealthMagazine> healthMagazines = healthMagazineRepository.findLatestByOrderByPublishedDateDesc();
+            if (healthMagazines.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            }
+            data = healthMagazines.stream().map(HealthMagazineResponseDto::new).collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+    }
+
+    // 헬스 매거진 조회순 정렬
+    @Override
+    public ResponseDto<List<HealthMagazineResponseDto>> findAllByOrderByViewCountDesc() {
+        List<HealthMagazineResponseDto> data = null;
+
+        try {
+            List<HealthMagazine> healthMagazines = healthMagazineRepository.findAllByOrderByViewCountDesc();
+            if(healthMagazines.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            }
+            data = healthMagazines.stream().map(HealthMagazineResponseDto::new).collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+    }
 }

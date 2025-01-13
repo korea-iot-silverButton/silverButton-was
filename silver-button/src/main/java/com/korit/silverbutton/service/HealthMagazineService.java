@@ -16,4 +16,9 @@ public interface HealthMagazineService {
     ResponseDto<Boolean> deleteHealthMagazineById(Long id);
 
     ResponseDto<List<HealthMagazineResponseDto>> findTop5ByOrderByViewCountDesc();
+
+    ResponseDto<List<HealthMagazineResponseDto>> findLatestByOrderByPublishedDateDesc();
+
+    ResponseDto<List<HealthMagazineResponseDto>> findAllByOrderByViewCountDesc();
+
 }
