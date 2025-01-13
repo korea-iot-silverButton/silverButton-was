@@ -56,7 +56,7 @@ public class ProfileImgService {
         // 삭제할 파일 경로
         String rootPath = "C:/silverButtonImg/upload/"; // 실제로는 외부 설정 파일로 분리 가능
         Path pathToFile = Paths.get(rootPath + filePath);
-`
+
         // 파일이 존재하면 삭제
         try {
             File file = pathToFile.toFile();
