@@ -121,6 +121,7 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher("/api/v1/health-magazine/**"),
                                 new AntPathRequestMatcher("api/v1/message/**")
 
+
                         )
                         // .permitAll()
                         //  : 누구나 접근이 가능하게 설정
@@ -129,8 +130,8 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 new AntPathRequestMatcher("api/v1/board/**"),
                                 new AntPathRequestMatcher("api/v1/board/comment/**"),
-                                new AntPathRequestMatcher("api/v1/board/boardlike/**"),
-                                new AntPathRequestMatcher("/api/v1/health-magazine")
+                                new AntPathRequestMatcher("api/v1/board/boardlike/**")
+
                         ).authenticated()
                         // .anyRequest()
                         //  : 위에서 설정한 url 이외의 요청에 대해 설정
