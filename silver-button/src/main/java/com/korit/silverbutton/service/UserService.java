@@ -6,6 +6,7 @@ import com.korit.silverbutton.dto.User.Request.UserRequestDto;
 import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,14 +18,6 @@ public interface UserService {
     // userId로 특정 user 조회
     ResponseDto<UserProfileDto> getUser(String userId);
 
-    // 로그인 한 user의 정보 수정해야 하니까 프론트에서는 getUser로 내용 불러오고 이 내용으로
-    // input 창 넣어서 수정 가능하도록
-//    ResponseDto<UserProfileDto> updateUser(String userId, UserRequestDto dto);
-//
-//    // 사용자 정보 수정 및 업데이트
-//    ResponseDto<UserProfileDto> updateUser(String userId, UpdateRequestDto dto) // http://localhost:4040/api/v1/manage/allusers 작동 함
-//    ;
-
     ResponseDto<UserProfileDto> updatePassword(String userId, String currentPassword, String newPassword);
 
     boolean verifyPassword(String userId, String currentPassword);
@@ -32,5 +25,15 @@ public interface UserService {
     // user 삭제
     ResponseDto<Void> deleteUser(String userId);
 
+    // 사용자 정보 수정 및 업데이트
     ResponseDto<UserProfileDto> updateUser(String userId, UserProfileDto dto);
+
+    // 프로필 이미지 업로드
+    ResponseDto<String> uploadFile(String userId, MultipartFile file);
+
+    // 프로필 이미지 삭제
+    ResponseDto<Void> deleteFile(String filePath);
+
+    // 프로필 이미지 조회
+    ResponseDto<String> getProfileImg(String userId);
 }
