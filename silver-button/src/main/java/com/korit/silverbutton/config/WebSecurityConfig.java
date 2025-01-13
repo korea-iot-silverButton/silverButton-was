@@ -116,19 +116,17 @@ public class WebSecurityConfig {
                                 // .requestMatchers()
                                 //  : 특정 요청과 일치하는 url에 대한 엑세스
                                 new AntPathRequestMatcher("/api/v1/auth/**"),
-                                new AntPathRequestMatcher("/api/v1/board/**"),
+                                new AntPathRequestMatcher("/api/v1/board/all"),
+                                new AntPathRequestMatcher("/api/v1/board/view/**"),
+                                new AntPathRequestMatcher("/api/v1/comment/all"),
                                 new AntPathRequestMatcher("/api/v1/medicine-schedule/**"),
                                 new AntPathRequestMatcher("/api/v1/health-magazine/**")
-
                         )
                         // .permitAll()
                         //  : 누구나 접근이 가능하게 설정
                         //  : 해당 경로와 일치하는 요청이 오면 인증, 인가 없이도 접근 가능
                         .permitAll()
                         .requestMatchers(
-                                new AntPathRequestMatcher("api/v1/board/**"),
-                                new AntPathRequestMatcher("api/v1/board/comment/**"),
-                                new AntPathRequestMatcher("api/v1/board/boardlike/**"),
                                 new AntPathRequestMatcher("/api/v1/health-magazine")
                         ).authenticated()
                         // .anyRequest()
