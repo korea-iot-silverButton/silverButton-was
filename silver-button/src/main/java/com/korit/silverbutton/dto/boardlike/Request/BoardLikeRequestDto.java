@@ -8,6 +8,4 @@ import lombok.NoArgsConstructor;
 public class BoardLikeRequestDto {
     private Long id;
     private Long boardId;
-
-
 }
