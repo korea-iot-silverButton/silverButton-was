@@ -1,19 +1,12 @@
 package com.korit.silverbutton.dto.board.Response;
 
-import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.dto.comment.Response.CommentResponseDto;
 import com.korit.silverbutton.entity.Board;
-import com.korit.silverbutton.entity.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Data
@@ -30,8 +23,7 @@ public class BoardResponseDto {
     private int likes;
     private int views;
     private List<CommentResponseDto> comments;
-
-
+    private Long writerId;
 
     public BoardResponseDto(Board board) {
         this.id = board.getId();
@@ -45,12 +37,9 @@ public class BoardResponseDto {
         this.views = board.getViews();
         this.comments = (board.getComments() != null) ?
                 board.getComments().stream()
-                .map(CommentResponseDto::new)
-                .collect(Collectors.toList()):
+                        .map(CommentResponseDto::new)
+                        .collect(Collectors.toList()) :
                 Collections.emptyList();
-
-
-
+        this.writerId = board.getUser().getId();
     }
-
 }
