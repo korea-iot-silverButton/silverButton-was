@@ -26,13 +26,13 @@ public class MessageServiceImpl implements MessageService {
     public ResponseDto<List<MessageResponseDto>> getAllMessages(Long id) {
 
         try{
-            List<Message> Messages = messageRepository.findMessageById(id);
-            if (Messages.isEmpty()) {
+            List<Message> messages = messageRepository.findMessageById(id);
+            if (messages.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
 
             }
             // 메시지를 DTO로 변환
-            List<MessageResponseDto> messageDtos = Messages.stream()
+            List<MessageResponseDto> messageDtos = messages.stream()
                     .map(MessageResponseDto::new) // MessageResponseDto 생성자 활용
                     .collect(Collectors.toList());
 
