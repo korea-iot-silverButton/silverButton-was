@@ -25,4 +25,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByRoleAndNameAndPhone(@Param("role") String role, @Param("name") String name, @Param("phone") String phone);
 
 
+    boolean existsByUserId(String userId);
 }

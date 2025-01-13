@@ -7,6 +7,8 @@ import com.korit.silverbutton.dto.SignUp.Request.SignUpRequestDto;
 import com.korit.silverbutton.dto.SignIn.Response.SignInResponseDto;
 import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.User.Request.OverlapIdRequestDto;
+import com.korit.silverbutton.dto.User.Request.OverlapNicknameRequestDto;
 import com.korit.silverbutton.provider.JwtProvider;
 import com.korit.silverbutton.service.AuthService;
 import com.korit.silverbutton.service.TokenBlacklistService;
@@ -68,6 +70,28 @@ public class AuthController {
             ResponseDto<String> response = ResponseDto.setFailed("로그아웃 오류 발생");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+    }
+
+    @PostMapping("/check-duplicate-userid")
+    public ResponseEntity<ResponseDto<Boolean>> duplicateCheckUserId(
+            @RequestBody OverlapIdRequestDto dto){
+        boolean isDuplicated= authService.overlapUserId(dto.getUserId());
+        ResponseDto<Boolean> response= isDuplicated? ResponseDto.setFailed("userId가 중복됩니다."):
+                ResponseDto.setSuccess("userId가 사용가능합니다.", isDuplicated);
+
+        HttpStatus status = isDuplicated ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @PostMapping("/check-duplicate-nickname")
+    public ResponseEntity<ResponseDto<Boolean>> duplicateCheckNickName(
+            @RequestBody OverlapNicknameRequestDto dto){
+        boolean isDuplicated= authService.overlapNickname(dto.getNickname());
+        ResponseDto<Boolean> response= isDuplicated? ResponseDto.setFailed("닉네임이 중복됩니다."):
+        ResponseDto.setSuccess("닉네임이 사용가능합니다.", isDuplicated);
+
+        HttpStatus status = isDuplicated ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
     }
 
 }

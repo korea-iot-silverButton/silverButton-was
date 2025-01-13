@@ -3,12 +3,11 @@ package com.korit.silverbutton.controller;
 import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.UpdateRequestDto;
-import com.korit.silverbutton.dto.User.Request.PasswordVerifyRequestDto;
-import com.korit.silverbutton.dto.User.Request.UpdatePasswordRequestDto;
-import com.korit.silverbutton.dto.User.Request.UserRequestDto;
+import com.korit.silverbutton.dto.User.Request.*;
 import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.dto.User.Response.UserResponseDto;
 import com.korit.silverbutton.principal.PrincipalUser;
+import com.korit.silverbutton.service.AuthService;
 import com.korit.silverbutton.service.UserService;
 
 import jakarta.validation.Valid;
@@ -29,6 +28,7 @@ import java.util.List;
 public class UserController {
 
     private final @Lazy UserService userService;
+    private final @Lazy AuthService authService;
 
     @GetMapping("/allusers")
     public ResponseEntity<ResponseDto<List<UserResponseDto>>> getAllUsers(
