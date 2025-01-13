@@ -32,6 +32,7 @@ public class MedicineScheduleController {
             @AuthenticationPrincipal String userId,
             @RequestBody MedicineScheduleRequestDto dto
     ) {
+
         ResponseDto<MedicineScheduleResponseDto> response = medicineScheduleService.postMedicineByUserId(userId, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
@@ -39,6 +40,7 @@ public class MedicineScheduleController {
 
     @GetMapping(MEDICINE_LIST_GET)
     public ResponseEntity<ResponseDto<List<MedicineScheduleResponseDto>>> getMedicineAllByUserId(@AuthenticationPrincipal String userId) {
+        System.out.println(userId);
         ResponseDto<List<MedicineScheduleResponseDto>> response = medicineScheduleService.getMedicineAllByUserId(userId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);

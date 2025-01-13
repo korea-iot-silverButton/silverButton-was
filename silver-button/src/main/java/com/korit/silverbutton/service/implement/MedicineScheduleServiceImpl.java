@@ -62,6 +62,7 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
 
         try {
             Optional<List<MedicineSchedule>> optionalMedicineSchedule = medicineScheduleRepository.getMedicineAllByUserId(userId);
+            System.out.println(userId);
             if (optionalMedicineSchedule.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
             }
