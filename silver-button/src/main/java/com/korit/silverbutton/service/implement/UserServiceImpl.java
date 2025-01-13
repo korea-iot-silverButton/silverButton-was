@@ -65,8 +65,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-
     //http://localhost:4040/api/v1/manage/profile 오퍼 확인
 
     // 사용자 정보 수정 및 업데이트
@@ -200,6 +198,7 @@ public class UserServiceImpl implements UserService {
     //http://localhost:4040/api/v1/manage/delete-account 작동 확인
 
     // 프로필 이미지 업로드
+    @Override
     public ResponseDto<String> uploadFile(String userId, MultipartFile file) {
         try {
             // 사용자 확인
@@ -228,6 +227,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // 프로필 이미지 삭제
+    @Override
     public ResponseDto<Void> deleteFile(String filePath) {
         try {
             // 사용자 확인
@@ -258,6 +258,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // 프로필 이미지 조회
+    @Override
     public ResponseDto<String> getProfileImg(String userId) {
         try {
             Optional<User> userOptional = userRepository.findByUserId(userId);
@@ -276,7 +277,6 @@ public class UserServiceImpl implements UserService {
             return ResponseDto.setFailed("PROFILE_IMG_NOT_FOUND");
         }
     }
-
 }
 
 

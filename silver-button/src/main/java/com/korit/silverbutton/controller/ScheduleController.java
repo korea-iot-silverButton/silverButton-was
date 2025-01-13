@@ -65,4 +65,11 @@ public class ScheduleController {
         ResponseDto<Void> result = scheduleservice.deleteSchedule(id, principalUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    // 오늘 스케줄 조회
+    @GetMapping("/today")
+    public ResponseEntity<ResponseDto<List<ScheduleResponseDto>>> getTodaySchedules(@AuthenticationPrincipal PrincipalUser principalUser) {
+        ResponseDto<List<ScheduleResponseDto>> result = scheduleservice.getScheduleForToday(principalUser.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }
