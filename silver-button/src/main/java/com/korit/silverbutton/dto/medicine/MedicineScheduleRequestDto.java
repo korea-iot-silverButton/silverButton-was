@@ -19,5 +19,5 @@ public class MedicineScheduleRequestDto {
 
     private String depositMethodQesitm;
 
-    private String intrcQesitm;
+        private String intrcQesitm;
 }

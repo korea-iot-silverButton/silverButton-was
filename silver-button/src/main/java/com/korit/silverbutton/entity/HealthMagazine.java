@@ -44,9 +44,5 @@ public class HealthMagazine {
     @Column(name = "view_count")
     private int viewCount;
 
-    // 작성일자
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
 
 }
