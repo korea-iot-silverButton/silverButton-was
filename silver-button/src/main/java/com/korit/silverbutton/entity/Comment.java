@@ -20,11 +20,11 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", referencedColumnName = "id", nullable = false)
-    @JsonBackReference  // 순환 참조 방지를 위한 어노테이션
+    @JsonBackReference
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer",referencedColumnName = "id" ,nullable = false)
+    @JoinColumn(name = "writer_id",referencedColumnName = "id" ,nullable = false)
     private User writer;
 
     @Column(nullable = false, length = 200)

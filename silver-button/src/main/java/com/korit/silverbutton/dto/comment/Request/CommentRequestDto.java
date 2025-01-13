@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentRequestDto {
     @NotNull(message = "Board ID cannot be null")
-    private Long boardId;    // 게시글 구분
+    private Long boardId;
     @NotEmpty(message = "Content cannot be empty")
-    private String content;   // 댓글 내용
+    private String content;
 }

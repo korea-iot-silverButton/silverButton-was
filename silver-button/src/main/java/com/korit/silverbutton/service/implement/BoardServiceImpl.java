@@ -4,6 +4,7 @@ import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.board.Request.BoardRequestDto;
 import com.korit.silverbutton.dto.board.Response.BoardResponseDto;
+import com.korit.silverbutton.dto.board.Response.BoardUpdateResponseDto;
 import com.korit.silverbutton.dto.paged.Response.PagedResponseDto;
 import com.korit.silverbutton.entity.Board;
 import com.korit.silverbutton.entity.User;
@@ -18,10 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -35,12 +32,9 @@ public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
     private final ProfileImgService profileImgService;
 
-
-
     @Override
     public ResponseDto<BoardResponseDto> createBoard(Long userId, BoardRequestDto dto) {
 
-        // 유효성 검사
         if (userId == null || userId <= 0) {
             return ResponseDto.setFailed("유효하지 않은 사용자 ID입니다.");
         }
@@ -54,15 +48,11 @@ public class BoardServiceImpl implements BoardService {
         MultipartFile imageFile = dto.getImage(); // 요청에서 이미지를 받을 때 MultipartFile로 받기
         if (imageFile != null && !imageFile.isEmpty()) {
             imageUrl = profileImgService.uploadFile(imageFile); // 이미지 업로드 후 URL 반환
-        } 
+        }
 
         try {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException(ResponseMessage.NOT_EXIST_USER));
-            if (user == null) {
-                user = new User(); // 임시 User 객체 생성 (또는 임시 작성자 이름 설정)
-                user.setName("임시작성자"); // 임시 이름 설정
-            }
 
             Board board = Board.builder()
                     .user(user)
@@ -77,13 +67,11 @@ public class BoardServiceImpl implements BoardService {
             boardRepository.save(board);
             data = new BoardResponseDto(board);
 
-
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            return ResponseDto.setFailed(ResponseMessage.POST_CREATION_FAIL);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-
+        return ResponseDto.setSuccess(ResponseMessage.POST_CREATION_SUCCESS, data);
     }
 
     @Override
@@ -92,12 +80,7 @@ public class BoardServiceImpl implements BoardService {
 
         try {
             Pageable pageable = PageRequest.of(page, size);
-            Page<Board> boardPage = boardRepository.findAllByOrderByCreatedAtDesc(pageable); // 최신순 정렬된 데이터 가져오기
-
-            System.out.println("boardPage 내용: " + boardPage.getContent());
-            System.out.println("현재 페이지: " + boardPage.getNumber());
-            System.out.println("총 페이지 수: " + boardPage.getTotalPages());
-            System.out.println("전체 요소 수: " + boardPage.getTotalElements());
+            Page<Board> boardPage = boardRepository.findAllByOrderByCreatedAtDesc(pageable);
 
             data = boardPage
                     .getContent()
@@ -105,24 +88,23 @@ public class BoardServiceImpl implements BoardService {
                     .map(BoardResponseDto::new)
                     .collect(Collectors.toList());
 
-            if(data.isEmpty()) {
+            if (data.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
 
-           PagedResponseDto<List<BoardResponseDto>> paged = new PagedResponseDto<>(
+            PagedResponseDto<List<BoardResponseDto>> paged = new PagedResponseDto<>(
                     data,
                     boardPage.getNumber(),
                     boardPage.getTotalPages(),
                     boardPage.getTotalElements()
             );
 
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, paged);
+            return ResponseDto.setSuccess(ResponseMessage.POST_CREATION_SUCCESS, paged);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            return ResponseDto.setFailed(ResponseMessage.POST_CREATION_FAIL);
         }
-
     }
 
     @Override
@@ -133,7 +115,7 @@ public class BoardServiceImpl implements BoardService {
         try {
             Optional<Board> boardOptional = boardRepository.findWithCommentsById(boardId);
 
-            if(boardOptional.isPresent()) {
+            if (boardOptional.isPresent()) {
                 Board board = boardOptional.get();
 
                 board.setViews(board.getViews() + 1);
@@ -151,35 +133,24 @@ public class BoardServiceImpl implements BoardService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            return ResponseDto.setFailed(ResponseMessage.POST_DETAIL_NOT_FOUND);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-
+        return ResponseDto.setSuccess(ResponseMessage.POST_DETAIL_FOUND, data);
     }
 
     @Override
     public ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByTitle(String keyword, int page, int size) {
 
-        if(keyword == null || keyword.trim().isEmpty()) {
+        if (keyword == null || keyword.trim().isEmpty()) {
             return ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD);
         }
 
         try {
             keyword = keyword.trim();
-            Pageable pageable = PageRequest.of(page, size); // 페이징 처리
+            Pageable pageable = PageRequest.of(page, size);
             Page<Board> boardPage = boardRepository.findByTitleContainingIgnoreCase(keyword, pageable);
 
-            if(boardPage.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
-            }
-
-
-
-            System.out.println("검색 키워드: " + keyword);
-            System.out.println("검색 결과 개수: " + boardPage.getNumber());
-            boardPage.forEach(board -> System.out.println("게시글 제목: " + board.getTitle()));
-
-            if(boardPage.isEmpty()) {
+            if (boardPage.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
 
@@ -190,95 +161,94 @@ public class BoardServiceImpl implements BoardService {
             PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
                     boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements());
 
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, pagedResponse);
+            return ResponseDto.setSuccess(ResponseMessage.SEARCH_RESULTS_FOUND, pagedResponse);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        return ResponseDto.setFailed(ResponseMessage.NO_SEARCH_RESULTS);
     }
 
     @Override
     public ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByUserName(String name, int page, int size) {
-           if(name == null){
-               return ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD);
-           }
+        if (name == null) {
+            return ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD);
+        }
 
-            try {
-                Pageable pageable = PageRequest.of(page, size); // 페이징 처리
-                Page<Board> boardPage = boardRepository.findByUserName(name, pageable);
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Board> boardPage = boardRepository.findByUserName(name, pageable);
 
-                if(boardPage.isEmpty()) {
-                    return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
-                }
+            if (boardPage.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
+            }
 
+            List<BoardResponseDto> data = boardPage.getContent().stream()
+                    .map(BoardResponseDto::new)
+                    .collect(Collectors.toList());
 
-                List<BoardResponseDto> data = boardPage.getContent().stream()
-                        .map(BoardResponseDto::new)
-                        .collect(Collectors.toList());
+            PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
+                    boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements());
 
-                PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
-                        boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements());
-
-                return ResponseDto.setSuccess(ResponseMessage.SUCCESS, pagedResponse);
+            return ResponseDto.setSuccess(ResponseMessage.POST_FOUND_FOR_USER, pagedResponse);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            return ResponseDto.setFailed(ResponseMessage.POST_NOT_FOUND_FOR_USER);
         }
     }
 
     @Override
-    public ResponseDto<BoardResponseDto> updateBoard(Long userId, Long id,  BoardRequestDto dto) {
-        BoardResponseDto data = null;
+    public ResponseDto<BoardUpdateResponseDto> updateBoard(Long userId, Long id, BoardRequestDto dto) {
+        BoardUpdateResponseDto data = null;
         String title = dto.getTitle();
         String content = dto.getContent();
 
         try {
             Optional<Board> boardOptional = boardRepository.findByUserIdAndId(userId, id);
-            if(boardOptional.isEmpty()) {
+            if (boardOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
-                Board board = boardOptional.get();
-                board = board.toBuilder()
-                        .title(title)
-                        .content(content)
-                        .build();
+            Board board = boardOptional.get();
+            board = board.toBuilder()
+                    .title(title)
+                    .content(content)
+                    .build();
 
-                boardRepository.save(board);
-                data = new BoardResponseDto(board);
+            boardRepository.save(board);
+            data = new BoardUpdateResponseDto(board);
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            return ResponseDto.setFailed(ResponseMessage.POST_UPDATE_FAIL);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+        return ResponseDto.setSuccess(ResponseMessage.POST_UPDATE_SUCCESS, data);
 
     }
 
     @Override
     public ResponseDto<Void> deleteBoard(Long userId, Long id) {
         try {
-            Optional<Board> optionalBoard ;
-            // userId가 null일 경우 userId 체크를 건너뜁니다.
+            Optional<Board> optionalBoard;
+
             if (userId != null) {
                 optionalBoard = boardRepository.findByUserIdAndId(userId, id);
             } else {
-                optionalBoard = boardRepository.findById(id);  // userId 없이 id로만 조회
+                optionalBoard = boardRepository.findById(id);
             }
-            Board board = optionalBoard.get();
+
+            Board board = optionalBoard.orElseThrow(() ->
+                    new IllegalArgumentException(ResponseMessage.NOT_EXIST_POST)
+            );
 
             boardRepository.delete(board);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            return ResponseDto.setFailed(ResponseMessage.POST_DELETION_FAIL);
         }
-        return  ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
+        return ResponseDto.setSuccess(ResponseMessage.POST_DELETION_SUCCESS, null);
     }
-
-
-
 }
 
