@@ -36,7 +36,8 @@ build/
 .DS_Store
 Thumbs.db
 
-
+# application.properties 파일 무시
+src/main/resources/application.properties
 
 # application.properties 파일 무시
 application.properties

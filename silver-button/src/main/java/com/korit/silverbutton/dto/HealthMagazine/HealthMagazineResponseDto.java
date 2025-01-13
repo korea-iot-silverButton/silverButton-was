@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class HealthMagazineResponseDto {
 
+    private Long id;
+
     // 대표 이미지
     private String thumbnailImageUrl;
 
@@ -32,6 +34,7 @@ public class HealthMagazineResponseDto {
 
 
     public HealthMagazineResponseDto(HealthMagazine healthMagazine) {
+        this.id = healthMagazine.getId();
         this.thumbnailImageUrl = healthMagazine.getThumbnailImageUrl();
         this.title = healthMagazine.getTitle();
         this.content = healthMagazine.getContent();

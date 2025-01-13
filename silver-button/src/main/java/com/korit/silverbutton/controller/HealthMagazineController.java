@@ -24,6 +24,8 @@ public class HealthMagazineController {
     private static final String HEALTH_MAGAZINE_LIST_GET = "/";
     private static final String HEALTH_MAGAZINE_DELETE = "/{id}";
     private static final String HEALTH_MAGAZINE_GET_TOP5 = "/top5";
+    private static final String HEALTH_MAGAZINE_GET_LATEST = "/latest";
+    private static final String HEALTH_MAGAZINE_GET_DESC = "/desc";
     private final HealthMagazineService healthMagazineService;
 
     // 헬스 매거진 생성
@@ -62,6 +64,22 @@ public class HealthMagazineController {
     @GetMapping(HEALTH_MAGAZINE_GET_TOP5)
     public ResponseEntity<ResponseDto<List<HealthMagazineResponseDto>>> findTop5ByOrderByViewCountDesc() {
         ResponseDto<List<HealthMagazineResponseDto>> response = healthMagazineService.findTop5ByOrderByViewCountDesc();
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    // 헬스 매거진 작성일자 최신순으로 조회
+    @GetMapping(HEALTH_MAGAZINE_GET_LATEST)
+    public ResponseEntity<ResponseDto<List<HealthMagazineResponseDto>>> findLatestByOrderByPublishedDateDesc() {
+        ResponseDto<List<HealthMagazineResponseDto>> response = healthMagazineService.findLatestByOrderByPublishedDateDesc();
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    // 헬스 매거진 조회순 정렬
+    @GetMapping(HEALTH_MAGAZINE_GET_DESC)
+    public ResponseEntity<ResponseDto<List<HealthMagazineResponseDto>>> findDescByOrderByViewCountDesc() {
+        ResponseDto<List<HealthMagazineResponseDto>> response = healthMagazineService.findAllByOrderByViewCountDesc();
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
