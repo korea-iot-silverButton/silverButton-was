@@ -7,6 +7,8 @@ import com.korit.silverbutton.dto.SignUp.Request.SignUpRequestDto;
 import com.korit.silverbutton.dto.SignIn.Response.SignInResponseDto;
 import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.User.Request.OverlapIdRequestDto;
+import com.korit.silverbutton.dto.User.Request.OverlapNicknameRequestDto;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.provider.JwtProvider;
 import com.korit.silverbutton.repository.UserRepository;
@@ -164,6 +166,24 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public boolean overlapUserId(String Id) {
+        String userId = Id;
+        if (userId == null || userId.isEmpty()) {
+            return false;
+        }
+        return userRepository.existsByUserId(userId);  // 아이디 중복 검사
+    }
+
+    @Override
+    public boolean overlapNickname(String Nickname) {
+        String nickname = Nickname;
+        if (nickname == null || nickname.isEmpty()) {
+            return false;
+        }
+        return userRepository.existsByNickname(nickname);  // 닉네임 중복 검사
+    }
+
+    @Override
     public ResponseDto<SignInResponseDto> dependentLogin(SignInRequestDto dto) {
         // 간편 로그인 로직
         String name = dto.getName();
@@ -209,5 +229,6 @@ public class AuthServiceImpl implements AuthService {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.LOGOUT_FAILED);
         }
+
     }
 }

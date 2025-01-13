@@ -22,6 +22,7 @@ public interface UserService {
 
     boolean verifyPassword(String userId, String currentPassword);
 
+
     // user 삭제
     ResponseDto<Void> deleteUser(String userId);
 
