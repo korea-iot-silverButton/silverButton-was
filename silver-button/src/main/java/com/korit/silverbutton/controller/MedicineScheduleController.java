@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class MedicineScheduleController {
             @AuthenticationPrincipal String userId,
             @RequestBody MedicineScheduleRequestDto dto
     ) {
+        System.out.println(userId);
 
         ResponseDto<MedicineScheduleResponseDto> response = medicineScheduleService.postMedicineByUserId(userId, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
@@ -39,7 +41,8 @@ public class MedicineScheduleController {
     }
 
     @GetMapping(MEDICINE_LIST_GET)
-    public ResponseEntity<ResponseDto<List<MedicineScheduleResponseDto>>> getMedicineAllByUserId(@AuthenticationPrincipal String userId) {
+    public ResponseEntity<ResponseDto<List<MedicineScheduleResponseDto>>> getMedicineAllByUserId(@AuthenticationPrincipal UserDetails userDetails) {
+        String userId = userDetails.getUsername();
         System.out.println(userId);
         ResponseDto<List<MedicineScheduleResponseDto>> response = medicineScheduleService.getMedicineAllByUserId(userId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
@@ -48,6 +51,7 @@ public class MedicineScheduleController {
 
     @GetMapping(MEDICINE_GET)
     public ResponseEntity<ResponseDto<MedicineScheduleResponseDto>> getMedicineByUserIdAndItemSeq(@AuthenticationPrincipal String userId, @PathVariable Long itemSeq) {
+        System.out.println(userId);
         ResponseDto<MedicineScheduleResponseDto> response = medicineScheduleService.getMedicineByUserIdAndItemSeq(userId, itemSeq);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);

@@ -7,6 +7,10 @@ import lombok.*;
 @NoArgsConstructor
 public class MedicineScheduleRequestDto {
 
+    private Long id;
+
+    private String userId;
+
     private Long itemSeq;
 
     private String itemName;
@@ -19,5 +23,7 @@ public class MedicineScheduleRequestDto {
 
     private String depositMethodQesitm;
 
-        private String intrcQesitm;
+    private String intrcQesitm;
+
+//    private String medicineImage;
 }

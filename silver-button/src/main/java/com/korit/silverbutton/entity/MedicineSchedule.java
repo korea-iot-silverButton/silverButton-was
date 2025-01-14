@@ -55,4 +55,8 @@ public class MedicineSchedule {
     @Column(name = "intrc_qesitm")
     private String intrcQesitm;
 
+    // 약품 이미지
+//    @Column(name = "medicine_image")
+//    private String medicineImage;
+
 }
