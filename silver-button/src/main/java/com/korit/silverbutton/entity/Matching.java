@@ -25,7 +25,7 @@ public class Matching {
 
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "caregiver_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "caregiver_Id", referencedColumnName = "id", nullable = false)
     private User caregiver;
 
 

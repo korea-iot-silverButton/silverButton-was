@@ -3,6 +3,8 @@ package com.korit.silverbutton.repository;
 import com.korit.silverbutton.entity.Message;
 import com.korit.silverbutton.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,11 +18,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 //    OR m.receiverId = :id
 //ORDER BY m.createdAt DESC
 //""")
-    List<Message> findMessageById(Long id);
+    @Query("SELECT m FROM Message m WHERE m.sender.id = :userId OR m.receiver.id = :userId")
+    List<Message> findMessageById(@Param("userId") Long id);
 
-    List<Message> findAllBySenderId(User senderId); // 발신자 ID로 메시지 조회
-    List<Message> findAllByReceiverId(User receiverId);
-//    List<Message> findById(User user);
+    List<Message> findAllBySender(User sender); // 발신자 ID로 메시지 조회
+    List<Message> findAllByReceiver(User receiver);
 
-//    List<Object[]> findAllMessages(); - 쿼리쓸때
 }
