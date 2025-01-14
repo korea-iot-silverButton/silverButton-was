@@ -17,5 +17,4 @@ public class MessageRequestDto {
     private String title;
     @NotBlank
     private String content;
-//    private String userId;
 }
