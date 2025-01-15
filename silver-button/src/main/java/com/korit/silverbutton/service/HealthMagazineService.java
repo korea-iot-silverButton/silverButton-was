@@ -1,7 +1,7 @@
 package com.korit.silverbutton.service;
 
-import com.korit.silverbutton.dto.HealthMagazine.HealthMagazineRequestDto;
-import com.korit.silverbutton.dto.HealthMagazine.HealthMagazineResponseDto;
+import com.korit.silverbutton.dto.HealthMagazine.request.HealthMagazineRequestDto;
+import com.korit.silverbutton.dto.HealthMagazine.response.HealthMagazineResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
 
 import java.util.List;

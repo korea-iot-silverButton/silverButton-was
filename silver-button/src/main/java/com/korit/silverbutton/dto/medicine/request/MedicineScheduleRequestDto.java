@@ -1,4 +1,4 @@
-package com.korit.silverbutton.dto.medicine;
+package com.korit.silverbutton.dto.medicine.request;
 
 import lombok.*;
 
@@ -25,5 +25,5 @@ public class MedicineScheduleRequestDto {
 
     private String intrcQesitm;
 
-//    private String medicineImage;
+    private String medicineImage;
 }

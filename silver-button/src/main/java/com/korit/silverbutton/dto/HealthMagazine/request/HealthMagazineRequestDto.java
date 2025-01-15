@@ -1,4 +1,4 @@
-package com.korit.silverbutton.dto.HealthMagazine;
+package com.korit.silverbutton.dto.HealthMagazine.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

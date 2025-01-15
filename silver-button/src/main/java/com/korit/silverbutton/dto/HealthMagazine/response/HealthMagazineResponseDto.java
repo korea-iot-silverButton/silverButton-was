@@ -1,6 +1,7 @@
-package com.korit.silverbutton.dto.HealthMagazine;
+package com.korit.silverbutton.dto.HealthMagazine.response;
 
 import com.korit.silverbutton.entity.HealthMagazine;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

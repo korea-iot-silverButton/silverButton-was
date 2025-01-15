@@ -1,5 +1,4 @@
-package com.korit.silverbutton.dto.medicine;
-
+package com.korit.silverbutton.dto.medicine.response;
 
 import com.korit.silverbutton.entity.MedicineSchedule;
 import lombok.*;
@@ -8,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MedicineScheduleResponseDto {
+
     private Long id;
 
     private String userId;
@@ -26,7 +26,7 @@ public class MedicineScheduleResponseDto {
 
     private String intrcQesitm;
 
-//    private String medicineImage;
+    private String medicineImage;
 
     public MedicineScheduleResponseDto(MedicineSchedule medicineSchedule) {
         this.id = medicineSchedule.getId();
@@ -38,7 +38,7 @@ public class MedicineScheduleResponseDto {
         this.seQesitm = medicineSchedule.getSeQesitm();
         this.depositMethodQesitm = medicineSchedule.getDepositMethodQesitm();
         this.intrcQesitm = medicineSchedule.getIntrcQesitm();
-//        this.medicineImage = medicineSchedule.getMedicineImage();
+        this.medicineImage = medicineSchedule.getMedicineImage();
     }
 
 

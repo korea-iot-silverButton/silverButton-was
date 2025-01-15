@@ -2,11 +2,12 @@ package com.korit.silverbutton.service.implement;
 
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.ResponseDto;
-import com.korit.silverbutton.dto.medicine.MedicineScheduleRequestDto;
-import com.korit.silverbutton.dto.medicine.MedicineScheduleResponseDto;
+import com.korit.silverbutton.dto.medicine.request.MedicineScheduleRequestDto;
+import com.korit.silverbutton.dto.medicine.response.MedicineScheduleResponseDto;
 import com.korit.silverbutton.entity.MedicineSchedule;
 import com.korit.silverbutton.repository.MedicineScheduleRepository;
 import com.korit.silverbutton.service.MedicineScheduleService;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,12 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class MedicineScheduleServiceImpl implements MedicineScheduleService {
-    private final MedicineScheduleRepository medicineScheduleRepository; //
+    private final MedicineScheduleRepository medicineScheduleRepository;
 
     // 약품 정보 저장
     @Override
-    public ResponseDto<MedicineScheduleResponseDto> postMedicineByUserId(String userId, MedicineScheduleRequestDto dto) {
+    public ResponseDto<MedicineScheduleResponseDto> postMedicineByUserId(String userId, MedicineScheduleRequestDto dto
+    ) {
         MedicineScheduleResponseDto data = null;
         String itemName = dto.getItemName();
         Long itemSeq = dto.getItemSeq();
@@ -32,7 +34,6 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
         String seQesitm = dto.getSeQesitm();
         String depositMethodQesitm = dto.getDepositMethodQesitm();
         String intrcQesitm = dto.getIntrcQesitm();
-
         try {
             MedicineSchedule medicineSchedule = MedicineSchedule.builder()
                     .itemName(itemName)
@@ -45,26 +46,24 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
                     .userId(userId)
                     .build();
             medicineScheduleRepository.save(medicineSchedule);
-
             data = new MedicineScheduleResponseDto(medicineSchedule);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+        return ResponseDto.setSuccess(ResponseMessage.POST_MEDICINE_SCHEDULE_SUCCESS, data);
     }
 
     // 약품 정보 전체 조회
     @Override
-    public ResponseDto<List<MedicineScheduleResponseDto>> getMedicineAllByUserId(String userId) {
+    public ResponseDto<List<MedicineScheduleResponseDto>> getMedicineAllByUserId(String userId
+    ) {
         List<MedicineScheduleResponseDto> data = null;
-
         try {
             Optional<List<MedicineSchedule>> optionalMedicineSchedule = medicineScheduleRepository.getMedicineAllByUserId(userId);
             System.out.println(userId);
             if (optionalMedicineSchedule.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+                return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
             }
             List<MedicineSchedule> medicineSchedule = optionalMedicineSchedule.get();
             data = medicineSchedule.stream()
@@ -74,18 +73,18 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+        return ResponseDto.setSuccess(ResponseMessage.GET_ALL_MEDICINE_SCHEDULE_SUCCESS, data);
     }
 
     // 약품 정보 단건 조회
     @Override
-    public ResponseDto<MedicineScheduleResponseDto> getMedicineByUserIdAndItemSeq(String userId, Long itemSeq) {
+    public ResponseDto<MedicineScheduleResponseDto> getMedicineByUserIdAndItemSeq(String userId, Long itemSeq
+    ) {
         MedicineScheduleResponseDto data = null;
-
         try {
             Optional<MedicineSchedule> optionalMedicineSchedule = medicineScheduleRepository.getMedicineByUserIdAndItemSeq(userId, itemSeq);
             if (optionalMedicineSchedule.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+                return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
             }
             MedicineSchedule medicineSchedule = optionalMedicineSchedule.get();
             data = new MedicineScheduleResponseDto(medicineSchedule);
@@ -93,20 +92,19 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+        return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
     }
-
 
     // 약품 정보 삭제
     @Override
-    public ResponseDto<Boolean> deleteMedicineByUserIdAndItemSeq(String userId, Long itemSeq) {
-
+    public ResponseDto<Boolean> deleteMedicineByUserIdAndItemSeq(String userId, Long itemSeq
+    ) {
         try {
             medicineScheduleRepository.deleteMedicineByUserIdAndItemSeq(userId, itemSeq);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, true);
+        return ResponseDto.setSuccess(ResponseMessage.DELETE_MEDICINE_SCHEDULE_SUCCESS, true);
     }
 }

@@ -1,6 +1,7 @@
 package com.korit.silverbutton.entity;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,7 +57,7 @@ public class MedicineSchedule {
     private String intrcQesitm;
 
     // 약품 이미지
-//    @Column(name = "medicine_image")
-//    private String medicineImage;
+    @Column(name = "medicine_image")
+    private String medicineImage;
 
 }
