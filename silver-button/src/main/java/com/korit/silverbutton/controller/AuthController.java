@@ -72,25 +72,28 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/check-duplicate-userid")
+    @PostMapping("/check-duplicate-userId") // http://localhost:4040/api/v1/auth/check-duplicate-userid
     public ResponseEntity<ResponseDto<Boolean>> duplicateCheckUserId(
             @RequestBody OverlapIdRequestDto dto){
+        System.out.println("숨1");
         boolean isDuplicated= authService.overlapUserId(dto.getUserId());
+        System.out.println("숨2");
         ResponseDto<Boolean> response= isDuplicated? ResponseDto.setFailed("userId가 중복됩니다."):
                 ResponseDto.setSuccess("userId가 사용가능합니다.", isDuplicated);
 
-        HttpStatus status = isDuplicated ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        System.out.println(isDuplicated);
+        HttpStatus status = isDuplicated ? HttpStatus.BAD_REQUEST : HttpStatus.OK;
         return ResponseEntity.status(status).body(response);
     }
 
-    @PostMapping("/check-duplicate-nickname")
+    @PostMapping("/check-duplicate-nickname") // http://localhost:4040/api/v1/auth/check-duplicate-nickname
     public ResponseEntity<ResponseDto<Boolean>> duplicateCheckNickName(
             @RequestBody OverlapNicknameRequestDto dto){
         boolean isDuplicated= authService.overlapNickname(dto.getNickname());
         ResponseDto<Boolean> response= isDuplicated? ResponseDto.setFailed("닉네임이 중복됩니다."):
         ResponseDto.setSuccess("닉네임이 사용가능합니다.", isDuplicated);
 
-        HttpStatus status = isDuplicated ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        HttpStatus status = isDuplicated ? HttpStatus.BAD_REQUEST : HttpStatus.OK;
         return ResponseEntity.status(status).body(response);
     }
 
