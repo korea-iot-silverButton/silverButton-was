@@ -16,6 +16,7 @@ import com.korit.silverbutton.service.AuthService;
 import com.korit.silverbutton.service.TokenBlacklistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.generic.ClassGen;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,12 +44,20 @@ public class AuthServiceImpl implements AuthService {
 
         String phone = dto.getPhone(); // 전화번호
         String gender = dto.getGender(); //성별
+        if ("female".equalsIgnoreCase(gender)) {
+            gender = "F";
+        } else if ("male".equalsIgnoreCase(gender)) {
+            gender = "M";
+        } else {
+            throw new IllegalArgumentException("Invalid gender value: " + gender);
+        }
 
         String nickname = dto.getNickname(); // 닉네임
 
         Date birthDate= dto.getBirthDate(); // 나이 계산
 
-        String profileImage= dto.getProfileImage();
+//        String profileImage= dto.getProfileImage();
+        String profileImage= "image";
 
         String role;
 
@@ -72,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
 
         SignUpResponseDto data = null;
 
-
+        System.out.println(userId+password+name+phone+email+nickname+birthDate+gender+profileImage+role);
 
         try {
             String encodedPassword = bCryptpasswordEncoder.encode(password);
@@ -101,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
-
+        System.out.println(data);
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
@@ -110,7 +119,6 @@ public class AuthServiceImpl implements AuthService {
         Date today = new Date();
         int currentYear = today.getYear() + 1900;
         int birthYear = birthDate.getYear() + 1900;
-
         int age = currentYear - birthYear;
 
         // 생일이 아직 지나지 않았으면 나이에서 1을 뺌
