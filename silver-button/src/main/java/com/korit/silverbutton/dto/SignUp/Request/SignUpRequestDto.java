@@ -17,6 +17,7 @@ public class SignUpRequestDto {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String confirmPassword;
 
     @Column(nullable = false)
@@ -38,7 +39,6 @@ public class SignUpRequestDto {
     @Column(columnDefinition = "ENUM('M', 'F')")
     private String gender;
 
-    @Column(nullable = false)
     private String profileImage;
 
     private String licenseNumber;
