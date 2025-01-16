@@ -9,9 +9,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
-sourceCompatibility = '17' // 자바 소스 컴파일 버전
-
-repositories {
+    sourceCompatibility = '17' // 자바 소스 컴파일 버전
     mavenCentral()
 }
 
