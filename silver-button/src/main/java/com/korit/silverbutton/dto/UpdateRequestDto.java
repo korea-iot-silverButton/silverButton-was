@@ -23,5 +23,6 @@ public class UpdateRequestDto {
     @NotBlank
     private String nickname;
 
+    @NotBlank
     private String profileImg;
 }

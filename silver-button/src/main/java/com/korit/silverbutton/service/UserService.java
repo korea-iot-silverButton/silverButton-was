@@ -18,8 +18,10 @@ public interface UserService {
     // userId로 특정 user 조회
     ResponseDto<UserProfileDto> getUser(String userId);
 
+    // 비밀번호 변경
     ResponseDto<UserProfileDto> updatePassword(String userId, String currentPassword, String newPassword);
 
+    // 현재 비밀번호 검증
     boolean verifyPassword(String userId, String currentPassword);
 
 
@@ -37,4 +39,6 @@ public interface UserService {
 
     // 프로필 이미지 조회
     ResponseDto<String> getProfileImg(String userId);
+
 }
+
