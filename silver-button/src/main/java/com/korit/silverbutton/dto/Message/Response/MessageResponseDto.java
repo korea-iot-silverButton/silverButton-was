@@ -18,7 +18,6 @@ public class MessageResponseDto {
     private final String content;
     private final LocalDateTime createdAt;
 
-    // Message 엔티티를 기반으로 DTO를 생성하는 생성자
     public MessageResponseDto(Message message) {
         this.senderId = message.getSender().getId();
         this.senderName = message.getSender().getName();
