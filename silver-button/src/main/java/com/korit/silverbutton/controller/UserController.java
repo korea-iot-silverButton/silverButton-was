@@ -98,15 +98,27 @@ public class UserController {
         return ResponseEntity.status(status).body(response);
     }//complete
 
-    @PutMapping("/upload-profile-img")
+    @PatchMapping("/upload-profile-img")
     public ResponseEntity<ResponseDto<String>> uploadProfileImg(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestParam("file") MultipartFile file) {
+        // 파일이 존재하는지 확인
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ResponseDto.setFailed("No file uploaded"));
+        }
+
+        // 파일 형식 검증 (예: 이미지 파일만 허용)
+        if (!file.getContentType().startsWith("image/")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ResponseDto.setFailed("Invalid file type"));
+        }
+
         // 새 이미지를 업로드
         ResponseDto<String> response = userService.uploadFile(principalUser.getUserId(), file);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
-    }// Test해봐야 함
+    }
 
     @GetMapping("/profile-img")
     public ResponseEntity<ResponseDto<String>> getProfileImg(@AuthenticationPrincipal PrincipalUser principalUser) {
@@ -114,5 +126,5 @@ public class UserController {
         ResponseDto<String> response = userService.getProfileImg(principalUser.getUserId());
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
-    }// Test 해봐야 함
+    }
 }

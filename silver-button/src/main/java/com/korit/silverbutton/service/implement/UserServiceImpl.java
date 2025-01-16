@@ -1,5 +1,9 @@
 package com.korit.silverbutton.service.implement;
 
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.User.Response.UserProfileDto;
@@ -12,12 +16,15 @@ import com.korit.silverbutton.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +34,12 @@ public class UserServiceImpl implements UserService {
     private final ProfileImgService profileImgService; // 프로필 이미지 추가
     private final BCryptPasswordEncoder bCryptPasswordEncoder; // 비번 검증
     private final MailService mailService; // 이메일 인증을 위한 서비스 주입
+
+    @Value("${spring.cloud.gcp.storage.bucket}") // application.yml에 써둔 bucket 이름
+    private String bucketName;
+
+    @Autowired
+    private Storage storage;
 
     @Override
     // user 조회
@@ -207,24 +220,49 @@ public class UserServiceImpl implements UserService {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
 
-            // 프로필 이미지 업로드
-            String filePath = profileImgService.uploadFile(file);
+            User user = userOptional.get();
+            String currentProfileImg = user.getProfileImage();  // 기존 프로필 이미지 가져오기
 
-            if (filePath == null) {
-                return ResponseDto.setFailed("PROFILE_IMG_UPLOAD_FAIL");
+            // 기존 파일이 있다면 삭제
+            if (currentProfileImg != null && !currentProfileImg.isEmpty()) {
+                // URL에서 파일 이름(UUID)만 추출
+                String fileName = currentProfileImg.substring(currentProfileImg.lastIndexOf("/") + 1);
+
+                // 기존 파일 삭제
+                Blob blob = storage.get(BlobId.of(bucketName, fileName));
+
+                // blob이 null이 아니고 파일이 존재하는 경우에만 삭제
+                if (blob != null && blob.exists()) {
+                    blob.delete();  // 파일 삭제
+                } else {
+                    System.out.println("null");
+                }
             }
 
-            // 이미지 경로 DB에 저장
-            User user = userOptional.get();
-            user.setProfileImg(filePath);
-            userRepository.save(user);
+            // 새로 업로드할 파일 이름(UUID) 생성
+            String uuid = UUID.randomUUID().toString();
+            String ext = file.getContentType();
 
-            return ResponseDto.setSuccess("PROFILE_IMG_UPLOAD_SUCCESS", filePath);
+            // Google Cloud Storage에 새 파일 업로드
+            BlobInfo blobInfo = storage.create(
+                    BlobInfo.newBuilder(bucketName, uuid)
+                            .setContentType(ext)
+                            .build(),
+                    file.getInputStream()
+            );
+
+            String profileImgUrl = String.format("https://storage.googleapis.com/%s/%s", bucketName, uuid);
+
+            // 프로필 이미지 경로 DB에 저장
+            user.setProfileImage(profileImgUrl);  // DB의 프로필 이미지 경로 업데이트
+            userRepository.save(user);  // DB에 저장
+
+            return ResponseDto.setSuccess("PROFILE_IMG_UPLOAD_SUCCESS", profileImgUrl);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed("PROFILE_IMG_UPDATE_FAIL");
         }
-    }
+    }// patch 형식으로 http://localhost:4040/api/v1/manage/upload-profile-img
 
     // 프로필 이미지 삭제
     @Override
@@ -266,8 +304,9 @@ public class UserServiceImpl implements UserService {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
 
-            String profileImg = userOptional.get().getProfileImg();
+            String profileImg = userOptional.get().getProfileImage();
             if (profileImg != null) {
+                System.out.println(profileImg);
                 return ResponseDto.setSuccess("PROFILE_IMG_NOT_FOUND", profileImg);
             }
             return ResponseDto.setFailed("PROFILE_IMG_NOT_FOUND");
@@ -276,7 +315,7 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return ResponseDto.setFailed("PROFILE_IMG_NOT_FOUND");
         }
-    }
+    }//http://localhost:4040/api/v1/manage/profile-img
 }
 
 
