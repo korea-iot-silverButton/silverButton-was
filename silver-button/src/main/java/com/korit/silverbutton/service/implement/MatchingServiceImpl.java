@@ -136,33 +136,34 @@ public class MatchingServiceImpl implements MatchingService {
     // 매칭 생성
     @Override
     public ResponseDto<MatchingResponseDto> createMatching(MatchingRequestDto dto, Long userId) {
-        MatchingResponseDto data = null;
-
-        try {
-            User dependent = userRepository.findById(dto.getDependentUserId()).orElse(null);
-            User caregiver = userRepository.findById(dto.getCaregiverUserId()).orElse(null);
-
-            // 중복 매칭 여부 확인
-            boolean exists = matchingRepository.existsByDependentIdAndCaregiverId(dependent.getId(), caregiver.getId());
-            if (exists) {
-                return ResponseDto.setFailed("Matching already exists.");
-            }
-
-            Matching matching = Matching.builder()
-                    .dependent(dependent)
-                    .caregiver(caregiver)
-                    .build();
-
-            matchingRepository.save(matching);
-
-            data = new MatchingResponseDto(matching);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-        }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+        return null;
+//        MatchingResponseDto data = null;
+//
+//        try {
+//            User dependent = userRepository.findById(dto.getDependentUserId()).orElse(null);
+//            User caregiver = userRepository.findById(dto.getCaregiverUserId()).orElse(null);
+//
+//            // 중복 매칭 여부 확인
+//            boolean exists = matchingRepository.existsByDependentIdAndCaregiverId(dependent.getId(), caregiver.getId());
+//            if (exists) {
+//                return ResponseDto.setFailed("Matching already exists.");
+//            }
+//
+//            Matching matching = Matching.builder()
+//                    .dependent(dependent)
+//                    .caregiver(caregiver)
+//                    .build();
+//
+//            matchingRepository.save(matching);
+//
+//            data = new MatchingResponseDto(matching);
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+//        }
+//        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
 }
