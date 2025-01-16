@@ -116,6 +116,7 @@ public class WebSecurityConfig {
                                 // .requestMatchers()
                                 //  : 특정 요청과 일치하는 url에 대한 엑세스
                                 new AntPathRequestMatcher("/api/v1/auth/**"),
+                                new AntPathRequestMatcher("/api/v1/mail/**"), // 아이디 비밀번호 찾을때 보내는 인증코드 api
                                 new AntPathRequestMatcher("/api/v1/board/all"),
                                 new AntPathRequestMatcher("/api/v1/board/view/**"),
                                 new AntPathRequestMatcher("/api/v1/comment/all"),

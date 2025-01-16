@@ -9,14 +9,19 @@ import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.User.Request.OverlapIdRequestDto;
 import com.korit.silverbutton.dto.User.Request.OverlapNicknameRequestDto;
+import com.korit.silverbutton.entity.User;
+import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.provider.JwtProvider;
 import com.korit.silverbutton.service.AuthService;
 import com.korit.silverbutton.service.TokenBlacklistService;
+import com.korit.silverbutton.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(ApiMappingPattern.AUTH)
@@ -31,6 +36,10 @@ public class AuthController {
     private static final String LOGIN_PATH = "/login";
     private static final String DEPENDENT_LOGIN_PATH = "/dependent-login";
     private static final String LOGOUT_PATH = "/logout";
+    private static final String MAIL = "/mail";
+
+
+    private final UserService userService;
 
     @PostMapping(SIGN_UP_PATH)
     public ResponseEntity<ResponseDto<SignUpResponseDto>> signUp(@Valid @RequestBody SignUpRequestDto dto) {
@@ -96,5 +105,73 @@ public class AuthController {
         HttpStatus status = isDuplicated ? HttpStatus.BAD_REQUEST : HttpStatus.OK;
         return ResponseEntity.status(status).body(response);
     }
+
+    @PutMapping("/upload-profile-img")
+    public ResponseEntity<ResponseDto<String>> uploadProfileImg(
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @RequestParam("file") MultipartFile file) {
+        // 새 이미지를 업로드
+        ResponseDto<String> response = userService.uploadFile(principalUser.getUserId(), file);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }// Test해봐야 함
+
+    @GetMapping("/profile-img")
+    public ResponseEntity<ResponseDto<String>> getProfileImg(@AuthenticationPrincipal PrincipalUser principalUser) {
+        // 현재 로그인된 사용자의 프로필 이미지 경로를 반환
+        ResponseDto<String> response = userService.getProfileImg(principalUser.getUserId());
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
+    }// Test 해봐야 함
+
+    // 이메일 인증을 통한 아이디 찾기
+    @PostMapping("/findId")
+    public ResponseDto<String> findUserIdByEmail(@RequestParam String email) {
+        return authService.findUserIdByEmail(email);
+    }
+
+    // 이메일 인증 후 아이디 찾기
+    @PostMapping("/verifyId")
+    public ResponseDto<String> verifyUserId(@RequestParam String email, @RequestParam String token) {
+        return authService.findUserIdByEmail(email); // 이미 findUserIdByEmail 메서드로 처리 가능
+    }
+
+    // 비밀번호 재설정 링크 발송
+    @PostMapping("/findPassword")
+    public ResponseDto<String> sendPasswordResetLink(@RequestParam String email) {
+        return authService.sendPasswordResetLink(email);
+    }
+
+    // 비밀번호 재설정 및 변경
+    @PostMapping("/verifyPassword")
+    public ResponseDto<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        return authService.resetPassword(token, newPassword);
+    }
+
+//    // 카카오 로그인 요청
+//    @PostMapping("/kakao")
+//    public ResponseEntity<String> loginWithKakao(@RequestParam String code) {
+//        try {
+//            User user = authService.loginWithKakao(code);
+//            return ResponseEntity.ok("Kakao Login Success: " + user.getUsername());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Kakao login failed: " + e.getMessage());
+//        }
+//    }
+//
+//    // 네이버 로그인 요청
+//    @PostMapping("/naver")
+//    public ResponseEntity<String> loginWithNaver(@RequestParam String code) {
+//        try {
+//            User user = authService.loginWithNaver(code);
+//            return ResponseEntity.ok("Naver Login Success: " + user.getUsername());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Naver login failed: " + e.getMessage());
+//        }
+//    }
+
+
 
 }
