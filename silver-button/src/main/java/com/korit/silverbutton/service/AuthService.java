@@ -7,6 +7,9 @@ import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.User.Request.OverlapIdRequestDto;
 import com.korit.silverbutton.dto.User.Request.OverlapNicknameRequestDto;
+import com.korit.silverbutton.entity.User;
+
+import java.util.Optional;
 
 public interface AuthService {
 
@@ -18,6 +21,19 @@ public interface AuthService {
 
     // 닉네임 중복 확인 로직
     boolean overlapNickname(String nickName);
+
+    // 이메일 인증을 통한 아이디 찾기
+    ResponseDto<String> findUserIdByEmail(String email);
+
+    // 이메일 인증 후 아이디 찾기
+    ResponseDto<String> verifyUserId(String email, String token);
+
+    // 비밀번호 재설정 링크 발송
+    ResponseDto<String> sendPasswordResetLink(String email);
+
+    // 비밀번호 재설정 및 변경
+    ResponseDto<String> resetPassword(String token, String newPassword);
+
 
     ResponseDto<SignInResponseDto> dependentLogin(SignInRequestDto dto);
 
