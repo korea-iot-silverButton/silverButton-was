@@ -81,8 +81,6 @@ public class MessageServiceImpl implements MessageService {
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
-
-
     // 발신 쪽지 조회 - 완료
     @Override
     public ResponseDto<List<MessageResponseDto>> getOutGoingMessages(Long senderId) {
