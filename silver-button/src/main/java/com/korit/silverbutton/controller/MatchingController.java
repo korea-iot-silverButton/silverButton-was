@@ -4,6 +4,7 @@ import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.Matching.Request.MatchingRequestDto;
 import com.korit.silverbutton.dto.Matching.Response.MatchingResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.MatchingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,47 +21,59 @@ import java.util.List;
 public class MatchingController {
     private final MatchingService matchingService;
 
-    // 모든 매칭 조회
+    // 모든 매칭 조회 - 완료
     @GetMapping
     public ResponseEntity<ResponseDto<List<MatchingResponseDto>>> getAllMatchings(
-            @AuthenticationPrincipal Long id
+            @AuthenticationPrincipal PrincipalUser principalUser
     ) {
+        Long id = principalUser.getId();
         ResponseDto<List<MatchingResponseDto>> response = matchingService.getAllMatchings(id);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
 
 
-    // 특정 매칭 조회 요양사 특정인의 정보
+    // 특정 매칭 조회- 완료
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<MatchingResponseDto>> getMatchingById(
-            @AuthenticationPrincipal Long id
+            @PathVariable Long id,
+            @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        ResponseDto<MatchingResponseDto> response = matchingService.getMatchingById(id);
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-        return ResponseEntity.status(status).body(response);
+        ResponseDto<MatchingResponseDto> responseDto = matchingService.getMatchingById(id, principalUser.getId());
+        HttpStatus status = responseDto.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(responseDto);
     }
 
-    // 매칭 삭제
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto<Void>> deleteMatching(
-            @AuthenticationPrincipal Long id
-    ) {
-        ResponseDto<Void> response = matchingService.deleteMatching(id);
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-        return ResponseEntity.status(status).body(response);
-    }
-
-    // 매칭 생성
+    //매칭 하기
     @PostMapping
     public ResponseEntity<ResponseDto<MatchingResponseDto>> createMatching(
-            @Valid @RequestBody MatchingRequestDto matchingRequestDto,
-            @AuthenticationPrincipal Long userId
+            @RequestBody @Valid MatchingRequestDto dto,
+            @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        matchingService.validateUserRole(userId, "DEPENDENT");
-        ResponseDto<MatchingResponseDto> response = matchingService.createMatching(matchingRequestDto, userId);
-        HttpStatus status = response.isResult() ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
-        return ResponseEntity.status(status).body(response);
+        Long id = principalUser.getId();
+
+        try{
+            ResponseDto<MatchingResponseDto> response = matchingService.createMatching(dto, id);
+            HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+            return ResponseEntity.status(status).body(response);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseDto.setFailed("Internal server error"));
+        }
+
+
     }
 
+    // 매칭 삭제 - 완료
+    @DeleteMapping
+    public ResponseEntity<ResponseDto<Void>> deleteMatching(
+            @RequestParam Long id,
+            @AuthenticationPrincipal PrincipalUser principalUser
+    ) {
+        Long userId = principalUser.getId();
+
+        ResponseDto<Void> response = matchingService.deleteMatching(id, userId);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
+    }
 }

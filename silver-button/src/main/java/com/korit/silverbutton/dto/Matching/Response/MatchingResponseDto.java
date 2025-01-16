@@ -1,36 +1,34 @@
 package com.korit.silverbutton.dto.Matching.Response;
 
-import com.korit.silverbutton.entity.User;
-import lombok.Getter;
+import com.korit.silverbutton.entity.Matching;
+import lombok.*;
 
-@Getter
+import java.util.Date;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MatchingResponseDto {
-    private final Long dependentId; // 필수
-    private final Long caregiverId; // 필수
+    private Long dependentId;
+    private Long caregiverId;
+    private String dependentName;
+    private String caregiverName;
+    private String phone;
+    private String email;
+    private Date birthdate;
+    private String gender;
+    private String profileImage;
 
-    private final String dependentName; // 선택
-    private final String caregiverName; // 선택
-
-    public MatchingResponseDto(Long dependentId, Long caregiverId, String dependentName, String caregiverName) {
-        this.dependentId = dependentId;
-        this.caregiverId = caregiverId;
-        this.dependentName = dependentName;
-        this.caregiverName = caregiverName;
+    public MatchingResponseDto(Matching matching) {
+        this.dependentId = matching.getDependent().getId();
+        this.caregiverId = matching.getCaregiver().getId();
+        this.dependentName = matching.getDependent().getName();
+        this.caregiverName = matching.getCaregiver().getName();
+        this.phone=matching.getCaregiver().getPhone();
+        this.email=matching.getCaregiver().getEmail();
+        this.birthdate=matching.getCaregiver().getBirthDate();
+        this.gender=matching.getCaregiver().getGender();
+        this.profileImage=matching.getCaregiver().getProfileImage();
     }
 
-    public static MatchingResponseDto fromEntities(User caregiver, User dependent) {
-        return new MatchingResponseDto(
-                dependent.getId(),
-                caregiver.getId(),
-                dependent.getName(),
-                caregiver.getName()
-        );
-    }
 }
-
-/*
-불변성을 유지하기 위해 final을 적용.
-@Getter: 게터만 생성.
-@RequiredArgsConstructor: final 필드만 포함하는 생성자 자동 생성.
-응답 DTO에서는 보통 데이터 생성 시 검증이 완료된 상태라고 가정하므로 제거. -- notnull
- */

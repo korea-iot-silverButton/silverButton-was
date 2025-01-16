@@ -13,7 +13,7 @@ public interface MessageService {
 
     ResponseDto<Void> deleteMessage(Long id, Long userId);
 
-    ResponseDto<MessageResponseDto> createMessage(MessageRequestDto dto, Long id);
+    ResponseDto<MessageResponseDto> createMessage(MessageRequestDto dto, Long id);//@
 
     ResponseDto<MessageResponseDto> getMessageById(Long messageId, Long userId);
 
