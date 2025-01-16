@@ -21,7 +21,7 @@ import java.util.List;
 public class MatchingController {
     private final MatchingService matchingService;
 
-    // 모든 매칭 조회
+    // 모든 매칭 조회 - 완료
     @GetMapping
     public ResponseEntity<ResponseDto<List<MatchingResponseDto>>> getAllMatchings(
             @AuthenticationPrincipal PrincipalUser principalUser
@@ -33,19 +33,38 @@ public class MatchingController {
     }
 
 
-    // 특정 매칭 조회 요양사 특정인의 정보
+    // 특정 매칭 조회- 완료
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<MatchingResponseDto>> getMatchingById(
             @PathVariable Long id,
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        MatchingResponseDto matchingResponseDto = matchingService.getMatchingById(id, principalUser.getId());
-        ResponseDto<MatchingResponseDto> response = matchingService.getMatchingById(id, matchingId);
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-        return ResponseEntity.status(status).body(response);
+        ResponseDto<MatchingResponseDto> responseDto = matchingService.getMatchingById(id, principalUser.getId());
+        HttpStatus status = responseDto.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(responseDto);
     }
 
-    // 매칭 삭제
+    //매칭 하기
+    @PostMapping
+    public ResponseEntity<ResponseDto<MatchingResponseDto>> createMatching(
+            @RequestBody @Valid MatchingRequestDto dto,
+            @AuthenticationPrincipal PrincipalUser principalUser
+    ) {
+        Long id = principalUser.getId();
+
+        try{
+            ResponseDto<MatchingResponseDto> response = matchingService.createMatching(dto, id);
+            HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+            return ResponseEntity.status(status).body(response);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseDto.setFailed("Internal server error"));
+        }
+
+
+    }
+
+    // 매칭 삭제 - 완료
     @DeleteMapping
     public ResponseEntity<ResponseDto<Void>> deleteMatching(
             @RequestParam Long id,

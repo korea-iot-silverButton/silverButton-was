@@ -50,6 +50,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public ResponseDto<MessageResponseDto> createMessage(MessageRequestDto dto, Long senderId) {
         MessageResponseDto data = null;
+
         String title = dto.getTitle();
         String content = dto.getContent();
 
