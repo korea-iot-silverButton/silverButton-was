@@ -1,5 +1,6 @@
 package com.korit.silverbutton.controller;
 
+import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.Mail.SendMailRequestDto;
 import com.korit.silverbutton.service.MailService;
 import jakarta.mail.MessagingException;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/mail")
+@RequestMapping(ApiMappingPattern.MAIL)
 public class MailController {
 
     @Autowired

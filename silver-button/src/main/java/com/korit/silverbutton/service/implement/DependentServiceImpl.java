@@ -100,6 +100,7 @@ public class DependentServiceImpl implements DependentService {
         String email = dto.getEmail();
         String name = dto.getName();
         String phone = dto.getPhone();
+        String nickname = dto.getNickname();
 
         String role = principalUser.getRole();
         try{
@@ -119,6 +120,7 @@ public class DependentServiceImpl implements DependentService {
                     .email(email != null ? email : user.getEmail()) // email이 null이 아니면 업데이트
                     .name(name != null ? name : user.getName()) // 이름
                     .phone(phone != null ? phone : user.getPhone()) // 폰
+                    .nickname(nickname != null ? nickname : user.getNickname()) // 닉네임
                     .build();
 
             userRepository.save(user);
