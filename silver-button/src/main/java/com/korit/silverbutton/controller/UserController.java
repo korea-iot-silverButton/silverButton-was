@@ -98,7 +98,7 @@ public class UserController {
         return ResponseEntity.status(status).body(response);
     }//complete
 
-    @PutMapping("/upload-profile-img")
+    @PatchMapping("/upload-profile-img")
     public ResponseEntity<ResponseDto<String>> uploadProfileImg(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestParam("file") MultipartFile file) {

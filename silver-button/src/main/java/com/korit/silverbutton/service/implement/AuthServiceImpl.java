@@ -7,8 +7,6 @@ import com.korit.silverbutton.dto.SignUp.Request.SignUpRequestDto;
 import com.korit.silverbutton.dto.SignIn.Response.SignInResponseDto;
 import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
-import com.korit.silverbutton.dto.User.Request.OverlapIdRequestDto;
-import com.korit.silverbutton.dto.User.Request.OverlapNicknameRequestDto;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.provider.JwtProvider;
 import com.korit.silverbutton.repository.UserRepository;
@@ -16,7 +14,6 @@ import com.korit.silverbutton.service.AuthService;
 import com.korit.silverbutton.service.TokenBlacklistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.apache.bcel.generic.ClassGen;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
