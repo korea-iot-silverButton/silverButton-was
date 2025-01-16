@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,12 +43,20 @@ public class BoardServiceImpl implements BoardService {
         BoardResponseDto data = null;
         String title = dto.getTitle();
         String content = dto.getContent();
-        String imageUrl = null;
+        List<String> uploadedImages = new ArrayList<>();
 
-        // 이미지 파일 처리 (Content에서 이미지 URL 추출)
-        MultipartFile imageFile = dto.getImage(); // 요청에서 이미지를 받을 때 MultipartFile로 받기
-        if (imageFile != null && !imageFile.isEmpty()) {
-            imageUrl = profileImgService.uploadFile(imageFile); // 이미지 업로드 후 URL 반환
+        // 이미지 파일 처리
+        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+            uploadedImages = profileImgService.uploadFiles(dto.getImages()); // board 디렉토리에 이미지 저장
+        }
+
+        // 저장된 이미지 URL을 Content에 추가 (선택적)
+        if (!uploadedImages.isEmpty()) {
+            StringBuilder imageLinks = new StringBuilder(content);
+            for (String imageUrl : uploadedImages) {
+                imageLinks.append("\n![이미지](").append(imageUrl).append(")"); // Markdown 형식으로 이미지 삽입
+            }
+            content = imageLinks.toString();
         }
 
         try {
@@ -58,7 +67,7 @@ public class BoardServiceImpl implements BoardService {
                     .user(user)
                     .title(title)
                     .content(content)
-                    .imageUrl(imageUrl)
+                    .imageUrl(uploadedImages.isEmpty() ? null : uploadedImages.get(0))
                     .likes(0)
                     .views(0)
                     .createdAt(LocalDateTime.now())

@@ -8,6 +8,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -50,6 +52,42 @@ public class ProfileImgService {
         // 저장된 파일 경로 반환
         return filePath;
     }
+
+    // 여러 파일 업로드 처리 (board 디렉토리로 저장)
+    public List<String> uploadFiles(List<MultipartFile> files) {
+        List<String> filePaths = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            if (file == null || file.isEmpty()) {
+                continue;
+            }
+
+            // 파일명 고유화: UUID를 이용해 파일 이름을 고유하게 생성
+            String newFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
+            // 저장할 경로 (board 디렉토리)
+            String filePath = rootPath + "/board/";
+
+            // 이미지를 저장할 디렉토리 생성
+            File dir = new File(filePath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            // 실제 파일 저장 경로 설정
+            Path uploadPath = Paths.get(filePath + newFileName);
+            try {
+                // 파일을 지정된 경로에 저장
+                Files.write(uploadPath, file.getBytes());
+                filePaths.add(filePath + newFileName); // 업로드된 파일 경로를 리스트에 추가
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return filePaths;
+    }
+
 
     // 이미지 삭제 로직
     public boolean deleteFile(String filePath) {

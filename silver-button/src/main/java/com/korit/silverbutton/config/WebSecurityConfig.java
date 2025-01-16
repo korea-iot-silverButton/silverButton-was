@@ -103,7 +103,8 @@ public class WebSecurityConfig {
         @throws: Exception - 설정 중 예외 발생 가능
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain
+    filterChain(HttpSecurity http) throws Exception {
         return http
                 // CSRF 보호 비활성화 (REST API에서는 보통 비활성화)
                 .csrf(AbstractHttpConfigurer::disable)

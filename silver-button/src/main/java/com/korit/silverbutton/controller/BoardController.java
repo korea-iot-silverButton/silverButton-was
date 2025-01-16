@@ -15,8 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 @RestController
 @RequestMapping(ApiMappingPattern.BOARD)
 @RequiredArgsConstructor
@@ -36,8 +38,12 @@ public class BoardController {
     public ResponseEntity<ResponseDto<BoardResponseDto>> createBoard(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @Valid @RequestBody BoardRequestDto dto
+
     ) {
+        System.out.println("dto요청 : " + dto);
+//        System.out.println("images" + images);
         ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto);
+        System.out.println("dto응답 : " + dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
