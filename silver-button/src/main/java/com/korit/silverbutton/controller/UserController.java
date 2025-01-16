@@ -118,7 +118,7 @@ public class UserController {
         ResponseDto<String> response = userService.uploadFile(principalUser.getUserId(), file);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
-    }// Test해봐야 함
+    }
 
     @GetMapping("/profile-img")
     public ResponseEntity<ResponseDto<String>> getProfileImg(@AuthenticationPrincipal PrincipalUser principalUser) {
@@ -126,5 +126,5 @@ public class UserController {
         ResponseDto<String> response = userService.getProfileImg(principalUser.getUserId());
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
-    }// Test 해봐야 함
+    }
 }

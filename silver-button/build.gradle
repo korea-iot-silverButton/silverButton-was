@@ -9,38 +9,53 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
+sourceCompatibility = '17' // 자바 소스 컴파일 버전
+
+repositories {
     mavenCentral()
 }
 
 dependencies {
+    // 프로젝트 개발에 필요한 기능인 의존성을 입력
+    // : 스프링부트 웹 관련 기능 제공 | 테스트 기능을 제공
     implementation('org.springframework.boot:spring-boot-starter-web')
+    // 스프링 데이터 JPA
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    // 스프링 시큐리티 사용 스타터
     implementation('org.springframework.boot:spring-boot-starter-security')
 
+    // 프로젝트 유효성 검사를 위한 의존성 입력
     implementation('jakarta.validation:jakarta.validation-api:3.0.2')
     implementation('commons-validator:commons-validator:1.7')
 
+    // JWT 의존성 추가
     implementation('io.jsonwebtoken:jjwt-api:0.11.2')
     implementation('io.jsonwebtoken:jjwt-impl:0.11.2')
     implementation('io.jsonwebtoken:jjwt-jackson:0.11.2')
 
+    // 데이터베이스 h2 사용
     runtimeOnly('com.h2database:h2')
     implementation('mysql:mysql-connector-java:8.0.33')
 
+    // 반복 메서드 작성 작업을 줄여주는 라이브러리
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
 
     testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
     testImplementation('org.assertj:assertj-core:3.22.0')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation('org.springframework.security:spring-security-test')
-
-    implementation('org.springframework.boot:spring-boot-starter-webflux')
-    implementation('org.springframework.boot:spring-boot-starter-mail')
 
     // Google Cloud Storage 관련 의존성 추가
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter', version: '1.2.5.RELEASE'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-storage', version: '1.2.5.RELEASE'
+
+    // 스프링 시큐리티 테스트를 위한 테스트 기능 제공
+    testImplementation('org.springframework.security:spring-security-test')
+
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+
+    // 스프링 이메일 기능 제공
+    implementation('org.springframework.boot:spring-boot-starter-mail')
 }
 
 test {
