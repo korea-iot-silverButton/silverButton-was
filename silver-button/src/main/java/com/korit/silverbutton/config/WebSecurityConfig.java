@@ -123,8 +123,8 @@ public class WebSecurityConfig {
 
 
                                 new AntPathRequestMatcher("/api/v1/health-magazine/**"),
-                                new AntPathRequestMatcher("api/v1/message/**"),
-                                new AntPathRequestMatcher("api/v1/matching/**")
+                                new AntPathRequestMatcher("/api/v1/message/**"),
+                                new AntPathRequestMatcher("/api/v1/matching/**")
 
 
                         )
