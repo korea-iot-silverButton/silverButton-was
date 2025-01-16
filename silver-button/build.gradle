@@ -6,16 +6,14 @@ plugins {
 
 group = 'com.korit'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17' // 자바 소스 컴파일 버전
+sourceCompatibility = '17'
 
 repositories {
-    // 의존성을 받을 저장소 지정
+    sourceCompatibility = '17' // 자바 소스 컴파일 버전
     mavenCentral()
 }
 
 dependencies {
-
-
     // 프로젝트 개발에 필요한 기능인 의존성을 입력
     // : 스프링부트 웹 관련 기능 제공 | 테스트 기능을 제공
     implementation('org.springframework.boot:spring-boot-starter-web')
@@ -44,6 +42,11 @@ dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
     testImplementation('org.assertj:assertj-core:3.22.0')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+
+    // Google Cloud Storage 관련 의존성 추가
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter', version: '1.2.5.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-storage', version: '1.2.5.RELEASE'
+
     // 스프링 시큐리티 테스트를 위한 테스트 기능 제공
     testImplementation('org.springframework.security:spring-security-test')
 
@@ -51,7 +54,6 @@ dependencies {
 
     // 스프링 이메일 기능 제공
     implementation('org.springframework.boot:spring-boot-starter-mail')
-
 }
 
 test {
