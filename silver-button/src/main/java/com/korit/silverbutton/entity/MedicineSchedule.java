@@ -35,6 +35,10 @@ public class MedicineSchedule {
         @Column(name = "item_name")
         private String itemName;
 
+        // 약품 효능
+        @Column(name = "efcy_qesitm")
+        private String efcyQesitm;
+
         /// 약품 사용방법
         @Column(name = "use_method_qesitm")
         private String useMethodQesitm;

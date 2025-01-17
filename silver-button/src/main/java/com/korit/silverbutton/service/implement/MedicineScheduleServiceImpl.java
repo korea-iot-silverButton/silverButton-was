@@ -29,6 +29,7 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
         MedicineScheduleResponseDto data = null;
         String userId = dto.getUserId();
         String itemName = dto.getItemName();
+        String efcyQesitm = dto.getEfcyQesitm();
         Long itemSeq = dto.getItemSeq();
         String useMethodQesitm = dto.getUseMethodQesitm();
         String atpnQesitm = dto.getAtpnQesitm();
@@ -39,6 +40,7 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
         try {
             MedicineSchedule medicineSchedule = MedicineSchedule.builder()
                     .itemName(itemName)
+                    .efcyQesitm(efcyQesitm)
                     .itemSeq(itemSeq)
                     .useMethodQesitm(useMethodQesitm)
                     .atpnQesitm(atpnQesitm)
