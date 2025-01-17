@@ -28,10 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUserId(String userId);
 
-
     @Query("SELECT u FROM User u WHERE u.role = :role AND u.name = :name AND u.phone = :phone")
     User findByRoleAndNameAndPhone(@Param("role") String role, @Param("name") String name, @Param("phone") String phone);
-
-
-
 }

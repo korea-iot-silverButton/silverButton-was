@@ -28,7 +28,6 @@ import java.util.List;
 public class UserController {
 
     private final @Lazy UserService userService;
-    private final @Lazy AuthService authService;
 
     @GetMapping("/allusers")
     public ResponseEntity<ResponseDto<List<UserResponseDto>>> getAllUsers(
