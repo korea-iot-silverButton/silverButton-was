@@ -1,8 +1,8 @@
 package com.korit.silverbutton.dto;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class SnsLoginResponseDto {
 
     private String userId;   // 사용자 아이디
@@ -21,6 +21,7 @@ public class SnsLoginResponseDto {
     // 팩토리 메서드
     public static SnsLoginResponseDto fromUser(String userId, String email, boolean isPasswordResetRequired, String message) {
         return new SnsLoginResponseDto(userId, email, isPasswordResetRequired, message);
+
     }
 
 
