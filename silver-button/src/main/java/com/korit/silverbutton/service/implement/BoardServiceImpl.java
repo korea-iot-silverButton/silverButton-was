@@ -34,7 +34,7 @@ public class BoardServiceImpl implements BoardService {
     private final ProfileImgService profileImgService;
 
     @Override
-    public ResponseDto<BoardResponseDto> createBoard(Long userId, BoardRequestDto dto) {
+    public ResponseDto<BoardResponseDto> createBoard(Long userId, BoardRequestDto dto, List<MultipartFile> images) {
 
         if (userId == null || userId <= 0) {
             return ResponseDto.setFailed("유효하지 않은 사용자 ID입니다.");
@@ -46,8 +46,8 @@ public class BoardServiceImpl implements BoardService {
         List<String> uploadedImages = new ArrayList<>();
 
         // 이미지 파일 처리
-        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
-            uploadedImages = profileImgService.uploadFiles(dto.getImages()); // board 디렉토리에 이미지 저장
+        if (images != null && !images.isEmpty()) {
+            uploadedImages = profileImgService.uploadFiles(images); // board 디렉토리에 이미지 저장
         }
 
         // 저장된 이미지 URL을 Content에 추가 (선택적)

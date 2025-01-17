@@ -18,6 +18,5 @@ public class BoardRequestDto {
     @NotBlank(message = "Content cannot be empty")
     private String content;
 
-    @Size(max = 2083, message = "Image URL length must be less than 2083 characters")
     private List<MultipartFile> images;
 }

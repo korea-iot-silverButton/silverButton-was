@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,13 +38,25 @@ public class BoardController {
     @PostMapping(POST_BOARD)
     public ResponseEntity<ResponseDto<BoardResponseDto>> createBoard(
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @Valid @RequestBody BoardRequestDto dto
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
 
     ) {
-        System.out.println("dto요청 : " + dto);
-//        System.out.println("images" + images);
-        ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto);
-        System.out.println("dto응답 : " + dto);
+
+        BoardRequestDto dto = new BoardRequestDto();
+        dto.setTitle(title);
+        dto.setContent(content);
+
+        System.out.println("dto 요청: " + dto);
+        if (images != null) {
+            images.forEach(image -> System.out.println("Image Name: " + image.getOriginalFilename()));
+        } else {
+            System.out.println("No Images Uploaded.");
+        }
+
+        ResponseDto<BoardResponseDto> response = boardService.createBoard(principalUser.getId(), dto, images);
+        System.out.println("dto 응답: " + response);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -54,7 +67,13 @@ public class BoardController {
             @RequestParam(defaultValue = "10") int size
     ) {
         ResponseDto<PagedResponseDto<List<BoardResponseDto>>> response = boardService.getAllBoards(page, size);
-        System.out.println("ResponseDto 내용: " + response);
+        if (response != null && response.getData() != null) {
+            List<BoardResponseDto> boardList = response.getData().getContent();
+            for (BoardResponseDto board : boardList) {
+                System.out.println("Board ID: " + board.getId() + ", Image URL: " + board.getImageUrl());
+            }
+        }
+
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
