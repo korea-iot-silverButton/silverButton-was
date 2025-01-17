@@ -62,4 +62,37 @@ public class ResponseMessage {
     public static final String PROFILE_IMG_UPDATE_SUCCESS = "Profile image updated successfully."; // 프로필 이미지 업데이트 성공
     public static final String PROFILE_IMG_UPDATE_FAIL = "Failed to update profile image."; // 프로필 이미지 업데이트 실패
 
+
+    // 메디슨 스캐쥴 관련 메시지 - 정재원
+    public static final String POST_MEDICINE_SCHEDULE_SUCCESS = "Medicine schedule created successfully.";  // 메디슨 스케줄 저장 성공
+    public static final String GET_ALL_MEDICINE_SCHEDULE_SUCCESS = "Get all medicine schedule successfully."; // 메디슨 스케쥴 전체 조회 성공
+    public static final String MEDICINE_SCHEDULE_NOT_FOUND = "Medicine schedule not found."; // 메디슨 스케줄 조회 실패
+    public static final String GET_MEDICINE_SCHEDULE_SUCCESS = "Get medicine schedule successfully."; // 메디슨 스케쥴 단건 조회 성공
+    public static final String DELETE_MEDICINE_SCHEDULE_SUCCESS = "Delete medicine schedule successfully."; // 메디슨 스케줄 삭제 성공
+
+    // 헬스 매거진 관련 메시지 - 정재원
+    public static final String POST_HEALTH_MAGAZINE_SUCCESS = "Health magazine created successfully.";  // 헬스 매거진 생성 성공
+    public static final String GET_ALL_HEALTH_MAGAZINE_SUCCESS = "Get all magazine successfully.";  // 헬스 매거진 전체 조회 성공
+    public static final String GET_HEALTH_MAGAZINE_SUCCESS = "Get magazine successfully.";  // 헬스 매거진 단건 조회 성공
+    public static final String HEALTH_MAGAZINE_NOT_FOUND = "Health magazine not found.";   // 헬스 매거진 조회 실패
+    public static final String DELETE_HEALTH_MAGAZINE_SUCCESS = "Delete health magazine successfully.";  // 헬스 매거진 삭제 성공
+    public static final String GET_HEALTH_MAGAZINE_TOP5 = "Get health magazine top 5 successfully."; // 헬스 매거진 top5 조회 성공
+    public static final String GET_HEALTH_MAGAZINE_LATEST = "Get health magazine latest successfully.";  // 헬스 매거진 조회수 정렬 성공
+    public static final String GET_HEALTH_MAGAZINE_DESC = "Get health magazine desc successfully.";   // 헬스 매거진 최신순 정렬 성공
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

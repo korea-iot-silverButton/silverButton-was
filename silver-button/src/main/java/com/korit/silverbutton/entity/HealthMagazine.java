@@ -1,6 +1,5 @@
 package com.korit.silverbutton.entity;
 
-import ch.qos.logback.core.testUtil.MockInitialContext;
 import jakarta.persistence.*;
 import lombok.*;
 
