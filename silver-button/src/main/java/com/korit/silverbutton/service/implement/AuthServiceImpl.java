@@ -6,6 +6,7 @@ import com.korit.silverbutton.dto.SignUp.Request.SignUpRequestDto;
 import com.korit.silverbutton.dto.SignIn.Response.SignInResponseDto;
 import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.SnsLoginResponseDto;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.provider.JwtProvider;
 import com.korit.silverbutton.repository.UserRepository;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -167,82 +169,93 @@ public class AuthServiceImpl implements AuthService {
 
     // 이메일 관련 아이디 비번 찾기 로직
     @Override
-    public ResponseDto<String> findUserIdByEmail(String email) {
+    public ResponseDto<SnsLoginResponseDto> findUserIdByEmail(String email) {
         try {
-            // 이메일로 사용자를 찾기
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));  // 사용자가 없으면 예외 발생
+            // 이메일로 사용자를 찾기 (Optional<User> 반환)
+            Optional<User> optionalUser = userRepository.findByEmail(email);
 
-            // 사용자 아이디 반환
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, user.getUserId());
+            // 사용자가 없으면 예외를 던짐
+            User user = optionalUser.orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));
 
-        } catch (IllegalArgumentException e) {
-            // 예외가 발생한 경우, ResponseMessage를 이용한 실패 메시지 반환
-            return ResponseDto.setFailed(e.getMessage());
+            // SnsLoginResponseDto 생성 (아이디만 반환)
+            SnsLoginResponseDto responseDto = SnsLoginResponseDto.fromUser(user.getUserId(), user.getEmail(), false, "아이디 찾기 성공");
+
+            // 성공 응답 반환
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);  // 기타 오류 발생 시 데이터베이스 오류 메시지 반환
         }
     }
 
-    // 찾은 이메일로 아이디
     @Override
-    public ResponseDto<String> verifyUserId(String email, String token) {
+    public ResponseDto<SnsLoginResponseDto> verifyUserId(String email, String token) {
         try {
-            // 인증 토큰을 통해 이메일 인증 처리
+            // 이메일 인증 토큰을 검증하여 유효한 아이디를 가져옴
             String userId = mailService.verifyEmail(token);
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, "아이디는 " + userId + "입니다.");
+
+            // 인증이 성공했을 때, SnsLoginResponseDto 생성
+            SnsLoginResponseDto responseDto = new SnsLoginResponseDto(userId, email, false, "아이디 인증 성공");
+
+            // 성공적인 응답 반환
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
+        } catch (IllegalArgumentException e) {
+            // 예외가 발생한 경우 (예: 잘못된 토큰)
+            return ResponseDto.setFailed("유효하지 않은 인증 토큰입니다.");
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseDto.setFailed("아이디 인증에 실패했습니다.");
         }
     }
-
-    // 이메일로 비번
     @Override
-    public ResponseDto<String> sendPasswordResetLink(String email) {
+    public ResponseDto<SnsLoginResponseDto> sendPasswordResetLink(String email) {
         try {
-            // 이메일로 사용자 찾기
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));  // 사용자가 없으면 예외 발생
+            // 이메일로 사용자 찾기 (Optional<User> 반환)
+            Optional<User> optionalUser = userRepository.findByEmail(email);
 
-            // 인증 메일 발송
-            String token = mailService.sendSimpleMessage(email, user.getUserId());  // 인증 메일 발송
+            // 사용자가 없으면 예외를 던짐
+            User user = optionalUser.orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));
 
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, "비밀번호 재설정 링크가 발송되었습니다.");
-        } catch (IllegalArgumentException e) {
-            // 사용자가 존재하지 않을 경우
-            return ResponseDto.setFailed(e.getMessage());
+            // 비밀번호 재설정 링크 발송
+            String token = mailService.sendSimpleMessage(email, user.getUserId());
+
+            // 비밀번호 재설정 성공 응답 반환
+            SnsLoginResponseDto responseDto = new SnsLoginResponseDto(user.getUserId(), user.getEmail(), true, "비밀번호 재설정 링크가 발송되었습니다.");
+
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);  // 기타 오류 발생 시 데이터베이스 오류 메시지 반환
         }
     }
 
-    // 인증된 이메일로 비번 변경
     @Override
-    public ResponseDto<String> resetPassword(String token, String newPassword) {
+    public ResponseDto<SnsLoginResponseDto> resetPassword(String token, String newPassword) {
         try {
-            // 토큰 검증
-            String userId = mailService.verifyEmail(token);  // 토큰 검증
+            // 이메일 인증 토큰을 검증하여 유효한 사용자 ID 가져옴
+            String userId = mailService.verifyEmail(token);
 
-            // 사용자 찾기
-            User user = userRepository.findByUserId(userId)
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));  // 사용자가 없으면 예외 발생
+            // 해당 userId로 사용자 찾기
+            Optional<User> optionalUser = userRepository.findByUserId(userId);
+
+            // 사용자가 없으면 예외를 던짐
+            User user = optionalUser.orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));
 
             // 새로운 비밀번호로 업데이트
             String encodedPassword = bCryptpasswordEncoder.encode(newPassword);
             user.setPassword(encodedPassword);
             userRepository.save(user);
 
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, "비밀번호가 성공적으로 재설정되었습니다.");
-        } catch (IllegalArgumentException e) {
-            // 사용자가 존재하지 않을 경우
-            return ResponseDto.setFailed(e.getMessage());
+            // 비밀번호 재설정 성공 응답 반환
+            SnsLoginResponseDto responseDto = new SnsLoginResponseDto(user.getUserId(), user.getEmail(), false, "비밀번호가 성공적으로 재설정되었습니다.");
+
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed("비밀번호 재설정에 실패했습니다.");  // 비밀번호 재설정 실패 메시지 반환
+            return ResponseDto.setFailed("비밀번호 재설정에 실패했습니다.");
         }
     }
+
 
     @Override
     public ResponseDto<SignInResponseDto> dependentLogin(SignInRequestDto dto) {
