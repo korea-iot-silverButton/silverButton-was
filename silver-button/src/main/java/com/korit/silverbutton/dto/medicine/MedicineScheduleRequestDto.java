@@ -7,17 +7,23 @@ import lombok.*;
 @NoArgsConstructor
 public class MedicineScheduleRequestDto {
 
-    private Long itemSeq;
+        private Long id;
 
-    private String itemName;
+        private String userId;
 
-    private String useMethodQesitm;
+        private Long itemSeq;
 
-    private String atpnQesitm;
+        private String itemName;
 
-    private String seQesitm;
+        private String useMethodQesitm;
 
-    private String depositMethodQesitm;
+        private String atpnQesitm;
+
+        private String seQesitm;
+
+        private String depositMethodQesitm;
 
         private String intrcQesitm;
+
+        private String medicineImage;
 }
