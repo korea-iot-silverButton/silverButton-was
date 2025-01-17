@@ -2,6 +2,7 @@ package com.korit.silverbutton.dto.HealthMagazine.response;
 
 import com.korit.silverbutton.entity.HealthMagazine;
 
+import com.korit.silverbutton.entity.Medicine;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,4 +44,6 @@ public class HealthMagazineResponseDto {
         this.source = healthMagazine.getSource();
         this.viewCount = healthMagazine.getViewCount();
     }
+
+
 }

@@ -1,15 +1,13 @@
-package com.korit.silverbutton.dto.medicine.request;
+package com.korit.silverbutton.dto.medicines;
 
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MedicineScheduleRequestDto {
+public class MedicineRequestDto {
 
     private Long id;
-
-    private String userId;
 
     private Long itemSeq;
 

@@ -2,8 +2,8 @@ package com.korit.silverbutton.service.implement;
 
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.ResponseDto;
-import com.korit.silverbutton.dto.medicine.request.MedicineScheduleRequestDto;
-import com.korit.silverbutton.dto.medicine.response.MedicineScheduleResponseDto;
+import com.korit.silverbutton.dto.medicine.MedicineScheduleRequestDto;
+import com.korit.silverbutton.dto.medicine.MedicineScheduleResponseDto;
 import com.korit.silverbutton.entity.MedicineSchedule;
 import com.korit.silverbutton.repository.MedicineScheduleRepository;
 import com.korit.silverbutton.service.MedicineScheduleService;
@@ -24,9 +24,10 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
 
     // 약품 정보 저장
     @Override
-    public ResponseDto<MedicineScheduleResponseDto> postMedicineByUserId(String userId, MedicineScheduleRequestDto dto
+    public ResponseDto<MedicineScheduleResponseDto> postMedicineByUserId(Long id, MedicineScheduleRequestDto dto
     ) {
         MedicineScheduleResponseDto data = null;
+        String userId = dto.getUserId();
         String itemName = dto.getItemName();
         Long itemSeq = dto.getItemSeq();
         String useMethodQesitm = dto.getUseMethodQesitm();
@@ -34,6 +35,7 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
         String seQesitm = dto.getSeQesitm();
         String depositMethodQesitm = dto.getDepositMethodQesitm();
         String intrcQesitm = dto.getIntrcQesitm();
+        String medicineImage = dto.getMedicineImage();
         try {
             MedicineSchedule medicineSchedule = MedicineSchedule.builder()
                     .itemName(itemName)
@@ -44,6 +46,7 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
                     .depositMethodQesitm(depositMethodQesitm)
                     .intrcQesitm(intrcQesitm)
                     .userId(userId)
+                    .medicineImage(medicineImage)
                     .build();
             medicineScheduleRepository.save(medicineSchedule);
             data = new MedicineScheduleResponseDto(medicineSchedule);

@@ -10,6 +10,7 @@ public class ApiMappingPattern {
     public static final String COMMENT = "/api/v1/comment"; // 황상기
     public static final String BOARD_LIKE = "/api/v1/board-like"; // 황상기
     public static final String MEDICINE= "/api/v1/medicine-schedule"; // 정재원
+    public static final String MEDICINES= "/api/v1/medicine"; // 정재원
     public static final String MESSAGE = "/api/v1/message";
     public static final String MATCHING = "/api/v1/matching";
     public static final String MANAGE= "/api/v1/manage";
