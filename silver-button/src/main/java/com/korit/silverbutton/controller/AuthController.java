@@ -7,6 +7,7 @@ import com.korit.silverbutton.dto.SignUp.Request.SignUpRequestDto;
 import com.korit.silverbutton.dto.SignIn.Response.SignInResponseDto;
 import com.korit.silverbutton.dto.SignUp.Response.SignUpResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.SnsLoginResponseDto;
 import com.korit.silverbutton.dto.User.Request.OverlapIdRequestDto;
 import com.korit.silverbutton.dto.User.Request.OverlapNicknameRequestDto;
 import com.korit.silverbutton.entity.User;
@@ -126,25 +127,30 @@ public class AuthController {
 
     // 이메일 인증을 통한 아이디 찾기
     @PostMapping("/findId")
-    public ResponseDto<String> findUserIdByEmail(@RequestParam String email) {
+    public ResponseDto<SnsLoginResponseDto> findUserIdByEmail(@RequestParam String email) {
+        // 이메일로 아이디 찾기 서비스 호출
         return authService.findUserIdByEmail(email);
     }
 
     // 이메일 인증 후 아이디 찾기
     @PostMapping("/verifyId")
-    public ResponseDto<String> verifyUserId(@RequestParam String email, @RequestParam String token) {
-        return authService.findUserIdByEmail(email); // 이미 findUserIdByEmail 메서드로 처리 가능
+    public ResponseDto<SnsLoginResponseDto> verifyUserId(@RequestParam String email, @RequestParam String token) {
+        // 이메일 인증 후 아이디 찾기 서비스 호출
+        return authService.verifyUserId(email, token);
     }
+
 
     // 비밀번호 재설정 링크 발송
     @PostMapping("/findPassword")
-    public ResponseDto<String> sendPasswordResetLink(@RequestParam String email) {
+    public ResponseDto<SnsLoginResponseDto> sendPasswordResetLink(@RequestParam String email) {
+        // 이메일로 비밀번호 재설정 링크 발송 서비스 호출
         return authService.sendPasswordResetLink(email);
     }
 
     // 비밀번호 재설정 및 변경
     @PostMapping("/verifyPassword")
-    public ResponseDto<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+    public ResponseDto<SnsLoginResponseDto> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        // 비밀번호 재설정 및 변경 서비스 호출
         return authService.resetPassword(token, newPassword);
     }
 
