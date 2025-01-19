@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(ApiMappingPattern.COMMENT) // 매핑 패턴 변경
+@RequestMapping(ApiMappingPattern.COMMENT)
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -38,8 +38,10 @@ public class CommentController {
 
     @GetMapping(GET_COMMENT_ALL)
     public ResponseEntity<ResponseDto<List<CommentResponseDto>>> getAllComments(
+            @RequestParam Long boardId
     ) {
-        ResponseDto<List<CommentResponseDto>> response = commentService.getAllComments();
+
+        ResponseDto<List<CommentResponseDto>> response = commentService.getAllComments(boardId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

@@ -12,6 +12,7 @@ import com.korit.silverbutton.repository.BoardRepository;
 import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.BoardService;
 import com.korit.silverbutton.service.ProfileImgService;
+import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,16 +46,14 @@ public class BoardServiceImpl implements BoardService {
         String content = dto.getContent();
         List<String> uploadedImages = new ArrayList<>();
 
-        // 이미지 파일 처리
         if (images != null && !images.isEmpty()) {
-            uploadedImages = profileImgService.uploadFiles(images); // board 디렉토리에 이미지 저장
+            uploadedImages = profileImgService.uploadFiles(images);
         }
 
-        // 저장된 이미지 URL을 Content에 추가 (선택적)
         if (!uploadedImages.isEmpty()) {
             StringBuilder imageLinks = new StringBuilder(content);
             for (String imageUrl : uploadedImages) {
-                imageLinks.append("\n![이미지](").append(imageUrl).append(")"); // Markdown 형식으로 이미지 삽입
+                imageLinks.append("\n![이미지](").append(imageUrl).append(")");
             }
             content = imageLinks.toString();
         }
@@ -130,10 +129,6 @@ public class BoardServiceImpl implements BoardService {
                 board.setViews(board.getViews() + 1);
                 boardRepository.save(board);
 
-                // 게시글 작성자 정보 조회
-                User boardAuthor = userRepository.findById(board.getUser().getId())
-                        .orElseThrow(() -> new RuntimeException(ResponseMessage.NOT_EXIST_USER));
-
                 data = new BoardResponseDto(board);
 
             } else {
@@ -208,10 +203,23 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public ResponseDto<BoardUpdateResponseDto> updateBoard(Long userId, Long id, BoardRequestDto dto) {
+    public ResponseDto<BoardUpdateResponseDto> updateBoard(Long userId, Long id, BoardRequestDto dto, List<MultipartFile> images) {
         BoardUpdateResponseDto data = null;
         String title = dto.getTitle();
         String content = dto.getContent();
+        List<String> uploadedImages = new ArrayList<>();
+
+        if (images != null && !images.isEmpty()) {
+            uploadedImages = profileImgService.uploadFiles(images);
+        }
+
+        if (!uploadedImages.isEmpty()) {
+            StringBuilder imageLinks = new StringBuilder(content);
+            for (String imageUrl : uploadedImages) {
+                imageLinks.append("\n![이미지](").append(imageUrl).append(")");
+            }
+            content = imageLinks.toString();
+        }
 
         try {
             Optional<Board> boardOptional = boardRepository.findByUserIdAndId(userId, id);
@@ -219,9 +227,21 @@ public class BoardServiceImpl implements BoardService {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
             Board board = boardOptional.get();
+
+            String oldImageUrl = board.getImageUrl();
+            if (oldImageUrl != null) {
+                boolean imageDeleted = profileImgService.deleteFile(oldImageUrl);
+                if (imageDeleted) {
+                    System.out.println(ResponseMessage.FILE_DELETION_SUCCESS);
+                } else {
+                    System.out.println(ResponseMessage.FILE_DELETION_FAIL);
+                }
+            }
+
             board = board.toBuilder()
                     .title(title)
                     .content(content)
+                    .imageUrl(uploadedImages.isEmpty() ? board.getImageUrl() : uploadedImages.get(0))
                     .build();
 
             boardRepository.save(board);
@@ -233,7 +253,6 @@ public class BoardServiceImpl implements BoardService {
             return ResponseDto.setFailed(ResponseMessage.POST_UPDATE_FAIL);
         }
         return ResponseDto.setSuccess(ResponseMessage.POST_UPDATE_SUCCESS, data);
-
     }
 
     @Override
@@ -251,12 +270,32 @@ public class BoardServiceImpl implements BoardService {
                     new IllegalArgumentException(ResponseMessage.NOT_EXIST_POST)
             );
 
+            String imageUrl = board.getImageUrl();
+            if (imageUrl != null) {
+                boolean imageDeleted = profileImgService.deleteFile(imageUrl);
+                if (imageDeleted) {
+                    System.out.println(ResponseMessage.FILE_DELETION_SUCCESS);
+                } else {
+                    System.out.println(ResponseMessage.FILE_DELETION_FAIL);
+                }
+            }
+
             boardRepository.delete(board);
 
+        } catch (IllegalArgumentException e) {
+            // 게시글이 없을 때의 처리
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
+        } catch (IOException e) {
+            // 파일 관련 에러 처리
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.FILE_DELETION_FAIL);
         } catch (Exception e) {
+            // 기타 예외 처리
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.POST_DELETION_FAIL);
         }
+
         return ResponseDto.setSuccess(ResponseMessage.POST_DELETION_SUCCESS, null);
     }
 }

@@ -67,11 +67,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public ResponseDto<List<CommentResponseDto>> getAllComments() {
+    public ResponseDto<List<CommentResponseDto>> getAllComments(Long boardId) {
         List<CommentResponseDto> data = null;
 
         try {
-            List<Comment> comments = commentRepository.findAll();
+            List<Comment> comments = commentRepository.findByBoardId(boardId);
             data = comments.stream()
                     .map(CommentResponseDto::new)
                     .collect(Collectors.toList());

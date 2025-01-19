@@ -18,7 +18,7 @@ public class BoardResponseDto {
     private String username;
     private String title;
     private String content;
-    private String imageUrl; // 업로드된 이미지 URL
+    private String imageUrl;
     private LocalDateTime createdAt;
     private int likes;
     private int views;

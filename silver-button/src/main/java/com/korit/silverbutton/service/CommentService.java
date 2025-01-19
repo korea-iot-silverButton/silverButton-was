@@ -11,7 +11,7 @@ public interface CommentService {
 
     ResponseDto<CommentResponseDto> createComment(PrincipalUser name, PrincipalUser phone, @Valid CommentRequestDto dto);
 
-    ResponseDto<List<CommentResponseDto>> getAllComments();
+    ResponseDto<List<CommentResponseDto>> getAllComments(Long boardId);
 
     ResponseDto<Void> deleteComment(Long userId, Long id);
 }

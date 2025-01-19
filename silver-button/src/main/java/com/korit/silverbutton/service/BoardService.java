@@ -20,7 +20,7 @@ public interface BoardService {
 
     ResponseDto<PagedResponseDto<List<BoardResponseDto>>> getBoardByUserName(String name, int page, int size);
 
-    ResponseDto<BoardUpdateResponseDto> updateBoard(Long userId, Long id, @Valid BoardRequestDto dto);
+    ResponseDto<BoardUpdateResponseDto> updateBoard(Long userId, Long id, @Valid BoardRequestDto dto, List<MultipartFile> images);
 
     ResponseDto<Void> deleteBoard(Long userId, Long id);
 

@@ -119,15 +119,11 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher("/api/v1/mail/**"), // 아이디 비밀번호 찾을때 보내는 인증코드 api
                                 new AntPathRequestMatcher("/api/v1/board/all"),
                                 new AntPathRequestMatcher("/api/v1/board/view/**"),
-                                new AntPathRequestMatcher("/api/v1/comment/all/**"),
-
-
+                                new AntPathRequestMatcher("/api/v1/comment/all"),
                                 new AntPathRequestMatcher("/api/v1/health-magazine/**"),
                                 new AntPathRequestMatcher("/api/v1/medicine/**"),
                                 new AntPathRequestMatcher("/api/v1/message/**"),
                                 new AntPathRequestMatcher("/api/v1/matching/**")
-
-
                         )
                         // .permitAll()
                         //  : 누구나 접근이 가능하게 설정
