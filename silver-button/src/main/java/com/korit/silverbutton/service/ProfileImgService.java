@@ -155,6 +155,7 @@ public class ProfileImgService {
     // 이미지 조회 로직 (파일 경로 반환)
     public String getProfileImg(String fileName) {
         // 파일 경로를 반환 (파일이 존재하는 경로로 리턴 가능)
+
         return Paths.get("profile", fileName).toString();
     }
 }
