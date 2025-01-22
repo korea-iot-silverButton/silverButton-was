@@ -84,19 +84,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseDto<UserProfileDto> updateUser(String userId, UserProfileDto dto) {
         try {
+            System.out.println("사용자"+userId);
             // 사용자 ID로 해당 사용자 검색
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
 
+            System.out.println("afasdfawefe");
             // 사용자가 존재하면 해당 사용자 객체 가져오기
             User user = userOptional.get();
-
-            // 이메일 중복 체크 (이메일이 변경되었을 경우만 체크)
-            if (!user.getEmail().equals(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
-                return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
-            }
 
             // 전화번호 중복 체크 (전화번호가 변경되었을 경우만 체크)
             if (!user.getPhone().equals(dto.getPhone()) && userRepository.existsByPhone(dto.getPhone())) {
@@ -108,12 +105,15 @@ public class UserServiceImpl implements UserService {
                 return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
             }
 
+            // 새 비밀번호 암호화
+            String encodedNewPassword = bCryptPasswordEncoder.encode(dto.getPassword());
+
             // 비밀번호는 변경하지 않음
             // 비밀번호 변경 없이 다른 값들만 업데이트
             user = user.toBuilder()
-                    .email(dto.getEmail())  // 이메일 변경
                     .phone(dto.getPhone())  // 전화번호 변경
                     .nickname(dto.getNickname())  // 닉네임 변경
+                    .password(encodedNewPassword)
                     .build(); // 이메일, phone, 닉네임만 변경가능
 
             // 사용자 정보 저장
@@ -307,7 +307,7 @@ public class UserServiceImpl implements UserService {
             String profileImg = userOptional.get().getProfileImage();
             if (profileImg != null) {
                 System.out.println(profileImg);
-                return ResponseDto.setSuccess("PROFILE_IMG_NOT_FOUND", profileImg);
+                return ResponseDto.setSuccess("PROFILE_IMG_FOUND", profileImg);
             }
             return ResponseDto.setFailed("PROFILE_IMG_NOT_FOUND");
 
