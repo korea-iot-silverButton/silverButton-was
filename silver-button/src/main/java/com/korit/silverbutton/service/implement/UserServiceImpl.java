@@ -96,9 +96,9 @@ public class UserServiceImpl implements UserService {
             User user = userOptional.get();
 
             // 이메일 중복 체크 (이메일이 변경되었을 경우만 체크)
-            if (!user.getEmail().equals(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
-                return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
-            }
+//            if (!user.getEmail().equals(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
+//                return ResponseDto.setFailed(ResponseMessage.EXIST_USER);
+//            }
 
             // 전화번호 중복 체크 (전화번호가 변경되었을 경우만 체크)
             if (!user.getPhone().equals(dto.getPhone()) && userRepository.existsByPhone(dto.getPhone())) {
