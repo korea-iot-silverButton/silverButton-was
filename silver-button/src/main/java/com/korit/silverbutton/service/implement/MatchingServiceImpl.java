@@ -3,20 +3,15 @@ package com.korit.silverbutton.service.implement;
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.Matching.Request.MatchingRequestDto;
 import com.korit.silverbutton.dto.Matching.Response.MatchingResponseDto;
-import com.korit.silverbutton.dto.Message.Response.MessageResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.entity.Matching;
-import com.korit.silverbutton.entity.Message;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.MatchingRepository;
 import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.MatchingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -26,12 +21,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MatchingServiceImpl implements MatchingService {
-    private final UserRepository userRepository;
     private final MatchingRepository matchingRepository;
+    private final UserRepository userRepository;
 
-    //매칭 전체 조회 ? - 완료지만 필요가 할까 ? ? ? 관리자만 볼수 있게 ?
     @Override
-    public ResponseDto<List<MatchingResponseDto>> getAllMatchings(Long id) {
+    public ResponseDto<List<MatchingResponseDto>> getAllMatchings() {
         try {
             List<Matching> matchings = matchingRepository.findAll();
 
@@ -43,14 +37,7 @@ public class MatchingServiceImpl implements MatchingService {
                         // MatchingResponseDto 직접 생성
                         return new MatchingResponseDto(
                                 dependent.getId(),
-                                caregiver.getId(),
-                                dependent.getName(),
-                                caregiver.getName(),
-                                caregiver.getPhone(), // 필요하면 dependent.getPhone() 사용
-                                caregiver.getEmail(),
-                                caregiver.getBirthDate(), // Date 타입
-                                caregiver.getGender(),
-                                caregiver.getProfileImage()
+                                caregiver.getId()
                         );
                     })
                     .collect(Collectors.toList());
@@ -62,41 +49,40 @@ public class MatchingServiceImpl implements MatchingService {
         }
     }
 
-    //특정 매칭 조회 - 완료
+    // 스스로 매칭 된 상태 조회
     @Override
-    public ResponseDto<MatchingResponseDto> getMatchingById(Long matchingId, Long userId) {
-        try {
-
-            // id와 사용자 ID가 일치하는 단일 매칭 가져오기
-            Matching matching = matchingRepository.findById(matchingId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "매칭을 찾을 수 없습니다."));
-
-            User caregiver = matching.getCaregiver();
-            User dependent = matching.getDependent();
-
-            // 권한 검사
-            if (!matching.getCaregiver().getId().equals(userId) && !matching.getDependent().getId().equals(userId)) {
-                return ResponseDto.setFailed(ResponseMessage.UNAUTHORIZED);
-            }
-
-            // MatchingResponseDto 리스트로 변환
-            MatchingResponseDto matchingResponseDto = new MatchingResponseDto(
-                    dependent.getId(),
-                    caregiver.getId(),
-                    dependent.getName(),
-                    caregiver.getName(),
-                    caregiver.getPhone(),
-                    caregiver.getEmail(),
-                    caregiver.getBirthDate(),
-                    caregiver.getGender(),
-                    caregiver.getProfileImage()
-            );
-
-            return ResponseDto.setSuccess("매칭 목록 조회 성공", matchingResponseDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed("매칭 목록 조회 중 오류가 발생했습니다.");
-        }
+    public ResponseDto<MatchingResponseDto> getMatchingById(Long userId) {
+//        try {
+//            Matching matching = matchingRepository.findById(userId)
+//                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "매칭을 찾을 수 없습니다."));
+//
+//            User caregiver = matching.getCaregiver();
+//            User dependent = matching.getDependent();
+//
+//            // 권한 검사
+//            if (!matching.getCaregiver().getId().equals(userId) && !matching.getDependent().getId().equals(userId)) {
+//                return ResponseDto.setFailed(ResponseMessage.UNAUTHORIZED);
+//            }
+//
+//            // MatchingResponseDto 리스트로 변환
+//            MatchingResponseDto matchingResponseDto = new MatchingResponseDto(
+//                    dependent.getId(),
+//                    caregiver.getId(),
+//                    dependent.getName(),
+//                    caregiver.getName(),
+//                    caregiver.getPhone(),
+//                    caregiver.getEmail(),
+//                    caregiver.getBirthDate(),
+//                    caregiver.getGender(),
+//                    caregiver.getProfileImage()
+//            );
+//
+//            return ResponseDto.setSuccess("매칭 목록 조회 성공", matchingResponseDto);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseDto.setFailed("매칭 목록 조회 중 오류가 발생했습니다.");
+//        }
+        return null;
     }
 
     //매칭 삭제 - 완료
@@ -166,4 +152,14 @@ public class MatchingServiceImpl implements MatchingService {
 //        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
+    @Override
+    public ResponseDto<List<User>> contractablecaregiver(Long id) {
+        Optional<User> optionalMatching = userRepository.findById(id);
+        if (optionalMatching.isEmpty()) {
+            return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+        }
+        List<User> caregivers = userRepository.findNamesByRoleExcludeMatchingCaregiver("요양사");
+
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, caregivers);
+    }
 }
