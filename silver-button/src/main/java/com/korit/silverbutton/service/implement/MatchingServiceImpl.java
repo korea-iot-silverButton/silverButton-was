@@ -4,15 +4,12 @@ import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.Matching.Request.MatchingRequestDto;
 import com.korit.silverbutton.dto.Matching.Response.MatchingResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
-import com.korit.silverbutton.entity.Matching;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.MatchingRepository;
 import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.MatchingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;

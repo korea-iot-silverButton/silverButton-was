@@ -31,6 +31,7 @@ public class MatchingController {
         return ResponseEntity.status(status).body(response);
     } // id로만 출력 되는 것 수정해야 함
 
+    // 검색하면 요양사 나옴
     @GetMapping("/search-caregiver")
     public ResponseEntity<ResponseDto<List<User>>> getAllContractAble(
             @AuthenticationPrincipal PrincipalUser principalUser

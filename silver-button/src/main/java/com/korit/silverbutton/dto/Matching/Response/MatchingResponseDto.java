@@ -1,9 +1,6 @@
 package com.korit.silverbutton.dto.Matching.Response;
 
-import com.korit.silverbutton.entity.Matching;
 import lombok.*;
-
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
