@@ -1,6 +1,11 @@
 package com.korit.silverbutton.service;
 
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.korit.silverbutton.common.constant.ResponseMessage;
+import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.entity.User;
+import com.korit.silverbutton.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,13 +17,24 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class ProfileImgService {
 
+    private final Storage storage;
+    private final UserRepository userRepository;
     @Value("${user.dir}") // 실버버튼 프로젝트 로컬 환경
     private String rootPath;
+
+    @Value("${spring.cloud.gcp.storage.bucket}")
+    private String bucketName;
+
+    public ProfileImgService(Storage storage, UserRepository userRepository) {
+        this.storage = storage;
+        this.userRepository = userRepository;
+    }
 
     // 파일 업로드 로직
     public String uploadFile(MultipartFile file) {
@@ -57,75 +73,35 @@ public class ProfileImgService {
         return Paths.get("profile", newFileName).toString(); // 상대 경로 반환
     }
 
-    // 여러 파일 업로드 처리 (board 디렉토리로 저장)
-    public List<String> uploadFiles(List<MultipartFile> files) {
-        List<String> filePaths = new ArrayList<>();
 
-        // rootPath가 null이거나 비어 있지 않은지 확인
-        if (rootPath == null || rootPath.isEmpty()) {
-            System.out.println("Root path is not set properly.");
-            return filePaths;
+    public ResponseDto<List<String>> uploadFiles(List<MultipartFile> files) {
+        List<String> uploadedFileUrls = new ArrayList<>();
+
+        try {
+            for (MultipartFile file : files) {
+                // 새로 업로드할 파일 이름(UUID) 생성
+                String uuid = UUID.randomUUID().toString();
+                String ext = file.getContentType();
+
+                // Google Cloud Storage에 새 파일 업로드
+                BlobInfo blobInfo = storage.create(
+                        BlobInfo.newBuilder(bucketName, uuid)  // bucketName 사용
+                                .setContentType(ext)
+                                .build(),
+                        file.getInputStream()
+                );
+
+                // 업로드된 파일의 URL 생성
+                String fileUrl = String.format("https://storage.googleapis.com/%s/%s", bucketName, uuid);  // bucketName 사용
+                uploadedFileUrls.add(fileUrl);
+            }
+
+            return ResponseDto.setSuccess("PROFILE_IMG_UPLOAD_SUCCESS", uploadedFileUrls);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed("PROFILE_IMG_UPDATE_FAIL");
         }
-        System.out.println("Root path: " + rootPath);
-        for (MultipartFile file : files) {
-            if (file == null || file.isEmpty()) {
-                System.out.println(ResponseMessage.NO_FILE_TO_UPLOAD); // 파일이 없을 경우 안내 메시지
-                continue;
-            }
-
-            // 파일명 고유화: UUID를 이용해 파일 이름을 고유하게 생성
-            String newFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            System.out.println("새로운 파일명: " + newFileName);
-            // 저장할 경로 (board 디렉토리)
-            String filePath = rootPath + "/board/";
-            System.out.println("저장할 경로: " + filePath);
-            System.out.println("저장할 rootPath 경로: " + rootPath);
-
-            // 디렉토리 생성 여부 확인
-            File dir = new File(filePath);
-            if (!dir.exists()) {
-                boolean dirCreated = dir.mkdirs();
-                if (dirCreated) {
-                    System.out.println(ResponseMessage.DIRECTORY_CREATED_SUCCESS + filePath);
-                } else {
-                    System.out.println(ResponseMessage.FAILED_TO_CREATE_DIRECTORY + filePath);
-                }
-            } else {
-                System.out.println(ResponseMessage.DIRECTORY_ALREADY_EXISTS + filePath);
-            }
-
-            // 파일 시스템 권한 확인
-            if (!dir.canWrite()) {
-                System.out.println(ResponseMessage.NO_WRITE_PERMISSION + filePath);
-            }
-
-            // 실제 파일 저장 경로 설정
-            Path uploadPath = Paths.get(filePath + newFileName).toAbsolutePath();
-            System.out.println(ResponseMessage.SAVING_FILE_TO + uploadPath);
-            System.out.println("파일 저장 경로: " + uploadPath);
-
-            try {
-                // 파일을 지정된 경로에 저장
-                Files.write(uploadPath, file.getBytes());
-                System.out.println(ResponseMessage.FILE_UPLOADED_SUCCESS + uploadPath);
-
-                filePaths.add(filePath + newFileName); // 업로드된 파일 경로를 리스트에 추가
-            } catch (Exception e) {
-                System.out.println(ResponseMessage.FAILED_TO_UPLOAD_FILE + file.getOriginalFilename());
-                e.printStackTrace();
-            }
-        }
-
-        // 업로드된 파일 경로 리스트 출력
-        if (filePaths.isEmpty()) {
-            System.out.println(ResponseMessage.NO_FILES_UPLOADED);
-        } else {
-            System.out.println(ResponseMessage.UPLOADED_FILE_PATHS + filePaths);
-        }
-
-        return filePaths;
     }
-
 
     // 이미지 삭제 로직
     public boolean deleteFile(String filePath) {

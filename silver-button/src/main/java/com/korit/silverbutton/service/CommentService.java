@@ -5,6 +5,7 @@ import com.korit.silverbutton.dto.comment.Request.CommentRequestDto;
 import com.korit.silverbutton.dto.comment.Response.CommentResponseDto;
 import com.korit.silverbutton.principal.PrincipalUser;
 import jakarta.validation.Valid;
+
 import java.util.List;
 
 public interface CommentService {

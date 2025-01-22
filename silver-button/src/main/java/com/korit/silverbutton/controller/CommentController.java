@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -31,8 +32,10 @@ public class CommentController {
             @Valid @RequestBody CommentRequestDto dto,
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        ResponseDto<CommentResponseDto> response = commentService.createComment(principalUser, principalUser, dto);
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        ResponseDto<CommentResponseDto> response
+                = commentService.createComment(principalUser, principalUser, dto);
+        HttpStatus status
+                = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
@@ -40,9 +43,10 @@ public class CommentController {
     public ResponseEntity<ResponseDto<List<CommentResponseDto>>> getAllComments(
             @RequestParam Long boardId
     ) {
-
-        ResponseDto<List<CommentResponseDto>> response = commentService.getAllComments(boardId);
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        ResponseDto<List<CommentResponseDto>> response
+                = commentService.getAllComments(boardId);
+        HttpStatus status
+                = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
@@ -51,8 +55,10 @@ public class CommentController {
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long id
     ) {
-        ResponseDto<Void> response = commentService.deleteComment(principalUser.getId(), id);
-        HttpStatus status = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
+        ResponseDto<Void> response
+                = commentService.deleteComment(principalUser.getId(), id);
+        HttpStatus status
+                = response.isResult() ? HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 }

@@ -41,13 +41,20 @@ public class BoardServiceImpl implements BoardService {
             return ResponseDto.setFailed("유효하지 않은 사용자 ID입니다.");
         }
 
+
         BoardResponseDto data = null;
         String title = dto.getTitle();
         String content = dto.getContent();
         List<String> uploadedImages = new ArrayList<>();
 
         if (images != null && !images.isEmpty()) {
-            uploadedImages = profileImgService.uploadFiles(images);
+            ResponseDto<List<String>> response = profileImgService.uploadFiles(images);
+            if (response.isResult()) {  // 'getResult()' 대신 'isResult()' 사용
+                uploadedImages = response.getData();
+            } else {
+                // 실패 처리
+                return ResponseDto.setFailed(ResponseMessage.POST_NOT_FOUND_FOR_USER); // 실패 메시지 수정
+            }
         }
 
         if (!uploadedImages.isEmpty()) {
@@ -99,16 +106,13 @@ public class BoardServiceImpl implements BoardService {
             if (data.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
-
             PagedResponseDto<List<BoardResponseDto>> paged = new PagedResponseDto<>(
                     data,
                     boardPage.getNumber(),
                     boardPage.getTotalPages(),
                     boardPage.getTotalElements()
             );
-
             return ResponseDto.setSuccess(ResponseMessage.POST_CREATION_SUCCESS, paged);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.POST_CREATION_FAIL);
@@ -119,22 +123,16 @@ public class BoardServiceImpl implements BoardService {
     public ResponseDto<BoardResponseDto> getBoardAndIncreaseViews(Long id) {
         BoardResponseDto data = null;
         Long boardId = id;
-
         try {
             Optional<Board> boardOptional = boardRepository.findWithCommentsById(boardId);
-
             if (boardOptional.isPresent()) {
                 Board board = boardOptional.get();
-
                 board.setViews(board.getViews() + 1);
                 boardRepository.save(board);
-
                 data = new BoardResponseDto(board);
-
             } else {
                 return ResponseDto.setFailed(ResponseMessage.INVALID_POST_ID);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.POST_DETAIL_NOT_FOUND);
@@ -148,7 +146,6 @@ public class BoardServiceImpl implements BoardService {
         if (keyword == null || keyword.trim().isEmpty()) {
             return ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD);
         }
-
         try {
             keyword = keyword.trim();
             Pageable pageable = PageRequest.of(page, size);
@@ -157,16 +154,12 @@ public class BoardServiceImpl implements BoardService {
             if (boardPage.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
-
             List<BoardResponseDto> data = boardPage.getContent().stream()
                     .map(BoardResponseDto::new)
                     .collect(Collectors.toList());
-
             PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
                     boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements());
-
             return ResponseDto.setSuccess(ResponseMessage.SEARCH_RESULTS_FOUND, pagedResponse);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -178,7 +171,6 @@ public class BoardServiceImpl implements BoardService {
         if (name == null) {
             return ResponseDto.setFailed(ResponseMessage.INVALID_KEYWORD);
         }
-
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<Board> boardPage = boardRepository.findByUserName(name, pageable);
@@ -186,16 +178,12 @@ public class BoardServiceImpl implements BoardService {
             if (boardPage.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
-
             List<BoardResponseDto> data = boardPage.getContent().stream()
                     .map(BoardResponseDto::new)
                     .collect(Collectors.toList());
-
             PagedResponseDto<List<BoardResponseDto>> pagedResponse = new PagedResponseDto<>(data,
                     boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements());
-
             return ResponseDto.setSuccess(ResponseMessage.POST_FOUND_FOR_USER, pagedResponse);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.POST_NOT_FOUND_FOR_USER);
@@ -210,7 +198,13 @@ public class BoardServiceImpl implements BoardService {
         List<String> uploadedImages = new ArrayList<>();
 
         if (images != null && !images.isEmpty()) {
-            uploadedImages = profileImgService.uploadFiles(images);
+            ResponseDto<List<String>> response = profileImgService.uploadFiles(images);
+            if (response.isResult()) {  // 'getResult()' 대신 'isResult()' 사용
+                uploadedImages = response.getData();
+            } else {
+                // 실패 처리
+                return ResponseDto.setFailed(ResponseMessage.POST_NOT_FOUND_FOR_USER); // 실패 메시지 수정
+            }
         }
 
         if (!uploadedImages.isEmpty()) {
@@ -283,15 +277,12 @@ public class BoardServiceImpl implements BoardService {
             boardRepository.delete(board);
 
         } catch (IllegalArgumentException e) {
-            // 게시글이 없을 때의 처리
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
         } catch (IOException e) {
-            // 파일 관련 에러 처리
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.FILE_DELETION_FAIL);
         } catch (Exception e) {
-            // 기타 예외 처리
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.POST_DELETION_FAIL);
         }
