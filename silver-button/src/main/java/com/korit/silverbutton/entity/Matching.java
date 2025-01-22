@@ -17,10 +17,6 @@ public class Matching {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id",referencedColumnName = "user_Id", nullable = false)
-//    private User user;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dependent_id", referencedColumnName = "id", nullable = false)
     private User dependent;
@@ -29,7 +25,4 @@ public class Matching {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "caregiver_id", referencedColumnName = "id", nullable = false)
     private User caregiver;
-
-
-
 }
