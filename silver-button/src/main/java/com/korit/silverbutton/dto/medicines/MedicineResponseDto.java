@@ -15,6 +15,8 @@ public class MedicineResponseDto {
 
     private String itemName;
 
+    private String efcyQesitm;
+
     private String useMethodQesitm;
 
     private String atpnQesitm;
@@ -37,6 +39,7 @@ public class MedicineResponseDto {
         this.depositMethodQesitm = medicine.getDepositMethodQesitm();
         this.intrcQesitm = medicine.getIntrcQesitm();
         this.medicineImage = medicine.getMedicineImage();
+        this.efcyQesitm = null;
     }
 
 

@@ -63,8 +63,9 @@ public class MedicineScheduleController {
 
     // 메디슨 스케줄 삭제
     @DeleteMapping(MEDICINE_DELETE)
-    public ResponseEntity<ResponseDto<Boolean>> deleteMedicineByUserIdAndItemSeq(@AuthenticationPrincipal String userId, @PathVariable Long itemSeq
+    public ResponseEntity<ResponseDto<Boolean>> deleteMedicineByUserIdAndItemSeq(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long itemSeq
     ) {
+        String userId = userDetails.getUsername();
         ResponseDto<Boolean> response = medicineScheduleService.deleteMedicineByUserIdAndItemSeq(userId, itemSeq);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);

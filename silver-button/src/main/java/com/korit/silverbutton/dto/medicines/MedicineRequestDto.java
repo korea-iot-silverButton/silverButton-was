@@ -13,6 +13,8 @@ public class MedicineRequestDto {
 
     private String itemName;
 
+    private String efcyQesitm;
+
     private String useMethodQesitm;
 
     private String atpnQesitm;
