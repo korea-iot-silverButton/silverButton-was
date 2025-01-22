@@ -32,9 +32,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.role = :role AND u.name = :name AND u.phone = :phone")
     User findByRoleAndNameAndPhone(@Param("role") String role, @Param("name") String name, @Param("phone") String phone);
 
-    @Query("SELECT u FROM User u WHERE u.role= :role")
-    List<User> findNamesByRole(@Param("role") String role);
-
-    @Query("SELECT u FROM User u LEFT JOIN Matching m ON u.id = m.caregiver.id WHERE u.role = :role AND m.caregiver IS NULL")
+    @Query("SELECT u FROM User u LEFT JOIN Matchings m ON u.id = m.id.caregiverId WHERE u.role = :role AND m.id.dependentId IS NULL")
     List<User> findNamesByRoleExcludeMatchingCaregiver(@Param("role") String role);
+
+    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
+            "FROM Matchings m WHERE m.id.caregiverId = :id OR m.id.dependentId = :id")
+    boolean existsByCaregiverOrDependentId(@Param("id") Long id);
 }

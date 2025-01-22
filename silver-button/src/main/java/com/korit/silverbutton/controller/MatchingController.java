@@ -42,24 +42,20 @@ public class MatchingController {
 
     // 특정 매칭 조회- 완료
     @GetMapping("matching-any")
-    public ResponseEntity<ResponseDto<MatchingResponseDto>> getMatchingById(
+    public Boolean getMatchingById(
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        ResponseDto<MatchingResponseDto> responseDto = matchingService.getMatchingById(principalUser.getId());
-        HttpStatus status = responseDto.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-        return ResponseEntity.status(status).body(responseDto);
+        return matchingService.getMatchingById(principalUser.getId());
     }
 
     //매칭 하기
     @PostMapping("/matching-make")
     public ResponseEntity<ResponseDto<MatchingResponseDto>> createMatching(
-            @RequestBody @Valid MatchingRequestDto dto,
+            @RequestParam Long id,
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        Long id = principalUser.getId();
-
         try{
-            ResponseDto<MatchingResponseDto> response = matchingService.createMatching(dto, id);
+            ResponseDto<MatchingResponseDto> response = matchingService.createMatching(id, principalUser.getId());
             HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
             return ResponseEntity.status(status).body(response);
         } catch (Exception e){

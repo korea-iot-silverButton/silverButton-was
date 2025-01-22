@@ -10,11 +10,11 @@ import java.util.List;
 public interface MatchingService {
     ResponseDto<List<MatchingResponseDto>> getAllMatchings();
 
-    ResponseDto<MatchingResponseDto> getMatchingById(Long userId);
+    Boolean getMatchingById(Long userId);
 
     ResponseDto<Void> deleteMatching(Long id, Long userId);
 
-    ResponseDto<MatchingResponseDto> createMatching(MatchingRequestDto dto, Long id);
+    ResponseDto<MatchingResponseDto> createMatching(Long caregiverId, Long dependentId);
 
     ResponseDto<List<User>> contractablecaregiver(Long id);
 }
