@@ -50,16 +50,15 @@ public class UserController {
     @PutMapping("/update")
     public ResponseEntity<ResponseDto<UserProfileDto>> updateUser(
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @RequestBody UserProfileDto dto // 요청 데이터를 받기 위해 @RequestBody 사용
+            @RequestBody @Valid UserProfileDto dto // 요청 데이터를 받기 위해 @RequestBody 사용
             // @ModelAttribute >> formdata를 전송하기 위해 해당 어노테이션 필요
     ) {
-        System.out.println(principalUser+ "sdsdsd"+ dto);
         ResponseDto<UserProfileDto> response = userService.updateUser(principalUser.getUserId(), dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     } // complete
 
-    // 비밀번호 업데이트 API
+    // 비밀번호만 업데이트 API
     @PutMapping("/update-password")
     public ResponseEntity<ResponseDto<UserProfileDto>> updatePassword(
             @AuthenticationPrincipal PrincipalUser principalUser,

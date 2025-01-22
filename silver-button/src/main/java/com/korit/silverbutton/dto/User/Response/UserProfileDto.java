@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserProfileDto {
     private String userId;
+    private String password;
     private String name;
     private String phone;
     private String email;
@@ -22,6 +23,7 @@ public class UserProfileDto {
     public UserProfileDto(User user){
 
         this.userId= user.getUserId();
+        this.password= user.getPassword();
         this.name= user.getName();
         this.phone= user.getPhone();
         this.email= user.getEmail();
