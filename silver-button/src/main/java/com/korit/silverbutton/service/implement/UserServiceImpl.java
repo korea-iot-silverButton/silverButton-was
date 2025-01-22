@@ -84,12 +84,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseDto<UserProfileDto> updateUser(String userId, UserProfileDto dto) {
         try {
+            System.out.println("사용자"+userId);
             // 사용자 ID로 해당 사용자 검색
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
             }
 
+            System.out.println("afasdfawefe");
             // 사용자가 존재하면 해당 사용자 객체 가져오기
             User user = userOptional.get();
 
@@ -307,7 +309,7 @@ public class UserServiceImpl implements UserService {
             String profileImg = userOptional.get().getProfileImage();
             if (profileImg != null) {
                 System.out.println(profileImg);
-                return ResponseDto.setSuccess("PROFILE_IMG_NOT_FOUND", profileImg);
+                return ResponseDto.setSuccess("PROFILE_IMG_FOUND", profileImg);
             }
             return ResponseDto.setFailed("PROFILE_IMG_NOT_FOUND");
 
