@@ -4,6 +4,9 @@ import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.Matching.Request.MatchingRequestDto;
 import com.korit.silverbutton.dto.Matching.Response.MatchingResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.User.Response.PartnerProfileDto;
+import com.korit.silverbutton.dto.User.Response.UserProfileDto;
+import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.MatchingService;
 import jakarta.validation.Valid;
@@ -22,50 +25,59 @@ public class MatchingController {
     private final MatchingService matchingService;
 
     // 모든 매칭 조회 - 완료
-    @GetMapping
+    @GetMapping("/matching-all")
     public ResponseEntity<ResponseDto<List<MatchingResponseDto>>> getAllMatchings(
-            @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        Long id = principalUser.getId();
-        ResponseDto<List<MatchingResponseDto>> response = matchingService.getAllMatchings(id);
+        ResponseDto<List<MatchingResponseDto>> response = matchingService.getAllMatchings();
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
+    } // id로만 출력 되는 것 수정해야 함
+
+    @GetMapping("/search-caregiver")
+    public ResponseEntity<ResponseDto<List<User>>> getAllContractAble(
+            @AuthenticationPrincipal PrincipalUser principalUser
+    ){
+        ResponseDto<List<User>> response= matchingService.contractablecaregiver(principalUser.getId());
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
 
-
     // 특정 매칭 조회- 완료
-    @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto<MatchingResponseDto>> getMatchingById(
-            @PathVariable Long id,
+    @GetMapping("matching-any")
+    public Boolean getMatchingById(
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        ResponseDto<MatchingResponseDto> responseDto = matchingService.getMatchingById(id, principalUser.getId());
-        HttpStatus status = responseDto.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-        return ResponseEntity.status(status).body(responseDto);
+        return matchingService.getMatchingById(principalUser.getId());
+    }
+
+    // 매칭된 상대 조회
+    @GetMapping("/matching-partner")
+    public ResponseEntity<ResponseDto<PartnerProfileDto>> getPartner(
+            @AuthenticationPrincipal PrincipalUser principalUser
+    ){
+        ResponseDto<PartnerProfileDto> response= matchingService.getPartner(principalUser.getId(), principalUser.getRole());
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
     }
 
     //매칭 하기
-    @PostMapping
+    @PostMapping("/matching-make")
     public ResponseEntity<ResponseDto<MatchingResponseDto>> createMatching(
-            @RequestBody @Valid MatchingRequestDto dto,
+            @RequestParam Long id,
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
-        Long id = principalUser.getId();
-
         try{
-            ResponseDto<MatchingResponseDto> response = matchingService.createMatching(dto, id);
+            ResponseDto<MatchingResponseDto> response = matchingService.createMatching(id, principalUser.getId());
             HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
             return ResponseEntity.status(status).body(response);
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ResponseDto.setFailed("Internal server error"));
         }
-
-
     }
 
     // 매칭 삭제 - 완료
-    @DeleteMapping
+    @DeleteMapping("/matching-delete")
     public ResponseEntity<ResponseDto<Void>> deleteMatching(
             @RequestParam Long id,
             @AuthenticationPrincipal PrincipalUser principalUser
