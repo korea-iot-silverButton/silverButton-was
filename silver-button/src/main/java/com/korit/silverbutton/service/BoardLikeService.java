@@ -7,7 +7,7 @@ import com.korit.silverbutton.entity.Board;
 import com.korit.silverbutton.entity.User;
 import jakarta.validation.Valid;
 
-public interface BoardLikeService  {
+public interface BoardLikeService {
 
     User findUserById(Long likerId);
 

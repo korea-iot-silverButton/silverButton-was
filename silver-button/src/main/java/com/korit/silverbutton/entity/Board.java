@@ -2,6 +2,7 @@ package com.korit.silverbutton.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Board  {
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,9 +29,9 @@ public class Board  {
     private String content;
 
     @Column(name = "image_url", columnDefinition = "LONGTEXT", nullable = true)
-    private String imageUrl; // 이미지 URL 필드
+    private String imageUrl;
 
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition =  "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
     @Column(nullable = false)

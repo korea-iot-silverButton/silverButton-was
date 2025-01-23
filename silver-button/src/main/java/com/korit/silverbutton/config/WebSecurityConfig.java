@@ -120,14 +120,10 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher("/api/v1/board/all"),
                                 new AntPathRequestMatcher("/api/v1/board/view/**"),
                                 new AntPathRequestMatcher("/api/v1/comment/all"),
-
-
                                 new AntPathRequestMatcher("/api/v1/health-magazine/**"),
                                 new AntPathRequestMatcher("/api/v1/medicine/**"),
                                 new AntPathRequestMatcher("/api/v1/message/**"),
                                 new AntPathRequestMatcher("/api/v1/matching/**")
-
-
                         )
                         // .permitAll()
                         //  : 누구나 접근이 가능하게 설정
