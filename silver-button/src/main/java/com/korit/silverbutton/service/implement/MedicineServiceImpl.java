@@ -91,22 +91,22 @@ public class MedicineServiceImpl implements MedicineService {
             return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
         }
 
-//    @Override
-//    public ResponseDto<MedicineResponseDto> getMedicineById(Long id) {
-//        MedicineResponseDto data = null;
-//        try {
-//            Optional<Medicine> optionalMedicine = medicineRepository.getMedicineById(id);
-//            if (optionalMedicine.isEmpty()) {
-//                return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
-//            }
-//            Medicine medicine = optionalMedicine.get();
-//            data = new MedicineResponseDto(medicine);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-//        }
-//        return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
-//    }
+    @Override
+    public ResponseDto<MedicineResponseDto> getMedicineById(Long id) {
+        MedicineResponseDto data = null;
+        try {
+            Optional<Medicine> optionalMedicine = medicineRepository.getMedicineById(id);
+            if (optionalMedicine.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
+            }
+            Medicine medicine = optionalMedicine.get();
+            data = new MedicineResponseDto(medicine);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+        return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
+    }
 }
 
 

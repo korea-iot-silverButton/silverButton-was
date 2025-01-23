@@ -5,7 +5,9 @@ import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleRequestDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleResponseDto;
 import com.korit.silverbutton.entity.MedicineSchedule;
+import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.repository.MedicineScheduleRepository;
+import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.MedicineScheduleService;
 
 import jakarta.transaction.Transactional;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MedicineScheduleServiceImpl implements MedicineScheduleService {
     private final MedicineScheduleRepository medicineScheduleRepository;
+    private final UserRepository userRepository;
 
     // 약품 정보 저장
     @Override
@@ -38,6 +41,10 @@ public class MedicineScheduleServiceImpl implements MedicineScheduleService {
         String intrcQesitm = dto.getIntrcQesitm();
         String medicineImage = dto.getMedicineImage();
         try {
+            Optional<User> user = userRepository.findById(id);
+            if (user.isEmpty()){
+                return ResponseDto.setFailed("fail");
+            }
             MedicineSchedule medicineSchedule = MedicineSchedule.builder()
                     .itemName(itemName)
                     .efcyQesitm(efcyQesitm)

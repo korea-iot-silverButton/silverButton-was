@@ -23,7 +23,7 @@ public class MedicineSchedule {
         @Column(name = "id")
         private Long id;
 
-        // 약품 아이디
+        // 유저 아이디
         @Column(name = "user_id")
         private String userId;
 

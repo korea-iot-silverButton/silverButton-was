@@ -19,7 +19,7 @@ public interface MedicineService {
 
     ResponseDto<List<MedicineResponseDto>> getMedicineByItemName(String itemName);
 
-//    ResponseDto<MedicineResponseDto> getMedicineById(Long id);
+    ResponseDto<MedicineResponseDto> getMedicineById(Long id);
 
 
 }

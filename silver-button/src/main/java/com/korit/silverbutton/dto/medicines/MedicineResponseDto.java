@@ -39,7 +39,7 @@ public class MedicineResponseDto {
         this.depositMethodQesitm = medicine.getDepositMethodQesitm();
         this.intrcQesitm = medicine.getIntrcQesitm();
         this.medicineImage = medicine.getMedicineImage();
-        this.efcyQesitm = null;
+        this.efcyQesitm = medicine.getEfcyQesitm();
     }
 
 

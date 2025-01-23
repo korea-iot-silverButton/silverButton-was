@@ -3,6 +3,7 @@ package com.korit.silverbutton.controller;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleRequestDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleResponseDto;
+import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.MedicineScheduleService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,11 @@ public class MedicineScheduleController {
     // 메디슨 스케줄 생성
     @PostMapping(MEDICINE_POST)
     public ResponseEntity<ResponseDto<MedicineScheduleResponseDto>> postMedicineByUserId(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestBody MedicineScheduleRequestDto dto
     ) {
-        ResponseDto<MedicineScheduleResponseDto> response = medicineScheduleService.postMedicineByUserId(id, dto);
+
+        ResponseDto<MedicineScheduleResponseDto> response = medicineScheduleService.postMedicineByUserId(principalUser.getId(), dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

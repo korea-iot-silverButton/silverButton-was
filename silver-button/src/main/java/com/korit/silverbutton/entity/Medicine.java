@@ -31,6 +31,9 @@ public class Medicine {
     @Column(name = "item_name")
     private String itemName;
 
+    @Column(name="efcy_qesitm")
+    private String efcyQesitm;
+
     /// 약품 사용방법
     @Column(name = "use_method_qesitm")
     private String useMethodQesitm;
