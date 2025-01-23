@@ -3,6 +3,7 @@ package com.korit.silverbutton.service.implement;
 import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.Matching.Response.MatchingResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.User.Response.PartnerProfileDto;
 import com.korit.silverbutton.entity.Matchings;
 import com.korit.silverbutton.entity.MatchingsId;
 import com.korit.silverbutton.entity.User;
@@ -58,6 +59,45 @@ public class MatchingServiceImpl implements MatchingService {
         } catch (Exception e) {
             e.printStackTrace();
             return true;
+        }
+    }
+
+    // 매칭된 상대의 프로필 조회
+    @Override
+    public ResponseDto<PartnerProfileDto> getPartner(Long id, String role){
+        try{
+            Optional<User> optionalMatching = userRepository.findById(id);
+            Optional<MatchingsId> matchedId;
+            if(optionalMatching.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            }
+            if(role.equals("요양사")){
+                matchedId= matchingRepository.findIdByCaregiverId(id);
+            }
+            else if(role.equals("노인")){
+                matchedId= matchingRepository.findIdByDependentId(id);
+            }
+            else{
+                return ResponseDto.setFailed("역할이 없습니다.");
+            }
+            if (matchedId.isPresent()) {
+                Long partnerId = role.equals("요양사") ? matchedId.get().getDependentId() : matchedId.get().getCaregiverId();
+                Optional<User> partnerProfile = userRepository.findById(partnerId);
+                PartnerProfileDto partnerProfileDto= PartnerProfileDto.builder()
+                        .name(partnerProfile.get().getName())
+                        .nickname(partnerProfile.get().getNickname())
+                        .phone(partnerProfile.get().getPhone())
+                        .email(partnerProfile.get().getEmail())
+                        .build();
+                if (partnerProfile.isPresent()) {
+                    return ResponseDto.setSuccess("성공",partnerProfileDto);
+                }
+            }
+            return ResponseDto.setFailed("매칭된 상대가 없습니다.");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("매칭된 상대가 없습니다.");
         }
     }
 
