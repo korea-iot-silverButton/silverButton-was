@@ -199,7 +199,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (images != null && !images.isEmpty()) {
             ResponseDto<List<String>> response = profileImgService.uploadFiles(images);
-            if (response.isResult()) {  // 'getResult()' 대신 'isResult()' 사용
+            if (response.isResult()) {
                 uploadedImages = response.getData();
             } else {
                 // 실패 처리
@@ -223,8 +223,8 @@ public class BoardServiceImpl implements BoardService {
             Board board = boardOptional.get();
 
             String oldImageUrl = board.getImageUrl();
-            if (oldImageUrl != null) {
-                boolean imageDeleted = profileImgService.deleteFile(oldImageUrl);
+            if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
+                boolean imageDeleted = profileImgService.deleteFile(oldImageUrl);  // Google Cloud에서 삭제
                 if (imageDeleted) {
                     System.out.println(ResponseMessage.FILE_DELETION_SUCCESS);
                 } else {
@@ -232,6 +232,7 @@ public class BoardServiceImpl implements BoardService {
                 }
             }
 
+            // 새 이미지 URL로 업데이트
             board = board.toBuilder()
                     .title(title)
                     .content(content)
@@ -241,11 +242,11 @@ public class BoardServiceImpl implements BoardService {
             boardRepository.save(board);
             data = new BoardUpdateResponseDto(board);
 
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.POST_UPDATE_FAIL);
         }
+
         return ResponseDto.setSuccess(ResponseMessage.POST_UPDATE_SUCCESS, data);
     }
 

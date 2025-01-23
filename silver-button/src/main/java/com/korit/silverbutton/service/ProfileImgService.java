@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -74,6 +73,9 @@ public class ProfileImgService {
     }
 
 
+
+
+
     public ResponseDto<List<String>> uploadFiles(List<MultipartFile> files) {
         List<String> uploadedFileUrls = new ArrayList<>();
 
@@ -103,23 +105,13 @@ public class ProfileImgService {
         }
     }
 
-    // 이미지 삭제 로직
-    public boolean deleteFile(String filePath) {
-        // 삭제할 파일 경로
-        Path pathToFile = Paths.get( filePath).normalize(); // normalize()로 중복된 경로 해결
-
-        if (!filePath.startsWith(rootPath)) {
-            pathToFile = Paths.get(rootPath, filePath).normalize();
-        }
-        // 파일이 존재하면 삭제
+    // 클라우드 파일 삭제 (private로 유지)
+    private boolean deleteFileFromCloudStorage(String filePath) {
         try {
-            File file = pathToFile.toFile();
-            if (file.exists() && file.delete()) {
-                System.out.println(ResponseMessage.FILE_DELETION_SUCCESS); // 삭제 성공 메시지 출력
-                return true;
-            } else {
-                System.out.println(ResponseMessage.FILE_NOT_FOUND + filePath); // 파일이 없을 경우 메시지 출력
-            }
+            String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+            storage.delete(bucketName, fileName);  // Cloud Storage에서 파일 삭제
+            System.out.println(ResponseMessage.FILE_DELETION_SUCCESS); // 삭제 성공 메시지 출력
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(ResponseMessage.FILE_DELETION_FAIL); // 삭제 실패 메시지 출력
@@ -127,6 +119,37 @@ public class ProfileImgService {
 
         return false;
     }
+
+
+    // 이미지 삭제 로직
+    public boolean deleteFile(String filePath) {
+        // 파일이 Cloud Storage에 저장된 경우 삭제
+        if (filePath.startsWith("https://storage.googleapis.com")) {
+            return deleteFileFromCloudStorage(filePath);  // 클라우드에서 삭제
+        } else {
+            // 로컬 파일 삭제
+            Path pathToFile = Paths.get(filePath).normalize(); // normalize()로 중복된 경로 해결
+            if (!filePath.startsWith(rootPath)) {
+                pathToFile = Paths.get(rootPath, filePath).normalize();
+            }
+            // 파일이 존재하면 삭제
+            try {
+                File file = pathToFile.toFile();
+                if (file.exists() && file.delete()) {
+                    System.out.println(ResponseMessage.FILE_DELETION_SUCCESS); // 삭제 성공 메시지 출력
+                    return true;
+                } else {
+                    System.out.println(ResponseMessage.FILE_NOT_FOUND + filePath); // 파일이 없을 경우 메시지 출력
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(ResponseMessage.FILE_DELETION_FAIL); // 삭제 실패 메시지 출력
+            }
+        }
+
+        return false;
+    }
+
 
     // 이미지 조회 로직 (파일 경로 반환)
     public String getProfileImg(String fileName) {
