@@ -17,9 +17,9 @@ public interface MedicineService {
 
     ResponseDto<List<MedicineResponseDto>> findAll(MedicineRequestDto dto);
 
-//    ResponseDto<MedicineResponseDto> getMedicineByItemName(String itemName);
+    ResponseDto<List<MedicineResponseDto>> getMedicineByItemName(String itemName);
 
-    ResponseDto<MedicineResponseDto> getMedicineById(Long id);
+//    ResponseDto<MedicineResponseDto> getMedicineById(Long id);
 
 
 }

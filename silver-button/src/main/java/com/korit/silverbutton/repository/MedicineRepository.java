@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface MedicineRepository extends JpaRepository<Medicine,Long> {
 
     @Query("SELECT m FROM Medicine m WHERE m.itemName LIKE %:itemName%")
-    Optional<Medicine> getMedicineByItemName(@Param("itemName")String itemName);
+    Optional<List<Medicine>> getMedicineByItemName(@Param("itemName")String itemName);
 
     Optional<Medicine> getMedicineById(Long id);
 

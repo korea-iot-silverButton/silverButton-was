@@ -72,40 +72,41 @@ public class MedicineServiceImpl implements MedicineService {
 
     }
 
-//    @Override
-//    public ResponseDto<MedicineResponseDto> getMedicineByItemName(String itemName) {
-//
-//            MedicineResponseDto data = null;
-//            try {
-//                Optional<Medicine> optionalMedicine = medicineRepository.getMedicineByItemName(itemName);
-//                if (optionalMedicine.isEmpty()) {
-//                    return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
-//                }
-//                Medicine medicine = optionalMedicine.get();
-//                data = new MedicineResponseDto(medicine);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-//            }
-//            return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
-//        }
-
     @Override
-    public ResponseDto<MedicineResponseDto> getMedicineById(Long id) {
-        MedicineResponseDto data = null;
-        try {
-            Optional<Medicine> optionalMedicine = medicineRepository.getMedicineById(id);
-            if (optionalMedicine.isEmpty()) {
-                return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
+    public ResponseDto<List<MedicineResponseDto>> getMedicineByItemName(String itemName) {
+
+            List<MedicineResponseDto> data = null;
+            try {
+                Optional<List<Medicine>> optionalMedicines = medicineRepository.getMedicineByItemName(itemName);
+                if (optionalMedicines.isEmpty()) {
+                    return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
+                }
+                List<Medicine> medicines = optionalMedicines.get();
+
+                data = medicines.stream().map(MedicineResponseDto::new).collect(Collectors.toList());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
             }
-            Medicine medicine = optionalMedicine.get();
-            data = new MedicineResponseDto(medicine);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
         }
-        return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
-    }
+
+//    @Override
+//    public ResponseDto<MedicineResponseDto> getMedicineById(Long id) {
+//        MedicineResponseDto data = null;
+//        try {
+//            Optional<Medicine> optionalMedicine = medicineRepository.getMedicineById(id);
+//            if (optionalMedicine.isEmpty()) {
+//                return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
+//            }
+//            Medicine medicine = optionalMedicine.get();
+//            data = new MedicineResponseDto(medicine);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+//        }
+//        return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
+//    }
 }
 
 
