@@ -4,6 +4,8 @@ import com.korit.silverbutton.common.constant.ApiMappingPattern;
 import com.korit.silverbutton.dto.Matching.Request.MatchingRequestDto;
 import com.korit.silverbutton.dto.Matching.Response.MatchingResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
+import com.korit.silverbutton.dto.User.Response.PartnerProfileDto;
+import com.korit.silverbutton.dto.User.Response.UserProfileDto;
 import com.korit.silverbutton.entity.User;
 import com.korit.silverbutton.principal.PrincipalUser;
 import com.korit.silverbutton.service.MatchingService;
@@ -46,6 +48,16 @@ public class MatchingController {
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
         return matchingService.getMatchingById(principalUser.getId());
+    }
+
+    // 매칭된 상대 조회
+    @GetMapping("/matching-partner")
+    public ResponseEntity<ResponseDto<PartnerProfileDto>> getPartner(
+            @AuthenticationPrincipal PrincipalUser principalUser
+    ){
+        ResponseDto<PartnerProfileDto> response= matchingService.getPartner(principalUser.getId(), principalUser.getRole());
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
     }
 
     //매칭 하기
