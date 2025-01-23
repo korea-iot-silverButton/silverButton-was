@@ -84,9 +84,9 @@ public class JwtProvider {
      * @param username - 사용자이름
      * @return 이메일 검증을 위한 JWT 토큰
      * */
-    public String generateEmailValidToken(String username) {
+    public String generateEmailValidToken(String userId) {
         return Jwts.builder()
-                .claim("username", username)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + (1000L * 60 * 5)))
                 // : 현재 시간에 5분을 더해 토큰 만료 시간 설정
@@ -125,11 +125,15 @@ public class JwtProvider {
     }
 
     public String getUsernameFromEmailJwt(String token) {
+        System.out.println("실행 token" + token);
         // JWT에서 클레임 정보를 추출 - claim 객체에 저장
         Claims claims = getClaims(token);
+        System.out.println("실행 claims" + claims);
 
         // 클레임에서 userId 값을 문자열 형태로 반환
-        return claims.get("username", String.class);
+        String username = claims.get("userId", String.class);
+        System.out.println(username);
+        return claims.get("userId", String.class);
     }
 
     /*

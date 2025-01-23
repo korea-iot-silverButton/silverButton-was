@@ -13,20 +13,11 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUserId(String userId); // 아이디로 사용자 찾기
-
-    Optional<User> findByEmail(String email);  // 이메일로 사용자 찾기
-
-    Optional<User> findByNameAndEmail(String name, String email);  // 이름과 이메일로 사용자 찾기
-
-    Optional<User> findByNameAndPhone(String name, String phone); // 이름이랑 전화번호로 노인 찾기
+    Optional<User> findByUserId(String userId);
+    Optional<User> findByNameAndPhone(String name, String phone);
 
     boolean existsByPhone(String phone);
-
-    boolean existsByEmail(String email);
-
     boolean existsByNickname(String nickname);
-
     boolean existsByUserId(String userId);
 
     @Query("SELECT u FROM User u WHERE u.role = :role AND u.name = :name AND u.phone = :phone")
@@ -38,4 +29,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
             "FROM Matchings m WHERE m.id.caregiverId = :id OR m.id.dependentId = :id")
     boolean existsByCaregiverOrDependentId(@Param("id") Long id);
+
+    @Query("SELECT u FROM User u WHERE u.email = :email AND u.name = :name")
+    Optional<User> findUserByEmailAndName(@Param("email") String email, @Param("name") String name);
+
 }

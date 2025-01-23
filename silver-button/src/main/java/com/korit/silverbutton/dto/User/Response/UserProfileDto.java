@@ -15,9 +15,13 @@ public class UserProfileDto {
     private String phone;
     private String email;
     private String nickname;
-    private Long protectorId; // 노인의 경우 요양사 아이디
+
+    private  Long protectorId; // 노인의 경우 요양사 아이디
+
+
 
     public UserProfileDto(User user){
+
         this.userId= user.getUserId();
         this.password= user.getPassword();
         this.name= user.getName();
