@@ -4,10 +4,12 @@ import com.korit.silverbutton.common.constant.ResponseMessage;
 import com.korit.silverbutton.dto.HealthMagazine.response.HealthMagazineResponseDto;
 import com.korit.silverbutton.dto.ResponseDto;
 import com.korit.silverbutton.dto.medicine.MedicineScheduleRequestDto;
+import com.korit.silverbutton.dto.medicine.MedicineScheduleResponseDto;
 import com.korit.silverbutton.dto.medicines.MedicineRequestDto;
 import com.korit.silverbutton.dto.medicines.MedicineResponseDto;
 import com.korit.silverbutton.entity.HealthMagazine;
 import com.korit.silverbutton.entity.Medicine;
+import com.korit.silverbutton.entity.MedicineSchedule;
 import com.korit.silverbutton.repository.MedicineRepository;
 import com.korit.silverbutton.service.MedicineService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class MedicineServiceImpl implements MedicineService {
     public ResponseDto<MedicineResponseDto> postMedicine(MedicineRequestDto dto) {
         MedicineResponseDto data = null;
         String itemName = dto.getItemName();
+        String efcyQesitm = dto.getEfcyQesitm();
         Long itemSeq = dto.getItemSeq();
         String useMethodQesitm = dto.getUseMethodQesitm();
         String atpnQesitm = dto.getAtpnQesitm();
@@ -68,5 +71,42 @@ public class MedicineServiceImpl implements MedicineService {
         return ResponseDto.setSuccess(ResponseMessage.GET_ALL_HEALTH_MAGAZINE_SUCCESS, data);
 
     }
+
+    @Override
+    public ResponseDto<List<MedicineResponseDto>> getMedicineByItemName(String itemName) {
+
+            List<MedicineResponseDto> data = null;
+            try {
+                Optional<List<Medicine>> optionalMedicines = medicineRepository.getMedicineByItemName(itemName);
+                if (optionalMedicines.isEmpty()) {
+                    return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
+                }
+                List<Medicine> medicines = optionalMedicines.get();
+
+                data = medicines.stream().map(MedicineResponseDto::new).collect(Collectors.toList());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+            }
+            return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
+        }
+
+    @Override
+    public ResponseDto<MedicineResponseDto> getMedicineById(Long id) {
+        MedicineResponseDto data = null;
+        try {
+            Optional<Medicine> optionalMedicine = medicineRepository.getMedicineById(id);
+            if (optionalMedicine.isEmpty()) {
+                return ResponseDto.setFailed(ResponseMessage.MEDICINE_SCHEDULE_NOT_FOUND);
+            }
+            Medicine medicine = optionalMedicine.get();
+            data = new MedicineResponseDto(medicine);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+        return ResponseDto.setSuccess(ResponseMessage.GET_MEDICINE_SCHEDULE_SUCCESS, data);
+    }
 }
+
 

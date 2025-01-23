@@ -12,7 +12,7 @@ public class MessageRequestDto {
     @NotNull
     private Long senderId;
     @NotNull
-    private Long receiverId;
+    private String receiverUserId;
     @NotBlank
     private String title;
     @NotBlank

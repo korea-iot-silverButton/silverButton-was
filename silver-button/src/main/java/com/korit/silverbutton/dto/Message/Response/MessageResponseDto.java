@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class MessageResponseDto {
+    private final Long id;
     private final Long senderId;
     private final String senderName;
     private final Long receiverId;
@@ -19,6 +20,7 @@ public class MessageResponseDto {
     private final LocalDateTime createdAt;
 
     public MessageResponseDto(Message message) {
+        this.id = message.getId();
         this.senderId = message.getSender().getId();
         this.senderName = message.getSender().getName();
         this.receiverId = message.getReceiver().getId();

@@ -23,7 +23,7 @@ public class MedicineSchedule {
         @Column(name = "id")
         private Long id;
 
-        // 약품 아이디
+        // 유저 아이디
         @Column(name = "user_id")
         private String userId;
 
@@ -34,6 +34,10 @@ public class MedicineSchedule {
         /// 약품 이름
         @Column(name = "item_name")
         private String itemName;
+
+        // 약품 효능
+        @Column(name = "efcy_qesitm")
+        private String efcyQesitm;
 
         /// 약품 사용방법
         @Column(name = "use_method_qesitm")

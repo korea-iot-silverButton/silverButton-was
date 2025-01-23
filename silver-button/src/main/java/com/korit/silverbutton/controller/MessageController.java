@@ -22,10 +22,13 @@ import java.util.List;
 @RequestMapping(ApiMappingPattern.MESSAGE)
 @RequiredArgsConstructor
 public class MessageController {
+
+
+
     private final MessageService messageService;
     private static final Logger log = LoggerFactory.getLogger(MessageController.class);
 
-    //  모든 쪽지 조회 - 완료
+    //  모든 쪽지 조회 - 확인 완료
     @GetMapping
     public ResponseEntity<ResponseDto<List<MessageResponseDto>>> getAllMessages(
             @AuthenticationPrincipal PrincipalUser principalUser
@@ -43,7 +46,7 @@ public class MessageController {
         return ResponseEntity.status(status).body(response);
     }
 
-    // 발신 쪽지 조회 - 완료
+    // 발신 쪽지 조회 - 확인 완료
     @GetMapping("/sender")
     public ResponseEntity<ResponseDto<List<MessageResponseDto>>> getOutGoingMessages(
             @AuthenticationPrincipal PrincipalUser principalUser
@@ -54,7 +57,7 @@ public class MessageController {
         return ResponseEntity.status(status).body(response);
     }
 
-    // 수신 쪽지 조회 - 완료
+    // 수신 쪽지 조회 - 확인 완료
     @GetMapping("/receive")
     public ResponseEntity<ResponseDto<List<MessageResponseDto>>> getReceiveMessages(
             @AuthenticationPrincipal PrincipalUser principalUser
@@ -65,23 +68,22 @@ public class MessageController {
         return ResponseEntity.status(status).body(response);
     }
 
-    // 쪽지 작성 - 완료
+    // 쪽지 작성 - 확인 완료
     @PostMapping
     public ResponseEntity<ResponseDto<MessageResponseDto>> createMessage(
             @Valid @RequestBody MessageRequestDto messageRequestDto,
             @AuthenticationPrincipal PrincipalUser principalUser
-    ){
-        Long id = principalUser.getId();
-
-        ResponseDto<MessageResponseDto> response = messageService.createMessage(messageRequestDto, id);
+    ) {
+        Long senderId = principalUser.getId();
+        ResponseDto<MessageResponseDto> response = messageService.createMessage(messageRequestDto, senderId);
         HttpStatus status = response.isResult() ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
     // 쪽지 삭제 - 완료
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto<Void>> deleteMessage(
-            @RequestParam Long id,
+            @PathVariable Long id,
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
         Long userId = principalUser.getId();
@@ -92,14 +94,14 @@ public class MessageController {
     }
 
     // 특정 쪽지 조회
-    @GetMapping("/{messageId}")
+    @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<MessageResponseDto>> getMessageById(
-            @PathVariable Long messageId,
+            @PathVariable Long id,
             @AuthenticationPrincipal PrincipalUser principalUser
     ){
         Long userId = principalUser.getId();
 
-        ResponseDto<MessageResponseDto> response = messageService.getMessageById(messageId, userId);
+        ResponseDto<MessageResponseDto> response = messageService.getMessageById(id, userId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }

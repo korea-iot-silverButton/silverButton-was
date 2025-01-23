@@ -25,6 +25,8 @@ public class MedicineController {
 
     private static final String MEDICINE_POST = "/";
     private static final String MEDICINE_GET = "/";
+    private static final String MEDICINE_GET_NAME = "/name/{itemName}";
+    private static final String MEDICINE_GET_MEDICINE_ID = "/medicineId/{id}";
 
     private final MedicineService medicineService;
 
@@ -42,6 +44,23 @@ public class MedicineController {
             MedicineRequestDto dto
     ) {
         ResponseDto<List<MedicineResponseDto>> response = medicineService.findAll(dto);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping(MEDICINE_GET_NAME)
+    public ResponseEntity<ResponseDto<List<MedicineResponseDto>>> getMedicineByItemName(@PathVariable String itemName
+    ) {
+        ResponseDto<List<MedicineResponseDto>> response = medicineService.getMedicineByItemName(itemName);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping(MEDICINE_GET_MEDICINE_ID)
+    public ResponseEntity<ResponseDto<MedicineResponseDto>> getMedicineById(@PathVariable Long id
+    ) {
+
+        ResponseDto<MedicineResponseDto> response = medicineService.getMedicineById(id);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(response);
     }
