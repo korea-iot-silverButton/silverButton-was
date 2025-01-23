@@ -16,6 +16,8 @@ public class MedicineScheduleResponseDto {
 
     private String itemName;
 
+    private String efcyQesitm;
+
     private String useMethodQesitm;
 
     private String atpnQesitm;
@@ -33,6 +35,7 @@ public class MedicineScheduleResponseDto {
         this.userId = medicineSchedule.getUserId();
         this.itemSeq = medicineSchedule.getItemSeq();
         this.itemName = medicineSchedule.getItemName();
+        this.efcyQesitm = medicineSchedule.getEfcyQesitm();
         this.useMethodQesitm = medicineSchedule.getUseMethodQesitm();
         this.atpnQesitm = medicineSchedule.getAtpnQesitm();
         this.seQesitm = medicineSchedule.getSeQesitm();

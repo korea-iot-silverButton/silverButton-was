@@ -58,7 +58,7 @@ public class MessageServiceImpl implements MessageService {
             // User ID를 이용해 User 객체를 데이터베이스에서 조회
             User sender = userRepository.findById(senderId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid sender ID"));
-            User receiver = userRepository.findById(dto.getReceiverId())
+            User receiver = userRepository.findByUserId(dto.getReceiverUserId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid receiver ID"));
 
             // Message 엔티티 생성
@@ -88,7 +88,7 @@ public class MessageServiceImpl implements MessageService {
         User sender = new User();
         sender.setId(senderId);
         try {
-            List<Message> messages = messageRepository.findAllBySender(sender);
+            List<Message> messages = messageRepository.findAllBySenderOrderByCreatedAtDesc(sender);
             if (messages.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
@@ -112,7 +112,7 @@ public class MessageServiceImpl implements MessageService {
         User receiver = new User();
         receiver.setId(receiverId);
         try {
-            List<Message> messages = messageRepository.findAllByReceiver(receiver);
+            List<Message> messages = messageRepository.findAllByReceiverOrderByCreatedAtDesc(receiver);
             if (messages.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
@@ -131,9 +131,9 @@ public class MessageServiceImpl implements MessageService {
 
     // 쪽지 삭제 - 완료
     @Override
-    public ResponseDto<Void> deleteMessage(Long messageId, Long userId) {
+    public ResponseDto<Void> deleteMessage(Long id, Long userId) {
         try {
-            Optional<Message> optionalMessage = messageRepository.findById(messageId);
+            Optional<Message> optionalMessage = messageRepository.findById(id);
             if (optionalMessage.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_POST);
             }
