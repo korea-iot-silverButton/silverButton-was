@@ -4,12 +4,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 public abstract class MailService {
-//
-//    MimeMessage createMail(String mail, String token) throws MessagingException {
-//        return null;
-//    }
-
-//    public abstract MimeMessage createMail(String mail, String token) throws MessagingException;
 
     public abstract MimeMessage createMail(String mail, String token) throws MessagingException;
 

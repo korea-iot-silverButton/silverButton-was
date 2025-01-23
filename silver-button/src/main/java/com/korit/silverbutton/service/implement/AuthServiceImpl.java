@@ -13,7 +13,6 @@ import com.korit.silverbutton.repository.UserRepository;
 import com.korit.silverbutton.service.AuthService;
 import com.korit.silverbutton.service.MailService;
 import com.korit.silverbutton.service.TokenBlacklistService;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,13 +32,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseDto<SignUpResponseDto> signUp(SignUpRequestDto dto) {
-        String userId = dto.getUserId(); // 아이디
-        String password = dto.getPassword(); // 비밀번호
-        String confirmPassword = dto.getConfirmPassword(); // 확인
-        String name = dto.getName(); //이름
-        String email = dto.getEmail(); //이메일
-        String phone = dto.getPhone(); // 전화번호
-        String gender = dto.getGender(); //성별
+        String userId = dto.getUserId();
+        String password = dto.getPassword();
+        String confirmPassword = dto.getConfirmPassword();
+        String name = dto.getName();
+        String email = dto.getEmail();
+        String phone = dto.getPhone();
+        String gender = dto.getGender();
         if ("female".equalsIgnoreCase(gender)) {
             gender = "F";
         } else if ("male".equalsIgnoreCase(gender)) {
@@ -47,16 +46,14 @@ public class AuthServiceImpl implements AuthService {
         } else {
             throw new IllegalArgumentException("Invalid gender value: " + gender);
         }
-        String nickname = dto.getNickname(); // 닉네임
-        Date birthDate= dto.getBirthDate(); // 나이 계산
-        String profileImage= "image"; // 프로필 이미지 기본값
+        String nickname = dto.getNickname();
+        Date birthDate= dto.getBirthDate();
+        String profileImage= "image";
         String role;
         String licenseNumber= dto.getLicenseNumber();
 
-        // 나이 계산 메서드
         int age = calculateAge(birthDate);
 
-        // role 설정 로직
         if (licenseNumber != null && !licenseNumber.isEmpty()) {
             role = "요양사";
         } else if (age >= 65) {
@@ -97,14 +94,12 @@ public class AuthServiceImpl implements AuthService {
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
-    // 나이 계산 메서드
     private int calculateAge(Date birthDate) {
         Date today = new Date();
         int currentYear = today.getYear() + 1900;
         int birthYear = birthDate.getYear() + 1900;
         int age = currentYear - birthYear;
 
-        // 생일이 아직 지나지 않았으면 나이에서 1을 뺌
         if (today.getMonth() < birthDate.getMonth() ||
                 (today.getMonth() == birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
             age--;
@@ -118,7 +113,6 @@ public class AuthServiceImpl implements AuthService {
         String password = dto.getPassword();
         SignInResponseDto data = null;
 
-        // 1. 유효성 검사
         if (userId == null || userId.isEmpty()) {
             return ResponseDto.setFailed(ResponseMessage.VALIDATION_FAIL);
         }
@@ -167,96 +161,6 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.existsByNickname(Nickname);
     }
 
-    // 이메일 관련 아이디 비번 찾기 로직
-    @Override
-    public ResponseDto<SnsLoginResponseDto> findUserIdByEmail(String email) {
-        try {
-            // 이메일로 사용자를 찾기 (Optional<User> 반환)
-            Optional<User> optionalUser = userRepository.findByEmail(email);
-
-            // 사용자가 없으면 예외를 던짐
-            User user = optionalUser.orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));
-
-            // SnsLoginResponseDto 생성 (아이디만 반환)
-            SnsLoginResponseDto responseDto = SnsLoginResponseDto.fromUser(user.getUserId(), user.getEmail(), false, "아이디 찾기 성공");
-
-            // 성공 응답 반환
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);  // 기타 오류 발생 시 데이터베이스 오류 메시지 반환
-        }
-    }
-
-    @Override
-    public ResponseDto<SnsLoginResponseDto> verifyUserId(String email, String token) {
-        try {
-            // 이메일 인증 토큰을 검증하여 유효한 아이디를 가져옴
-            String userId = mailService.verifyEmail(token);
-
-            // 인증이 성공했을 때, SnsLoginResponseDto 생성
-            SnsLoginResponseDto responseDto = new SnsLoginResponseDto(userId, email, false, "아이디 인증 성공");
-
-            // 성공적인 응답 반환
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
-        } catch (IllegalArgumentException e) {
-            // 예외가 발생한 경우 (예: 잘못된 토큰)
-            return ResponseDto.setFailed("유효하지 않은 인증 토큰입니다.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed("아이디 인증에 실패했습니다.");
-        }
-    }
-    @Override
-    public ResponseDto<SnsLoginResponseDto> sendPasswordResetLink(String email) {
-        try {
-            // 이메일로 사용자 찾기 (Optional<User> 반환)
-            Optional<User> optionalUser = userRepository.findByEmail(email);
-
-            // 사용자가 없으면 예외를 던짐
-            User user = optionalUser.orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));
-
-            // 비밀번호 재설정 링크 발송
-            String token = mailService.sendSimpleMessage(email, user.getUserId());
-
-            // 비밀번호 재설정 성공 응답 반환
-            SnsLoginResponseDto responseDto = new SnsLoginResponseDto(user.getUserId(), user.getEmail(), true, "비밀번호 재설정 링크가 발송되었습니다.");
-
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);  // 기타 오류 발생 시 데이터베이스 오류 메시지 반환
-        }
-    }
-
-    @Override
-    public ResponseDto<SnsLoginResponseDto> resetPassword(String token, String newPassword) {
-        try {
-            // 이메일 인증 토큰을 검증하여 유효한 사용자 ID 가져옴
-            String userId = mailService.verifyEmail(token);
-
-            // 해당 userId로 사용자 찾기
-            Optional<User> optionalUser = userRepository.findByUserId(userId);
-
-            // 사용자가 없으면 예외를 던짐
-            User user = optionalUser.orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));
-
-            // 새로운 비밀번호로 업데이트
-            String encodedPassword = bCryptpasswordEncoder.encode(newPassword);
-            user.setPassword(encodedPassword);
-            userRepository.save(user);
-
-            // 비밀번호 재설정 성공 응답 반환
-            SnsLoginResponseDto responseDto = new SnsLoginResponseDto(user.getUserId(), user.getEmail(), false, "비밀번호가 성공적으로 재설정되었습니다.");
-
-            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.setFailed("비밀번호 재설정에 실패했습니다.");
-        }
-    }
-
-
     @Override
     public ResponseDto<SignInResponseDto> dependentLogin(SignInRequestDto dto) {
         String name = dto.getName();
@@ -294,7 +198,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseDto<String> logout(String token) {
         try {
-            // 토큰을 블랙리스트에 추가
+
             tokenBlacklistService.addToBlacklist(token);
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, "Logout successful");
         } catch (Exception e) {

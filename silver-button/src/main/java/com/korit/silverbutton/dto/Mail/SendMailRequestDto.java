@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class SendMailRequestDto {
 
     private String email;
-    private String userId;
+    private String name;
 }
